@@ -1,0 +1,39 @@
+/* cancel button  */
+.clear-input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.clear-input-button {
+    /* button position */
+    position: absolute;
+    right: 6px;
+    top: 12px;
+    bottom: 4px;
+    /* button appearane */
+    justify-content: center;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    appearance: none;
+    border: none;
+    border-radius: 50%;
+    background: gray;
+    margin: 0;
+    padding: 2px ;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    /* hide the button initially */
+    display: none;
+}
+
+.clear-input-button:hover {
+    background: darkgray;
+}
+
+.clear-input--touched:focus+.clear-input-button,
+.clear-input--touched:hover+.clear-input-button,
+.clear-input--touched+.clear-input-button:hover {
+    display: inline-flex;
+}
