@@ -64,14 +64,14 @@ class JenisController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()]);
+            return response()->json(['errors' => $validator->errors()],422);
         }
 
         Jenis::create([
             'nama_jenis' => $request->nama_jenis
         ]);
 
-        return response()->json(['success'=>'Berhasil menambahkan data']);
+        return response()->json(['success'=>'Berhasil menambahkan data'],200);
     }
 
     /**
@@ -126,7 +126,7 @@ class JenisController extends Controller
     
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         }catch(\Exception $e){
-            return response()->json(['errors' => $e->getMessage()], 200);
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
 }

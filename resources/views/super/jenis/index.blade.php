@@ -20,8 +20,8 @@
         <div class="card">
             <div class="card-body">
                 <form class="row" id="formJenis">
-                    <div class="col-md-4 col-sm-12">
-                        <div class="input-group">
+                    <div class="col-md-5 col-sm-12">
+                        <div class="input-group" id="jenisGroup">
                             <input class="form-control" type="text" name="nama_jenis" required="true" id="namajenis" placeholder="Jenis dokumen">
                             <button class="btn btn-primary" type="submit">Tambah</button>
                         </div>
@@ -31,8 +31,11 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">
-                    Data Jenis
+                <h5 class="card-title d-flex align-items-center">
+                    Data Jenis 
+                    <button class="btn p-0 ms-1 border-0" id="refreshData">
+                        <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
+                    </button>
                 </h5>
             </div>
             <div class="card-body">
@@ -120,8 +123,12 @@
 
                 const formJenis = document.getElementById('formJenis')
                 formJenis.addEventListener("submit", (event) => {
-                    let namajenis = $('#namajenis')
                     event.preventDefault()
+                    //Clear error message
+                    $('.invalid-feedback').remove()
+                    $('.is-invalid').removeClass('is-invalid')
+
+                    let namajenis = $('#namajenis')
                     let data = {
                         nama_jenis: namajenis.val()
                     }
@@ -133,25 +140,20 @@
                         proccessData: false,
                         contentType: "application/json",
                         success: (response) => {
-                            if(response.errors) {
-                                var errorMsg = ''
-                                $.each(response.errors, (field, errors) => {
-                                    $.each(errors, (index, error) => {
-                                        errorMsg += error + '<br>'
-                                    })
-                                })
-                                toast("#dc3545","Failed",errorMsg)
-                            }else{
+                                namajenis.val('')
                                 refreshData(datatable)
                                 toast()
-                            }
                         },
                         error: function(xhr, status, error) {
-                            toast("#dc3545","Failed",error)
+                            var errors = xhr.responseJSON.errors
+                            if (errors.hasOwnProperty('nama_jenis')) {
+                                namajenis.addClass('is-invalid')
+                                $('#jenisGroup').append(`<span class="invalid-feedback" role="alert">${errors.nama_jenis[0]}</span>`)
+                            }
+                            toast("#dc3545","Failed","Gagal menambahkan data")
                         }
 
                     })
-                    namajenis.val('')
                 })
 
                 $('#datatable').on('click', '.delete-button', function() {
@@ -195,6 +197,12 @@
                         }
                     })
                 });
+
+                $('#refreshData').click(async () => {
+                    $('#refreshData').attr('disabled', true)
+                    await refreshData(datatable)
+                    $('#refreshData').attr('disabled', false)
+                })
                 
                 function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
                     $("#toastRect").attr("fill",color)
@@ -205,8 +213,10 @@
                     toast.show()
                 }
 
-                function refreshData(table) {
-                    table.ajax.reload()
+                async function refreshData(table) {
+                    await new Promise((resolve) => {
+                        table.ajax.reload(resolve)
+                    })
                 }
             });
 

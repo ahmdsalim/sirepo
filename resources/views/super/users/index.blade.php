@@ -25,30 +25,36 @@
                 </div>
             </div>
             <div class="card-body" id="formContainer" style="display: none;">
-                <form class="form">
+                <form class="form" id="formUser">
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
+                                <label for="nama" class="form-label">Nama</label>
+                                <input type="text" id="nama" class="form-control" placeholder="Nama pengguna" name="nama" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group mandatory">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" placeholder="Email pengguna" name="email">
+                                <input type="email" id="email" class="form-control" placeholder="Email pengguna" name="email" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" id="username" class="form-control" placeholder="Username" name="username">
+                                <input type="text" id="username" class="form-control" placeholder="Username" name="username" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="text" id="password" class="form-control" name="password" placeholder="Password">
+                                <input type="password" id="password" class="form-control" name="password" placeholder="Password" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="role" class="form-label">Role</label>
-                                <select class="choices form-select" name="role" required>
+                                <select id="role" class="form-select" name="role" required>
                                     <option value="">Pilih</option>
                                     <option value="super">Super</option>
                                     <option value="admin">Admin</option>
@@ -65,9 +71,12 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">
-                    Data Pengguna
-                </h5>
+                <h5 class="card-title d-flex align-items-center">
+                    Data Pengguna 
+                    <button class="btn p-0 ms-1 border-0" id="refreshData">
+                        <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
+                    </button>
+                </h5>                
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -100,15 +109,13 @@
     </section>
 
     @push('styles')
-        @vite(['resources/assets/compiled/css/table-datatable-jquery.css','resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css','resources/assets/extensions/choices.js/public/assets/styles/choices.css'])
+        @vite(['resources/assets/compiled/css/table-datatable-jquery.css','resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
     @endpush
 
     @push('scripts')
         <script src="{{asset('assets/extensions/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js')}}"></script>
         <script src="{{asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/choices.js/public/assets/scripts/choices.js')}}"></script>
-        <script src="{{asset('assets/static/js/pages/form-element-select.js')}}"></script>
         <script>
             $.ajaxSetup({
                 headers: {
@@ -166,41 +173,74 @@
                 setTableColor()
                 datatable.on('draw', setTableColor)
 
-                // const formJenis = document.getElementById('formJenis')
-                // formJenis.addEventListener("submit", (event) => {
-                //     let namajenis = $('#namajenis')
-                //     event.preventDefault()
-                //     let data = {
-                //         nama_jenis: namajenis.val()
-                //     }
-                //     $.ajax({
-                //         url: "{{ route('jenis.store') }}",
-                //         type: "POST",
-                //         data: JSON.stringify(data),
-                //         dataType: "JSON",
-                //         proccessData: false,
-                //         contentType: "application/json",
-                //         success: (response) => {
-                //             if(response.errors) {
-                //                 var errorMsg = ''
-                //                 $.each(response.errors, (field, errors) => {
-                //                     $.each(errors, (index, error) => {
-                //                         errorMsg += error + '<br>'
-                //                     })
-                //                 })
-                //                 toast("#dc3545","Failed",errorMsg)
-                //             }else{
-                //                 refreshData(datatable)
-                //                 toast()
-                //             }
-                //         },
-                //         error: function(xhr, status, error) {
-                //             toast("#dc3545","Failed",error)
-                //         }
+                const formUser = document.getElementById('formUser')
+                formUser.addEventListener("submit", (event) => {
+                    event.preventDefault()
+                    //Clear error message
+                    $('.invalid-feedback').remove()
+                    $('.is-invalid').removeClass('is-invalid')
+                    //Prepare input element
+                    let nama = $('#nama'),
+                        email = $('#email'),
+                        username = $('#username'),
+                        password = $('#password'),
+                        role = $('#role')
+                    //Data for sending to server    
+                    let data = {
+                        nama: nama.val(),
+                        email: email.val(),
+                        username: username.val(),
+                        password: password.val(),
+                        role: role.val()
+                    }
+                    $.ajax({
+                        url: "{{ route('users.store') }}",
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "JSON",
+                        proccessData: false,
+                        contentType: "application/json",
+                        success: (response) => {
+                            if(response.success){
+                                //Clear input value
+                                nama.val('')
+                                email.val('')
+                                username.val('')
+                                password.val('')
+                                role.val('')
 
-                //     })
-                //     namajenis.val('')
-                // })
+                                refreshData(datatable)
+                                toast(undefined,undefined,response.success)
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var errors = xhr.responseJSON.errors;
+
+                            if (errors.hasOwnProperty('nama')) {
+                                nama.addClass('is-invalid')
+                                nama.after(`<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('email')) {
+                                email.addClass('is-invalid')
+                                email.after(`<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('username')) {
+                                username.addClass('is-invalid')
+                                username.after(`<span class="invalid-feedback" role="alert">${errors.username[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('password')) {
+                                password.addClass('is-invalid')
+                                password.after(`<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('role')) {
+                                role.addClass('is-invalid')
+                                role.after(`<span class="invalid-feedback" role="alert">${errors.role[0]}</span>`)
+                            }
+                            toast("#dc3545","Failed","Gagal menambahkan pengguna")
+                        }
+
+                    })
+                })
 
                 $('#datatable').on('click', '.delete-button', function() {
                     Swal.fire({
@@ -218,7 +258,7 @@
                             const data = {
                                 id: dataId
                             }
-                            const url = "{{ route('jenis.destroy', ['id'=>':data']) }}"
+                            const url = "{{ route('users.destroy', ['user'=>':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             $.ajax({
                                 url: bindUrl,
@@ -228,16 +268,12 @@
                                 proccessData: false,
                                 contentType: "application/json",
                                 success: (response) => {
-                                    if(response.errors){
-                                        var errorMsg = response.errors
-                                        toast("#dc3545","Failed",errorMsg)
-                                    }else{
                                         refreshData(datatable)
                                         toast(undefined,undefined,response.success)
-                                    }
                                 },
                                 error: function(xhr, status, error) {
-                                    toast("#dc3545","Failed",error)
+                                    const errors = `${status} : ${error}`
+                                    toast("#dc3545","Failed",errors)
                                 }
                             })
                         }
@@ -246,22 +282,27 @@
 
                 const toggleContainer = document.getElementById('toggleContainer')
                 $('#toggleContainer').click(function() {
-                    console.log('ibasdisad')
                     const formContainer = $('#formContainer')
                     const toggleText = $('#toggleText')
                     const toggleIcon = $('#toggleIcon')
 
                     if (formContainer.is(':visible')) {
-                        formContainer.hide()
+                        formContainer.hide(200)
                         toggleText.text('Tambah')
                         toggleIcon.removeClass('bi bi-chevron-compact-down')
                         toggleIcon.addClass('bi bi-chevron-compact-right')
                     } else {
-                        formContainer.show()
+                        formContainer.show(200)
                         toggleText.text('Sembunyikan')
                         toggleIcon.removeClass('bi bi-chevron-compact-right')
                         toggleIcon.addClass('bi bi-chevron-compact-down')
                     }
+                })
+
+                $('#refreshData').on('click', async () => {
+                    $('#refreshData').attr('disabled',true)
+                    await refreshData(datatable)
+                    $('#refreshData').attr('disabled',false)
                 })
                 
                 function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
@@ -273,8 +314,10 @@
                     toast.show()
                 }
 
-                function refreshData(table) {
-                    table.ajax.reload()
+                async function refreshData(table) {
+                    await new Promise((resolve) => {
+                        table.ajax.reload(resolve)
+                    })
                 }
             });
 
