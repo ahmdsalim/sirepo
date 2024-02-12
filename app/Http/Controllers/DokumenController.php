@@ -14,31 +14,62 @@ class DokumenController extends Controller
     public function index()
     {
         $data['header'] = 'asasa';
-        return view('dokumen.index',$data);
+        return view('dokumen.index', $data);
     }
 
-    public function getDocByUName()
+    public function getDocByUName(Request $request)
     {
-        $user = Auth::user()->username;
-        $dokByUName = Dokumen::select('*')->with('jenis')->where('username', $user)->get();
+        $pageNumber = $request->start / $request->length + 1;
+        $pageLength = $request->length;
+        $skip = ($pageNumber - 1) * $pageLength;
 
-        $formattedData = $dokByUName->map(function ($item) {
-            return [
-                // 'id' => $item->id,
-                'judul' => $item->judul,
-                'penulis' => $item->penulis,
-                'tahun' => $item->tahun,
-                'username' => $item->username,
-                'jenis_id' => $item->jenis_id ,
-                'file' => $item->file,
-                'abstrak' => $item->abstrak,
-                'keyword' => $item->keyword,
-                'created_at' => $item->created_at,
-                'updated_at' => $item->updated_at,
-            ];
+        // Page Order
+        $orderColumnIndex = $request->order[0]['column'] ?? '0';
+        $orderBy = $request->order[0]['dir'] ?? 'desc';
+
+        $user = Auth::user()->username;
+        $query = Dokumen::select('dokumens.*', 'jenis.nama_jenis')
+                ->leftJoin('jenis', 'dokumens.jenis_id', '=', 'jenis.id')
+                ->where('dokumens.username', $user);
+
+
+        $search = $request->search;
+        $query = $query->where(function ($query) use ($search) {
+            $query->orWhere('judul', 'like', '%' . $search . '%');
+            $query->orWhere('penulis', 'like', '%' . $search . '%');
+            $query->orWhere('tahun', 'like', '%' . $search . '%');
+            $query->orWhere('keyword', 'like', '%' . $search . '%');
         });
 
-        return response()->json(['status' => 200, 'message' => 'getDocByUName', 'data' => $formattedData]);
+        $orderByName = 'judul';
+        switch ($orderColumnIndex) {
+            case '0':
+                $orderByName = 'judul';
+                break;
+            case '1':
+                $orderByName = 'penulis';
+                break;
+            case '2':
+                $orderByName = 'tahun';
+                break;
+            case '3':
+                $orderByName = 'jenis_id';
+                break;
+        }
+
+        $query = $query->orderBy($orderByName, $orderBy);
+        $recordsTotal = $query->count();
+        $dok = $query->skip($skip)->take($pageLength)->get();
+        $recordsFiltered = $dok->count();
+
+        return response()->json([
+            'draw' => $request->draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $dok,
+            'status' => 200,
+            'message' => 'getDocByUName',
+        ]);
     }
 
     /**
@@ -60,17 +91,17 @@ class DokumenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Dokumen $dokumen)
     {
-        //
+        return view('dokumen.detail',compact($dokumen));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Dokumen $dokumen)
     {
-        return view('dokumen.edit-dokumen');
+        return view('dokumen.edit-dokumen', compact($dokumen));
     }
 
     /**

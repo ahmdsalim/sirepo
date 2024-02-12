@@ -35,5 +35,5 @@ Route::post('/get-jenis', [JenisController::class,'getJenis'])->name('jenis.getJ
 Route::resource('users', UserController::class);
 Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
 
-Route::resource('dokumen',DokumenController::class);
-Route::get('/getDocByUName', [DokumenController::class, 'getDocByUName'])-> name('dokumen.getDocByUName');
+Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
+Route::post('/get-doc-by-uname', [DokumenController::class, 'getDocByUName'])->name('dokumens.getDocByUName');
