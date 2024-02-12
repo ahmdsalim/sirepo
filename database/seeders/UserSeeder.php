@@ -21,5 +21,21 @@ class UserSeeder extends Seeder
             "terverifikasi"=> 1,
             "role"=> "super"
         ]);
+        User::create([
+            "username"=> "adminANS",
+            "nama"=> "ANS",
+            "email"=> "ans@gmail.com",
+            "password"=> Hash::make("wew"),
+            "terverifikasi"=> 1,
+            "role"=> "admin"
+        ]);
+        User::create([
+            "username"=> "dadang.kornelo",
+            "nama"=> "Dadang",
+            "email"=> "dadangkornelo@gmail.com",
+            "password"=> Hash::make("telolet"),
+            "terverifikasi"=> 1,
+            "role"=> "user"
+        ]);
     }
 }

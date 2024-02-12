@@ -3,7 +3,13 @@
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
                 <h3>Dashboard</h3>
-                <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
+                @if (Auth::user()->role === 'super')
+                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
+                @elseif (Auth::user()->role === 'admin')
+                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
+                @else
+                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
+                @endif
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -22,8 +28,7 @@
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
                             <div class="row">
-                                <div
-                                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
                                     <div class="stats-icon purple mb-2">
                                         <i class="iconly-boldShow"></i>
                                     </div>
@@ -40,8 +45,7 @@
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
                             <div class="row">
-                                <div
-                                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
                                     <div class="stats-icon blue mb-2">
                                         <i class="iconly-boldProfile"></i>
                                     </div>
@@ -58,8 +62,7 @@
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
                             <div class="row">
-                                <div
-                                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
                                     <div class="stats-icon green mb-2">
                                         <i class="iconly-boldAdd-User"></i>
                                     </div>
@@ -76,8 +79,7 @@
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
                             <div class="row">
-                                <div
-                                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
                                     <div class="stats-icon red mb-2">
                                         <i class="iconly-boldBookmark"></i>
                                     </div>
@@ -97,8 +99,16 @@
                 <div class="card-body py-4 px-4">
                     <div class="d-flex align-items-center">
                         <div class="ms-3 name">
-                            <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
-                            <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
+                            @if (Auth::user()->role === 'super')
+                                <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
+                                <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
+                            @elseif (Auth::user()->role === 'admin')
+                                <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
+                                <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
+                            @else
+                                <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
+                                <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
+                            @endif
                         </div>
                     </div>
                 </div>

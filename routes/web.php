@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -33,3 +34,6 @@ Route::post('/get-jenis', [JenisController::class,'getJenis'])->name('jenis.getJ
 
 Route::resource('users', UserController::class);
 Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
+
+Route::resource('dokumen',DokumenController::class);
+Route::get('/getDocByUName', [DokumenController::class, 'getDocByUName'])-> name('dokumen.getDocByUName');

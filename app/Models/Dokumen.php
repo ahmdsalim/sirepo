@@ -15,11 +15,11 @@ class Dokumen extends Model
 
     public function bookmarks()
     {
-    	return $this->hasMany(Bookmark::class);
+        return $this->hasMany(Bookmark::class);
     }
 
     public function jenis()
     {
-    	return $this->belongsTo(Jenis::class);
+        return $this->belongsTo(Jenis::class);
     }
 }

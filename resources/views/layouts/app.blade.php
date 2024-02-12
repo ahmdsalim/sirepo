@@ -237,10 +237,13 @@
                         </button>
                         <ul class="nav">
                             <li class="me-3">
-                                <a href="https://ruangbaca.me" rel="no-follow">Perpustakaan</a>
+                                <a href="https://ruangbaca.me" target="_blank" rel="no-follow">Perpustakaan</a>
                             </li>
                             <li class="me-3">
-                                <a href="https://sipmhs.ulbi.ac.id" rel="no-follow">SIP Mahasiswa</a>
+                                <a href="https://siapmhs.ulbi.ac.id" target="_blank" rel="no-follow">SIAP Mahasiswa</a>
+                            </li>
+                            <li class="me-3">
+                                <a href="https://d3mi.ulbi.ac.id" target="_blank" rel="no-follow">D3 MI</a>
                             </li>
                         </ul>
                     </div>

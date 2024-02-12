@@ -3,7 +3,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="index.html"><img src="./assets/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
+                    <a href="#"><img src="./assets/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -23,8 +23,7 @@
                         </g>
                     </svg>
                     <div class="form-check form-switch fs-6">
-                        <input class="form-check-input  me-0" type="checkbox" id="toggle-dark"
-                            style="cursor: pointer">
+                        <input class="form-check-input  me-0" type="checkbox" id="toggle-dark" style="cursor: pointer">
                         <label class="form-check-label"></label>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -43,61 +42,65 @@
         <div class="sidebar-menu">
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
-    
-                <li class="sidebar-item active">
-                    <a href="index.html" class='sidebar-link'>
+
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'home') ? 'active' : '' }}">
+                    <a href="{{ route('home') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item  has-sub">
+                <li class="sidebar-item {{ Request::is('profil*', 'keamanan*') ? 'active' : '' }}  has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-circle"></i>
                         <span>Akun</span>
                     </a>
-    
+
                     <ul class="submenu ">
-                        <li class="submenu-item">
-                            <a href="account-profile.html" class="submenu-link">Profil</a>
+                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profil') ? 'active' : '' }}">
+                            <a href="#" class="submenu-link">Profil</a>
                         </li>
-    
-                        <li class="submenu-item">
-                            <a href="account-security.html" class="submenu-link">Keamanan</a>
+
+                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'keamanan') ? 'active' : '' }}">
+                            <a href="#" class="submenu-link">Keamanan</a>
                         </li>
 
                         <li class="submenu-item">
-                            <a href="account-security.html" class="submenu-link">Logout</a>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();" class="submenu-link">{{ __('Logout') }}</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-item">
-                    <a href="form-layout.html" class='sidebar-link'>
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'pengguna') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-check-fill"></i>
                         <span>Approve Pengguna</span>
                     </a>
                 </li>
-    
+
                 <li class="sidebar-title">Kelola Data</li>
-    
-                <li class="sidebar-item">
+
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'users') ? 'active' : '' }}">
                     <a href="{{ route('users.index') }}" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
                         <span>Pengguna</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'jenis') ? 'active' : '' }}">
                     <a href="{{ route('jenis.index') }}" class='sidebar-link'>
                         <i class="bi bi-tag-fill"></i>
                         <span>Jenis</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="form-layout.html" class='sidebar-link'>
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumen') ? 'active' : '' }}">
+                    <a href="{{ route('dokumen.index') }}" class='sidebar-link'>
                         <i class="bi bi-file-earmark-pdf-fill"></i>
                         <span>Dokumen</span>
                     </a>
-                </li>    
+                </li>
             </ul>
         </div>
     </div>

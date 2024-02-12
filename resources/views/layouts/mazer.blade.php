@@ -30,7 +30,7 @@
             <div class="page-content">
                 {{ $slot }}
             </div>
-
+            
             @include('layouts.partials.footer')
         </div>
     </div>
