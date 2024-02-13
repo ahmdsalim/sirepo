@@ -128,39 +128,29 @@
                     serverSide: true,
                     ajax: {
                         url: "{{ route('users.getUsers') }}",
-                        type: "POST",
-                        data: function (data) {
-                            data.search = $('input[type="search"]').val();
-                        }
+                        type: "POST"
                     },
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    aoColumns: [
+                    columns: [
                         {
-                            data: 'username',
+                            data: 'username', name: 'username',
                         },
                         {
-                            data: 'nama',
+                            data: 'nama', name: 'nama',
                         },
                         {
-                            data: 'email',
+                            data: 'email', name: 'email',
                         },
                         {
-                            data: 'role',
+                            data: 'role', name: 'role',
                         },
                         {
-                            data: 'username',
+                            data: 'action',
+                            name: 'action',
                             width: "20%",
                             orderable: false,
-                            render: function(data, type, row) {
-                                const editUrl = `{{ route('users.edit',['user' => ':data']) }}`
-                                const bindEditUrl = editUrl.replace(':data', data)
-                                return `<a class="btn btn-primary btn-sm" href="${bindEditUrl}">Edit</a>
-                                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="${data}" id="btnDelete">
-                                        Hapus
-                                    </button>`;
-                            }
                         }
                     ]
                 });

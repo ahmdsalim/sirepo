@@ -85,30 +85,21 @@
                     serverSide: true,
                     ajax: {
                         url: "{{ route('jenis.getJenis') }}",
-                        type: "POST",
-                        data: function (data) {
-                            data.search = $('input[type="search"]').val();
-                        }
+                        type: "POST"
                     },
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    aoColumns: [
+                    columns: [
                         {
                             data: 'nama_jenis',
+                            name: 'nama_jenis',
                         },
                         {
-                            data: 'id',
+                            data: 'action',
+                            name: 'action',
                             orderable: false,
                             width: "20%",
-                            render: function(data, type, row) {
-                                const editUrl = `{{ route('jenis.edit',['id' => ':data']) }}`
-                                const bindEditUrl = editUrl.replace(':data', data)
-                                return `<a class="btn btn-primary btn-sm" href="${bindEditUrl}">Edit</a>
-                                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="${data}" id="btnDelete">
-                                        Hapus
-                                    </button>`;
-                            }
                         }
                     ]
                 });

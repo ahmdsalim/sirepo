@@ -25,7 +25,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form class="row" action="{{ route('jenis.update', $jenis->id) }}" method="POST" id="formjenis">
+                <form class="row" action="{{ route('jenis.update', $jenis->hash_id) }}" method="POST" id="formjenis">
                     @csrf
                     @method('PUT')
                     <div class="col-md-4 col-sm-12">

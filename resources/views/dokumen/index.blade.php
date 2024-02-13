@@ -18,13 +18,68 @@
 
     <section class="section">
         <div class="card">
-            <div class="card-body">
-                <form class="row" id="formDokumen">
-                    <div class="col-md-5 col-sm-12">
-                        <div class="input-group" id="jenisGroup">
-                            <input class="form-control" type="text" name="nama_jenis" required="true" id="namajenis"
-                                placeholder="Jenis dokumen">
-                            <button class="btn btn-primary" type="submit">Tambah</button>
+            <div class="card-header">
+                <div class="d-inline-block user-select-none" id="toggleContainer" style="cursor: pointer;">
+                    <span id="toggleText">Tambah</span>
+                    <i class="bi bi-chevron-compact-right" id="toggleIcon"></i>
+                </div>
+            </div>
+            <div class="card-body" id="formContainer" style="display: none;">
+                <form class="form" id="formDokumen">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="judul" class="form-label">Judul</label>
+                                    <input type="text" id="judul" class="form-control" placeholder="Judul dokumen" name="judul" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="abstrak" class="form-label">Abstrak</label>
+                                    <textarea class="form-control" name="abstrak" id="abstrak" rows="4" placeholder="Abstrak minimal 100 karakter" style="resize: none;" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="keyword" class="form-label">Keyword</label>
+                                    <input type="text" id="keyword" class="form-control" placeholder="Laravel, Prototyping, BPMN.." name="keyword" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="penulis" class="form-label">Penulis</label>
+                                    <input type="text" id="penulis" class="form-control" placeholder="Penulis, Pembimbing 1, Pembimbing 2/Penguji" name="penulis" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="tahun" class="form-label">Tahun</label>
+                                    <input type="number" id="tahun" class="form-control" min="2000" max="{{ now() }}" placeholder="Tahun" name="tahun" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="jenis" class="form-label">Jenis Dokumen</label>
+                                    <select id="jenis" class="form-select" name="jenis" required>
+                                        <option value="">Pilih</option>
+                                        @foreach($jenis as $row)
+                                        <option value="{{ $row->hash_id }}">{{ $row->nama_jenis }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3 mandtory">
+                                    <label for="file" class="form-label">File <span class="text-danger">*</span> <span class="text-muted small">Unggah file sampai dengan 10MB dalam format PDF.</span></label>
+                                    <input class="form-control" type="file" id="file" required>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -33,7 +88,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title d-flex align-items-center">
-                    Data Jenis
+                    Data Dokumen
                     <button class="btn p-0 ms-1 border-0" id="refreshData">
                         <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
                     </button>
@@ -48,6 +103,7 @@
                                 <th>Penulis</th>
                                 <th>Tahun</th>
                                 <th>Jenis Dokumen</th>
+                                <th>File</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -67,7 +123,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body" id="toastMessage">
-                    Berhasil menambahkan data jenis.
+                    Berhasil menambahkan data dokumen.
                 </div>
             </div>
         </div>
@@ -93,43 +149,32 @@
                     serverSide: true,
                     ajax: {
                         url: "{{ route('dokumens.getDocByUName') }}",
-                        type: "POST",
-                        data: function(data) {
-                            data.search = $('input[type="search"]').val();
-                        }
+                        type: "POST"
                     },
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    aoColumns: [{
-                            data: 'judul',
+                    columns: [
+                        {
+                            data: 'judul', name: 'judul',
                         },
                         {
-                            data: 'penulis',
+                            data: 'penulis', name: 'penulis',
                         },
                         {
-                            data: 'tahun',
+                            data: 'tahun', name: 'tahun',
+                        },  
+                        {
+                            data: 'nama_jenis', name: 'nama_jenis',
                         },
                         {
-                            data: 'nama_jenis',
+                            data: 'file', name: 'file',
                         },
                         {
-                            data: 'id',
+                            data: 'action',
+                            name: 'action',
                             orderable: false,
                             width: "20%",
-                            render: function(data, type, row) {
-                                const editUrl = `{{ route('dokumens.edit', ['id' => ':data']) }}`;
-                                const showUrl = `{{ route('dokumens.show', ['id' => ':data']) }}`;
-                                const bindEditUrl = editUrl.replace(':data', data);
-                                const bindShowUrl = showUrl.replace(':data', data);
-
-                                return `<a class="btn btn-primary btn-sm" href="${bindEditUrl}">Edit</a> 
-            <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="${data}" id="btnDelete">
-                Hapus
-            </button>
-            <a class="btn btn-secondary btn-sm" href="${bindShowUrl}">Detail</a>`;
-                            }
-
                         }
                     ]
                 });
@@ -141,43 +186,6 @@
                 }
                 setTableColor()
                 datatable.on('draw', setTableColor)
-
-                const formDokumen = document.getElementById('formDokumen')
-                formDokumen.addEventListener("submit", (event) => {
-                    event.preventDefault()
-                    //Clear error message
-                    $('.invalid-feedback').remove()
-                    $('.is-invalid').removeClass('is-invalid')
-
-                    let namajenis = $('#namajenis')
-                    let data = {
-                        nama_jenis: namajenis.val()
-                    }
-                    $.ajax({
-                        url: "{{ route('dokumens.store') }}",
-                        type: "POST",
-                        data: JSON.stringify(data),
-                        dataType: "JSON",
-                        proccessData: false,
-                        contentType: "application/json",
-                        success: (response) => {
-                            namajenis.val('')
-                            refreshData(datatable)
-                            toast()
-                        },
-                        error: function(xhr, status, error) {
-                            var errors = xhr.responseJSON.errors
-                            if (errors.hasOwnProperty('nama_jenis')) {
-                                namajenis.addClass('is-invalid')
-                                $('#jenisGroup').append(
-                                    `<span class="invalid-feedback" role="alert">${errors.nama_jenis[0]}</span>`
-                                )
-                            }
-                            toast("#dc3545", "Failed", "Gagal menambahkan data")
-                        }
-
-                    })
-                })
 
                 $('#datatable').on('click', '.delete-button', function() {
                     Swal.fire({
@@ -220,6 +228,104 @@
                         }
                     })
                 });
+
+                const toggleContainer = document.getElementById('toggleContainer')
+                $('#toggleContainer').click(function() {
+                    const formContainer = $('#formContainer')
+                    const toggleText = $('#toggleText')
+                    const toggleIcon = $('#toggleIcon')
+
+                    if (formContainer.is(':visible')) {
+                        formContainer.hide(200)
+                        toggleText.text('Tambah')
+                        toggleIcon.removeClass('bi bi-chevron-compact-down')
+                        toggleIcon.addClass('bi bi-chevron-compact-right')
+                    } else {
+                        formContainer.show(200)
+                        toggleText.text('Sembunyikan')
+                        toggleIcon.removeClass('bi bi-chevron-compact-right')
+                        toggleIcon.addClass('bi bi-chevron-compact-down')
+                    }
+                })
+
+                const formDokumen = document.getElementById('formDokumen')
+                formDokumen.addEventListener('submit', (event) => {
+                    event.preventDefault()
+                    //Clear error message
+                    $('.invalid-feedback').remove()
+                    $('.is-invalid').removeClass('is-invalid')
+                    //Prepare input element
+                    let judul = $('#judul'),
+                        abstrak = $('#abstrak'),
+                        keyword = $('#keyword'),
+                        penulis = $('#penulis'),
+                        tahun = $('#tahun'),
+                        jenis = $('#jenis'),
+                        file = $('#file')
+                    //Data for sending to server  
+                    var formData = new FormData()  
+                    formData.append('judul', judul.val())
+                    formData.append('abstrak', abstrak.val())
+                    formData.append('keyword', keyword.val())
+                    formData.append('penulis', penulis.val())
+                    formData.append('tahun', tahun.val())
+                    formData.append('jenis', jenis.val())
+                    formData.append('file', file[0].files[0])
+
+                    $.ajax({
+                        url: "{{ route('dokumens.store') }}",
+                        type: "POST",
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: (response) => {
+                            if(response.success){
+                                //Clear input value
+                                judul.val('')
+                                abstrak.val('')
+                                keyword.val('')
+                                penulis.val('')
+                                tahun.val('')
+                                jenis.val('')
+                                file.val('')
+
+                                refreshData(datatable)
+                                toast(undefined,undefined,response.success)
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var errors = xhr.responseJSON.errors;
+
+                            if (errors.hasOwnProperty('judul')) {
+                                judul.addClass('is-invalid')
+                                judul.after(`<span class="invalid-feedback" role="alert">${errors.judul[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('abstrak')) {
+                                abstrak.addClass('is-invalid')
+                                abstrak.after(`<span class="invalid-feedback" role="alert">${errors.abstrak[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('keyword')) {
+                                keyword.addClass('is-invalid')
+                                keyword.after(`<span class="invalid-feedback" role="alert">${errors.keyword[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('penulis')) {
+                                penulis.addClass('is-invalid')
+                                penulis.after(`<span class="invalid-feedback" role="alert">${errors.penulis[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('jenis')) {
+                                jenis.addClass('is-invalid')
+                                jenis.after(`<span class="invalid-feedback" role="alert">${errors.jenis[0]}</span>`)
+                            }
+                            if (errors.hasOwnProperty('file')) {
+                                file.addClass('is-invalid')
+                                file.after(`<span class="invalid-feedback" role="alert">${errors.file[0]}</span>`)
+                            }
+                            toast("#dc3545","Failed","Gagal menambahkan dokumen")
+                        }
+
+                    })
+                })
 
                 $('#refreshData').click(async () => {
                     $('#refreshData').attr('disabled', true)

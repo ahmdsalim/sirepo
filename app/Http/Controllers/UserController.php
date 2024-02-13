@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -18,48 +19,17 @@ class UserController extends Controller
     }
 
     public function getUsers(Request $request) {
-        // Page Length
-        $pageNumber = ( $request->start / $request->length )+1;
-        $pageLength = $request->length;
-        $skip       = ($pageNumber-1) * $pageLength;
-
-        // Page Order
-        $orderColumnIndex = $request->order[0]['column'] ?? '0';
-        $orderBy = $request->order[0]['dir'] ?? 'desc';
-
-        // get data from users table
-        $query = User::select('*');
-
-        // Search
-        $search = $request->search;
-        $query = $query->where(function($query) use ($search) {
-            $query->orWhere('username', 'like', "%".$search."%");
-            $query->orWhere('nama', 'like', "%".$search."%");
-            $query->orWhere('email', 'like', "%".$search."%");
-            $query->orWhere('role', 'like', "%".$search."%");
-        });
-
-
-        $orderByName = 'username';
-        switch($orderColumnIndex){
-            case '0':
-                $orderByName = 'username';
-                break;
-            case '1':
-                $orderByName = 'nama';
-                break;
-            case '2':
-                $orderByName = 'email';
-                break;
-            case '3':
-                $orderByName = 'role';
-                break;
-        }
-        $query = $query->orderBy($orderByName, $orderBy);
-        $recordsFiltered = $recordsTotal = $query->count();
-        $users = $query->skip($skip)->take($pageLength)->get();
-
-        return response()->json(["draw"=> $request->draw, "recordsTotal"=> $recordsTotal, "recordsFiltered" => $recordsFiltered, 'data' => $users], 200);
+        $users = User::latest()->get();
+            return DataTables::of($users)
+            ->addColumn('action', function($row) {
+                $actionBtn = '<a class="btn btn-primary btn-sm" href="'.route("users.edit",["user"=>$row->username]).'">Edit</a>
+                <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="'.$row->username.'" id="btnDelete">
+                    Hapus
+                </button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**

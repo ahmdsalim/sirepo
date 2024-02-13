@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jenis;
 use App\Models\Dokumen;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Services\HashIdService;
+use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class DokumenController extends Controller
 {
@@ -14,62 +19,33 @@ class DokumenController extends Controller
     public function index()
     {
         $data['header'] = 'asasa';
+        $data['jenis'] = Jenis::select('id','nama_jenis')->get();
         return view('dokumen.index', $data);
     }
 
     public function getDocByUName(Request $request)
     {
-        $pageNumber = $request->start / $request->length + 1;
-        $pageLength = $request->length;
-        $skip = ($pageNumber - 1) * $pageLength;
-
-        // Page Order
-        $orderColumnIndex = $request->order[0]['column'] ?? '0';
-        $orderBy = $request->order[0]['dir'] ?? 'desc';
-
-        $user = Auth::user()->username;
-        $query = Dokumen::select('dokumens.*', 'jenis.nama_jenis')
-                ->leftJoin('jenis', 'dokumens.jenis_id', '=', 'jenis.id')
-                ->where('dokumens.username', $user);
-
-
-        $search = $request->search;
-        $query = $query->where(function ($query) use ($search) {
-            $query->orWhere('judul', 'like', '%' . $search . '%');
-            $query->orWhere('penulis', 'like', '%' . $search . '%');
-            $query->orWhere('tahun', 'like', '%' . $search . '%');
-            $query->orWhere('keyword', 'like', '%' . $search . '%');
-        });
-
-        $orderByName = 'judul';
-        switch ($orderColumnIndex) {
-            case '0':
-                $orderByName = 'judul';
-                break;
-            case '1':
-                $orderByName = 'penulis';
-                break;
-            case '2':
-                $orderByName = 'tahun';
-                break;
-            case '3':
-                $orderByName = 'jenis_id';
-                break;
-        }
-
-        $query = $query->orderBy($orderByName, $orderBy);
-        $recordsTotal = $query->count();
-        $dok = $query->skip($skip)->take($pageLength)->get();
-        $recordsFiltered = $dok->count();
-
-        return response()->json([
-            'draw' => $request->draw,
-            'recordsTotal' => $recordsTotal,
-            'recordsFiltered' => $recordsFiltered,
-            'data' => $dok,
-            'status' => 200,
-            'message' => 'getDocByUName',
-        ]);
+        $documents = Dokumen::with('jenis')->where('username',auth()->user()->username);
+            return DataTables::eloquent($documents)
+                ->editColumn('penulis', function($row){
+                    return Str::limit($row->penulis, 50, '...');
+                })
+                ->addColumn('nama_jenis', function($row){
+                    return $row->jenis->nama_jenis;
+                })
+                ->addColumn('file', function($row){
+                    $actionBtn = '<a href="'.Storage::url('file-dokumen/'.$row->file).'" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> '.Str::limit($row->file, 10, '...').'</a>';
+                    return $actionBtn;
+                })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a class="btn btn-primary btn-sm" href="'.route("dokumens.edit",["id"=>$row->hash_id]).'">Edit</a> 
+                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="'.$row->hash_id.'" id="btnDelete">
+                        Hapus
+                    </button>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['file','action'])
+                ->toJson();
     }
 
     /**
@@ -85,7 +61,45 @@ class DokumenController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required|string|min:15|max:250',
+            'abstrak' => 'required|string|min:100',
+            'keyword' => 'required|string|min:3',
+            'penulis' => 'required|string|min:3',
+            'tahun' => 'required|digits:4|integer|min:2000|max:'.(date('Y')),
+            'jenis' => 'required|string',
+            'file' => 'required|mimes:pdf|max:10240',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['errors'=>$validator->errors()],422);
+        }
+        
+        try {
+            $validData = $validator->validated();
+            $dokumen = new Dokumen();
+            $dokumen->judul = $validData['judul'];
+            $dokumen->abstrak = $validData['abstrak'];
+            $dokumen->keyword = $validData['keyword'];
+            $dokumen->penulis = $validData['penulis'];
+            $dokumen->tahun = $validData['tahun'];
+            $dokumen->jenis_id = (new HashIdService())->decode($validData['jenis']);
+            $dokumen->username = auth()->user()->username;
+            
+            if($request->hasFile('file')){
+                $destination = 'public/file-dokumen/';
+                $file = $request->file('file');
+                $file_name = 'sirepo'.time().'.'.$file->getClientOriginalExtension();
+                $file->storeAs($destination, $file_name);
+                $dokumen->file = $file_name;
+            }
+    
+            $dokumen->save();
+    
+            return response()->json(['success' => 'Berhasil menambah data','data'=>$dokumen], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage(), 500]);
+        }
     }
 
     /**
@@ -117,6 +131,15 @@ class DokumenController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $dokumen = Dokumen::findOrFail($id);
+            $destination = 'public/file-dokumen/';
+            Storage::delete($destination . $dokumen->file);
+            $dokumen->delete();
+
+            return response()->json(['success' => 'Berhasil menghapus data'],200);
+        } catch(\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()],500);
+        }
     }
 }

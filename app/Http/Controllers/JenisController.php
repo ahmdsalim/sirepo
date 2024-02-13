@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jenis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class JenisController extends Controller
 {
@@ -17,33 +18,17 @@ class JenisController extends Controller
     }
 
     public function getJenis(Request $request) {
-        // Page Length
-        $pageNumber = ( $request->start / $request->length )+1;
-        $pageLength = $request->length;
-        $skip       = ($pageNumber-1) * $pageLength;
-
-        // Page Order
-        $orderColumnIndex = $request->order[0]['column'] ?? '0';
-        $orderBy = $request->order[0]['dir'] ?? 'desc';
-
-        // get data from jenis table
-        $query = Jenis::select('*');
-
-        // Search
-        $search = $request->search;
-        $query = $query->where('nama_jenis', 'like', "%".$search."%");
-
-        $orderByName = 'nama_jenis';
-        switch($orderColumnIndex){
-            case '0':
-                $orderByName = 'nama_jenis';
-                break;
-        }
-        $query = $query->orderBy($orderByName, $orderBy);
-        $recordsFiltered = $recordsTotal = $query->count();
-        $jenis = $query->skip($skip)->take($pageLength)->get();
-
-        return response()->json(["draw"=> $request->draw, "recordsTotal"=> $recordsTotal, "recordsFiltered" => $recordsFiltered, 'data' => $jenis], 200);
+        $jenis = Jenis::latest()->get();
+            return DataTables::of($jenis)
+                ->addColumn('action', function($row) {
+                    $actionBtn = '<a class="btn btn-primary btn-sm" href="'.route("jenis.edit",["id"=>$row->hash_id]).'">Edit</a>
+                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="'.$row->hash_id.'" id="btnDelete">
+                        Hapus
+                    </button>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
     }
 
     /**
