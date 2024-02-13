@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 Route::get('/template', function () {
     return view('home');
-});
+})->middleware('auth');
 
 Auth::routes();
 

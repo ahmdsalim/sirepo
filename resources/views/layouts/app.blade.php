@@ -236,6 +236,10 @@
                             <i class="fa fa-ellipsis-vertical"></i>
                         </button>
                         <ul class="nav">
+                            <li class="me-4">
+                                <a href="#"><i class="fa fa-circle-question"></i>
+                                    FAQ</a>
+                            </li>
                             <li class="me-3">
                                 <a href="https://ruangbaca.me" target="_blank" rel="no-follow">Perpustakaan</a>
                             </li>
@@ -267,8 +271,7 @@
                         <ul class="navbar-nav ms-auto">
                             <!-- Authentication Links -->
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}"><i class="fa fa-circle-question"></i>
-                                    FAQ</a>
+                                
                             </li>
                             @guest
                             @if (Route::has('login'))
@@ -278,23 +281,44 @@
                             </li>
                             @endif
                             @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
+                            <div class="dropdown">
+                                <a href="#" data-bs-toggle="dropdown" class="text-decoration-none " aria-expanded="false" class="">
+                                    <div class="user-menu d-flex">
+                                        <div class="user-img d-flex align-items-center">
+                                            <div class="avatar avatar-md d-flex align-items-center gap-2 text-white font-bold">
+                                                <img src="./assets/compiled/jpg/1.jpg" class="rounded-circle" height="32px">
+                                            <h6 class="mb-0 text-gray-600">{{ Auth::user()->nama }}</h6>
 
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
+                                    <li>
+                                        <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i>
+                                            Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
+                                            Settings</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
+                                            Koleksi</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
+                                    <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                         document.getElementById('logout-form').submit();"><i class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
+                                    </a></li>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </div>
-                            </li>
+                                </ul>
+                            </div>
+
+                               
                             @endguest
                         </ul>
                     </div>
