@@ -1,4 +1,4 @@
-<x-app-layout title="Dokumen|REPMI">
+<x-app-layout title="Kelola Dokumen">
     <x-slot name="header">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
@@ -148,7 +148,7 @@
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        url: "{{ route('dokumens.getDocByUName') }}",
+                        url: "{{ route('dokumens.getDocuments') }}",
                         type: "POST"
                     },
                     order: ['1', 'DESC'],

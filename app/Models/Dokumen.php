@@ -18,6 +18,10 @@ class Dokumen extends Model
         return (new HashIdService)->encode($this->id);
     }
 
+    public function getHashJenisIdAttribute() {
+        return (new HashIdService)->encode($this->jenis_id);
+    }
+
     public function bookmarks()
     {
         return $this->hasMany(Bookmark::class);

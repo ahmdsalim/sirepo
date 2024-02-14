@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Dokumen;
 use App\Models\Bookmark;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable
 {
@@ -63,4 +64,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Dokumen::class);
     }
+
+    public function scopeToapprove(Builder $query)
+    {
+        $query->where('terverifikasi', 0);
+    }
+
+    public function scopeApproved(Builder $query)
+    {
+        $query->where('terverifikasi', 1);
+    }
+
 }
