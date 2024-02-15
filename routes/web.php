@@ -39,9 +39,8 @@ Route::middleware('auth')->group(function() {
     Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
     
     Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
-    Route::post('/get-documents', [DokumenController::class, 'getAllDoc'])->name('dokumens.getAllDoc');
-    Route::post('/get-documents-by-uname', [DokumenController::class, 'getDocByUName'])->name('dokumens.getDocByUName');
-    
+    Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
+
     Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
     Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
     Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');

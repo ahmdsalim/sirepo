@@ -23,8 +23,13 @@ class DokumenController extends Controller
         return view('dokumen.index', $data);
     }
 
-    private function doc($documents)
+    public function getDocuments(Request $request)
     {
+        $documents = Dokumen::with('jenis');
+        if(auth()->user()->role == 'admin'){
+            $documents = Dokumen::with('jenis')->where('username', auth()->user()->username);
+        }
+
         return DataTables::eloquent($documents)
             ->editColumn('penulis', function ($row) {
                 return Str::limit($row->penulis, 50, '...');
@@ -33,7 +38,7 @@ class DokumenController extends Controller
                 return $row->jenis->nama_jenis;
             })
             ->addColumn('file', function ($row) {
-                $actionBtn = '<a href="' . Storage::url('file-dokumen/' . $row->file) . '" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($row->file, 10, '...') . '</a>';
+                $actionBtn = '<a href="' . Storage::url('file-dokumen/' . $row->file) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($row->file, 10, '...') . '</a>';
                 return $actionBtn;
             })
             ->addColumn('action', function ($row) {
@@ -50,18 +55,6 @@ class DokumenController extends Controller
             })
             ->rawColumns(['file', 'action'])
             ->toJson();
-    }
-
-    public function getAllDoc(Request $request)
-    {
-        $documents = Dokumen::with('jenis');
-        return $this->doc($documents);
-    }
-
-    public function getDocByUName(Request $request)
-    {
-        $documents = Dokumen::with('jenis')->where('username', auth()->user()->username);
-        return $this->doc($documents);
     }
 
     /**

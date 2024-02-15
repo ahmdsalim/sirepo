@@ -166,20 +166,11 @@
                 }
             });
             $(document).ready(function() {
-                let url;
-                let userRole = "{{ auth()->user()->role }}";
-
-                if (userRole === 'admin') {
-                    url = "{{ route('dokumens.getDocByUName') }}";
-                } else {
-                    url = "{{ route('dokumens.getAllDoc') }}";
-                }
-
                 let datatable = $('#datatable').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        url: url,
+                        url: "{{ route('dokumens.getDocuments') }}",
                         type: "POST"
                     },
                     order: ['1', 'DESC'],
