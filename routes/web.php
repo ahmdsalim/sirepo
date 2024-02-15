@@ -37,6 +37,15 @@ Route::middleware('auth')->group(function() {
     
     Route::resource('users', UserController::class);
     Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
+    // Route::get('/setting', [UserController::class, 'settingLanding'])->name('user.settingLanding');
+    Route::group(['prefix' => 'setting'],function(){
+        Route::match(['get', 'post'] , '/profil',[UserController::class, 'settingLanding'])->name('user.settingLanding');
+        Route::match(['get', 'post'] , '/keamanan',[UserController::class, 'keamananLanding'])->name('user.keamananLanding');
+        Route::match(['get', 'post'] , '/setting/{id}',[UserController::class, 'editLanding'])->name('user.editLanding');
+    });
+
+
+    
     
     Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
     Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
@@ -46,7 +55,9 @@ Route::middleware('auth')->group(function() {
     Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
     Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
 
-    Route::get('profile', [UserController::class, 'profile'])->name('profile');
+    // Route::get('profile', [UserController::class, 'profile'])->name('profile');
+    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profile'])->name('user.profile');
+    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profileLanding'])->name('user.profileLanding');
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
     Route::get('security', [UserController::class, 'security'])->name('security');

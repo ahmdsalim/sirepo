@@ -21,211 +21,7 @@
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
         integrity="sha512-GWzVrcGlo0TxTRvz9ttioyYJ+Wwk9Ck0G81D+eO63BaqHaJ3YZX9wuqjwgfcV/MrB2PhaVX9DkYVhbFpStnqpQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-    {{-- <style>
-        body {
-            background-color: #E6E6E6 !important;
-        }
 
-        #header {
-            background-color: #073C64;
-            position: relative;
-        }
-
-        #header.header-fancy {
-            margin-bottom: 40px;
-        }
-
-        #header .navbar-nav .nav-link {
-            color: white;
-        }
-
-        #header .topbar {
-            display: block;
-            min-height: 40px;
-            border: none;
-            background-color: #1A2C43;
-            position: relative;
-        }
-
-        #header .topbar .container {
-            position: relative;
-            display: block;
-        }
-
-        #header .topbar .nav-more {
-            width: 50px;
-            height: 50px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            border: none;
-            outline: none;
-            font-size: 18px;
-            text-align: center;
-            color: #fff;
-            background-color: transparent;
-            display: none;
-        }
-
-        #header .topbar .nav-more .svg-inline--fa {
-            /* vertical-align: baseline; */
-        }
-
-        #header .topbar .nav>li {
-            display: inline-block;
-            vertical-align: middle;
-            color: white;
-            float: none;
-        }
-
-        #header .topbar .nav>li>a {
-            font-family: "Open Sans", Helvetica, Arial, sans-serif;
-            font-size: 12px;
-            font-weight: normal;
-            text-transform: capitalize;
-            color: white;
-            text-decoration: none;
-            padding: 8px 0;
-        }
-
-        #header .topbar .nav {
-            float: right;
-            margin: 0;
-        }
-
-        #header .navbar-collapse li a {
-            font-family: "Montserrat", Helvetica, Arial, sans-serif;
-            font-size: 12px;
-            font-weight: normal;
-        }
-
-        .navbar-toggler {
-            border: none !important;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none !important;
-        }
-
-        .navbar-toggler-icon {
-            background-image: none !important;
-            width: 1em !important;
-            height: 1em !important;
-        }
-
-        .navbar-toggler-icon::before {
-            font-family: FontAwesome;
-            content: "\f0c9";
-        }
-
-        #header .navbar-collapse .navbar-nav>li>a {
-            padding-top: 10px;
-            padding-bottom: 10px;
-            line-height: 23px;
-        }
-
-        @media (max-width: 1199px) {
-            #header .topbar .header-nav {
-                position: absolute;
-                top: 20px;
-                right: 60;
-                z-index: 99;
-            }
-
-            #header .topbar {
-                background-color: transparent;
-                min-height: 0;
-            }
-
-            #header .topbar .header-nav .nav>li>a {
-                height: 50px;
-                line-height: 30px;
-                padding: 10px 0;
-                font-size: 14px;
-            }
-
-            #header .navbar-collapse .navbar-nav {
-                margin-bottom: 20px;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            #header .topbar .header-nav .nav {
-                position: absolute;
-                right: 0;
-                top: 50px;
-                background-color: #fff;
-                padding: 0;
-                z-index: 9999;
-                width: 50%;
-                max-width: 250px;
-                box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
-                -webkit-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
-                -moz-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
-                visibility: hidden;
-                opacity: 0;
-                height: 0;
-                transition: all ease-in-out .2s;
-                -webkit-transition: all ease-in-out .2s;
-                -moz-transition: all ease-in-out .2s;
-            }
-
-            #header .topbar .header-nav .nav {
-                width: 200px;
-            }
-
-            #header .topbar .header-nav .nav>li>a {
-                color: rgb(85, 85, 85);
-                padding: 10px;
-            }
-
-            #header .topbar .header-nav {
-                top: 7.5px;
-                right: 0;
-                z-index: 999;
-            }
-
-            #header .topbar {
-                height: auto;
-                padding: 0;
-            }
-
-            #header .navbar-header {
-                padding-right: 40px;
-                padding-top: 0;
-                padding-bottom: 0;
-            }
-
-            #header .navbar-toggler {
-                margin: 18px 0;
-            }
-
-            #header .header-nav .nav-more {
-                display: block;
-                border-left: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            #header .header-nav .nav-more:hover {
-                background-color: #121F33;
-            }
-
-            #header .topbar .header-nav:hover .nav {
-                height: auto;
-                visibility: visible;
-                opacity: 1;
-            }
-
-            #header .topbar .header-nav .nav>li>a {
-                line-height: 48px;
-            }
-
-            #header .topbar .header-nav .nav li a:hover {
-                color: #149fc0;
-            }
-        }
-    </style> --}}
-    <!-- Scripts -->
-    {{-- @vite(['resources/sass/app.scss', 'resources/js/landing.js']) --}}
     @include('layouts.partials.styles')
 </head>
 
@@ -235,72 +31,55 @@
     <div id="app">
         <div id="main" class="layout-horizontal">
             <header class="mb-5">
-                <nav class="main-navbar p-1">
+                <div class="header-top py-2">
                     <div class="container">
-                        <ul>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <span><i class="fa fa-circle-question"></i> FAQ</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="https://ruangbaca.me" class="menu-link" target="_blank">
-                                    <span>Perpustakaan </span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="https://siapmhs.ulbi.ac.id" class="menu-link" target="_blank">
-                                    <span>SIAP Mahasiswa </span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
-                                    <span>D3 MI</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-                <div class="header-top">
-                    <div class="container">
-                        <div class="logo">
-                            <h5 class="m-0"><a href="{{ url('/') }}">Repository MI</a></h5>
+                        <div class="d-flex gap-3 ">
+                            <a href="#" class="menu-link">
+                                <span><i class="fa fa-circle-question"></i> FAQ</span>
+                            </a>
+                            <a href="https://ruangbaca.me" class="menu-link" target="_blank">
+                                <span>Perpustakaan </span>
+                            </a>
+                            <a href="https://siapmhs.ulbi.ac.id" class="menu-link" target="_blank">
+                                <span>SIAP Mahasiswa </span>
+                            </a>
+                            <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
+                                <span>D3 MI </span>
+                            </a>
                         </div>
                         <div class="header-top-right">
                             @guest
                                 @if (str_contains(Route::current()->getName(), 'login') || str_contains(Route::current()->getName(), 'register'))
                                 @else
                                     <div class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}"><i class="fa fa-user"></i> MASUK DAN
-                                            DAFTAR</a>
+                                        <a class="nav-link" href="{{ route('login') }}"><i class="fa fa-user mr-1"></i><span
+                                                style="font-size: 14px; margin-left:4px">MASUK
+                                                DAN
+                                                DAFTAR</span></a>
                                     </div>
                                 @endif
                             @else
                                 <div class="dropdown">
-                                    <a href="#" data-bs-toggle="dropdown" class="text-decoration-none "
-                                        aria-expanded="false" class="">
-                                        <div class="user-menu d-flex">
-                                            <div class="user-img d-flex align-items-center">
-                                                <div
-                                                    class="avatar avatar-md d-flex align-items-center gap-2 text-white font-bold">
-                                                    <img src="./assets/compiled/jpg/1.jpg" class="rounded-circle"
-                                                        height="32px">
-                                                    <h6 class="mb-0 text-gray-600">{{ Auth::user()->nama }}</h6>
-
-                                                </div>
-                                            </div>
+                                    <a href="#" id="topbarUserDropdown"
+                                        class="user-dropdown d-flex align-items-center dropend dropdown-toggle "
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="avatar">
+                                            <img src="./assets/compiled/jpg/1.jpg" alt="Avatar">
+                                        </div>
+                                        <div class="text">
+                                            <h6 class="user-dropdown-name">{{ Auth::user()->nama }}</h6>
                                         </div>
                                     </a>
-
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
-                                        style="min-width: 11rem;">
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-lg"
+                                        aria-labelledby="topbarUserDropdown">
                                         <li>
                                             <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
                                         </li>
-                                        <li><a class="dropdown-item" href="#"><i
+                                        <li><a class="dropdown-item" href="{{ route('user.profileLanding') }}"><i
                                                     class="icon-mid bi bi-person me-2"></i>
                                                 Profile</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
+                                        <li><a class="dropdown-item" href="{{ route('user.settingLanding') }}"><i
+                                                    class="icon-mid bi bi-gear me-2"></i>
                                                 Settings</a></li>
                                         <li><a class="dropdown-item" href="#"><i
                                                     class="icon-mid bi bi-wallet me-2"></i>
@@ -311,7 +90,7 @@
                                         {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();"><i
+                                                     document.getElementById('logout-form').submit();"><i
                                                     class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
                                             </a></li>
 
@@ -321,6 +100,7 @@
                                     </ul>
                                 </div>
                             @endguest
+
                             <!-- Burger button responsive -->
                             <a href="#" class="burger-btn d-block d-xl-none">
                                 <i class="bi bi-justify fs-3"></i>
@@ -328,6 +108,25 @@
                         </div>
                     </div>
                 </div>
+                <nav class="main-navbar">
+                    <div class="container">
+                        <div class="d-flex justify-content-between ">
+                            <div class="">
+                                <h4 class="m-0"><a href="{{ url('/') }}" class="text-white">Repository MI</a>
+                                </h4>
+                            </div>
+                            <ul>
+                                <li
+                                    class="menu-item {{ str_contains(Route::current()->getName(), '') ? 'active' : '' }}">
+                                    <a href="{{ url('/') }}" class="menu-link">
+                                        <span>Home</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
             </header>
             <div class="content-wrapper container">
                 <main class="py-4">
