@@ -3,6 +3,7 @@
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\cekRole;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,6 +28,7 @@ Route::get('/template', function () {
 
 Auth::routes();
 
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::resource('jenis', JenisController::class)->parameter('jenis','id');
@@ -37,3 +39,4 @@ Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUs
 
 Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
 Route::post('/get-doc-by-uname', [DokumenController::class, 'getDocByUName'])->name('dokumens.getDocByUName');
+Route::post('/get-all-doc', [DokumenController::class, 'getAllDoc'])->name('dokumens.getAllDoc');

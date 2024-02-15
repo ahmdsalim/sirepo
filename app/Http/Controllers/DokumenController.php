@@ -19,33 +19,49 @@ class DokumenController extends Controller
     public function index()
     {
         $data['header'] = 'asasa';
-        $data['jenis'] = Jenis::select('id','nama_jenis')->get();
+        $data['jenis'] = Jenis::select('id', 'nama_jenis')->get();
         return view('dokumen.index', $data);
+    }
+
+    private function doc($documents)
+    {
+        return DataTables::eloquent($documents)
+            ->editColumn('penulis', function ($row) {
+                return Str::limit($row->penulis, 50, '...');
+            })
+            ->addColumn('nama_jenis', function ($row) {
+                return $row->jenis->nama_jenis;
+            })
+            ->addColumn('file', function ($row) {
+                $actionBtn = '<a href="' . Storage::url('file-dokumen/' . $row->file) . '" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($row->file, 10, '...') . '</a>';
+                return $actionBtn;
+            })
+            ->addColumn('action', function ($row) {
+                $actionBtn =
+                    '<a class="btn btn-primary btn-sm" href="' .
+                    route('dokumens.edit', ['id' => $row->hash_id]) .
+                    '">Edit</a>
+                <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' .
+                    $row->hash_id .
+                    '" id="btnDelete">
+                    Hapus
+                </button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['file', 'action'])
+            ->toJson();
+    }
+
+    public function getAllDoc(Request $request)
+    {
+        $documents = Dokumen::with('jenis');
+        return $this->doc($documents);
     }
 
     public function getDocByUName(Request $request)
     {
-        $documents = Dokumen::with('jenis')->where('username',auth()->user()->username);
-            return DataTables::eloquent($documents)
-                ->editColumn('penulis', function($row){
-                    return Str::limit($row->penulis, 50, '...');
-                })
-                ->addColumn('nama_jenis', function($row){
-                    return $row->jenis->nama_jenis;
-                })
-                ->addColumn('file', function($row){
-                    $actionBtn = '<a href="'.Storage::url('file-dokumen/'.$row->file).'" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> '.Str::limit($row->file, 10, '...').'</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-primary btn-sm" href="'.route("dokumens.edit",["id"=>$row->hash_id]).'">Edit</a> 
-                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="'.$row->hash_id.'" id="btnDelete">
-                        Hapus
-                    </button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['file','action'])
-                ->toJson();
+        $documents = Dokumen::with('jenis')->where('username', auth()->user()->username);
+        return $this->doc($documents);
     }
 
     /**
@@ -66,15 +82,15 @@ class DokumenController extends Controller
             'abstrak' => 'required|string|min:100',
             'keyword' => 'required|string|min:3',
             'penulis' => 'required|string|min:3',
-            'tahun' => 'required|digits:4|integer|min:2000|max:'.(date('Y')),
+            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'jenis' => 'required|string',
             'file' => 'required|mimes:pdf|max:10240',
         ]);
 
-        if($validator->fails()){
-            return response()->json(['errors'=>$validator->errors()],422);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        
+
         try {
             $validData = $validator->validated();
             $dokumen = new Dokumen();
@@ -85,18 +101,18 @@ class DokumenController extends Controller
             $dokumen->tahun = $validData['tahun'];
             $dokumen->jenis_id = (new HashIdService())->decode($validData['jenis']);
             $dokumen->username = auth()->user()->username;
-            
-            if($request->hasFile('file')){
+
+            if ($request->hasFile('file')) {
                 $destination = 'public/file-dokumen/';
                 $file = $request->file('file');
-                $file_name = 'sirepo'.time().'.'.$file->getClientOriginalExtension();
+                $file_name = 'sirepo' . time() . '.' . $file->getClientOriginalExtension();
                 $file->storeAs($destination, $file_name);
                 $dokumen->file = $file_name;
             }
-    
+
             $dokumen->save();
-    
-            return response()->json(['success' => 'Berhasil menambah data','data'=>$dokumen], 200);
+
+            return response()->json(['success' => 'Berhasil menambah data', 'data' => $dokumen], 200);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
@@ -105,9 +121,10 @@ class DokumenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Dokumen $dokumen)
+    public function show($id)
     {
-        return view('dokumen.detail',compact($dokumen));
+        $data['dok'] = Dokumen::findOrFail($id);
+        return view('dokumen.detail', $data);
     }
 
     /**
@@ -115,7 +132,7 @@ class DokumenController extends Controller
      */
     public function edit(Dokumen $dokumen)
     {
-        return view('dokumen.edit-dokumen', compact($dokumen));
+        return view('dokumen.edit-dokumen', compact('dokumen'));
     }
 
     /**
@@ -137,9 +154,9 @@ class DokumenController extends Controller
             Storage::delete($destination . $dokumen->file);
             $dokumen->delete();
 
-            return response()->json(['success' => 'Berhasil menghapus data'],200);
-        } catch(\Exception $e) {
-            return response()->json(['errors' => $e->getMessage()],500);
+            return response()->json(['success' => 'Berhasil menghapus data'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,13 +48,17 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-    }
+{
+    return Validator::make($data, [
+        'nama' => 'required|string|min:2|max:255',
+        // 'email' => 'required|email|unique:users,email',
+        // 'username' => 'required|string|min:5|max:100|unique:users,username',
+        // 'role' => 'required|in:super,admin,user',
+        // 'verifikasi_file' => 'required|file', 
+        // 'password' => 'required|string|min:8|max:150', 
+    ]);
+}
+
 
     /**
      * Create a new user instance after a valid registration.
@@ -63,9 +68,19 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $terverifikasi = false;
+
+        if (auth()->check() && auth()->user()->role !== 'user') {
+            $terverifikasi = true;
+        }
+
         return User::create([
-            'name' => $data['name'],
+            'nama' => $data['nama'],
+            'username' => $data['username'],
             'email' => $data['email'],
+            'role' => 'user',
+            'verifikasi_file' => $data['verifikasi_file'],
+            'terverifikasi' => $terverifikasi,
             'password' => Hash::make($data['password']),
         ]);
     }

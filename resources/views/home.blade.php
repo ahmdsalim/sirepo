@@ -3,9 +3,7 @@
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
                 <h3>Dashboard</h3>
-                @if (Auth::user()->role === 'super')
-                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
-                @elseif (Auth::user()->role === 'admin')
+                @if (!Auth::user()->role === 'user')
                     <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
                 @else
                     <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
@@ -99,10 +97,7 @@
                 <div class="card-body py-4 px-4">
                     <div class="d-flex align-items-center">
                         <div class="ms-3 name">
-                            @if (Auth::user()->role === 'super')
-                                <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
-                                <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
-                            @elseif (Auth::user()->role === 'admin')
+                            @if (!Auth::user()->role === 'user')
                                 <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
                                 <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
                             @else

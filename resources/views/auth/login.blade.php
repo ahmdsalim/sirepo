@@ -5,7 +5,9 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Login') }}</div>
+                    <div class="card-header">
+                        <h4>{{ __('Login') }}</h4>
+                    </div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('login') }}">
@@ -57,20 +59,26 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary btn-block">
+                            <div class="row mb-0  ">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-primary btn-block mb-2">
                                         {{ __('Login') }}
                                     </button>
                                 </div>
-                                <div class="col-md-8 offset-md-5">
-                                    <p>Belum punya akun?<a href="#" class="text-decoration-none">Daftar</a></p>
+                                <div class="col-md-6 offset-md-4">
+                                    <p class="text-center m-0">Belum punya akun?<a href="{{ route('register') }}"
+                                            class="text-decoration-none"> Daftar</a></p>
                                 </div>
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link text-decoration-none " href="{{ route('password.request') }}">
-                                        {{ __('Lupa password?') }}
-                                    </a>
-                                @endif
+                                <div class="col-md-6 offset-md-4">
+                                    <p class="text-center">
+                                        @if (Route::has('password.request'))
+                                            <a class="btn btn-link text-decoration-none text-center"
+                                                href="{{ route('password.request') }}">
+                                                {{ __('Lupa password?') }}
+                                            </a>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
                         </form>
                     </div>

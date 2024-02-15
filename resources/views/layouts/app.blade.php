@@ -10,16 +10,18 @@
 
     <title>Repository MI</title>
 
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    {{-- <link rel="dns-prefetch" href="//fonts.bunny.net"> --}}
+    {{-- <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
         integrity="sha512-GWzVrcGlo0TxTRvz9ttioyYJ+Wwk9Ck0G81D+eO63BaqHaJ3YZX9wuqjwgfcV/MrB2PhaVX9DkYVhbFpStnqpQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <style>
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+    {{-- <style>
         body {
             background-color: #E6E6E6 !important;
         }
@@ -221,115 +223,121 @@
                 color: #149fc0;
             }
         }
-    </style>
+    </style> --}}
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/landing.js'])
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/landing.js']) --}}
+    @include('layouts.partials.styles')
 </head>
 
-<body>
+<body class="light">
+    {{-- <script src="assets/static/js/initTheme.js"></script> --}}
+    <script src="{{ asset('assets/static/js/initTheme.js') }}"></script>
     <div id="app">
-        <header id="header" class="header-fancy">
-            <nav class="navbar topbar">
-                <div class="container">
-                    <div class="header-nav">
-                        <button class="nav-more">
-                            <i class="fa fa-ellipsis-vertical"></i>
-                        </button>
-                        <ul class="nav">
-                            <li class="me-4">
-                                <a href="#"><i class="fa fa-circle-question"></i>
-                                    FAQ</a>
-                            </li>
-                            <li class="me-3">
-                                <a href="https://ruangbaca.me" target="_blank" rel="no-follow">Perpustakaan</a>
-                            </li>
-                            <li class="me-3">
-                                <a href="https://siapmhs.ulbi.ac.id" target="_blank" rel="no-follow">SIAP Mahasiswa</a>
-                            </li>
-                            <li class="me-3">
-                                <a href="https://d3mi.ulbi.ac.id" target="_blank" rel="no-follow">D3 MI</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-            <div class="container">
-                <nav class="navbar navbar-header navbar-expand-md navbar-light shadow-sm">
-                    <a class="navbar-brand text-white" href="{{ url('/') }}">
-                        Repository MI
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                        <span class="navbar-toggler-icon text-white"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <!-- Left Side Of Navbar -->
-
-                        <!-- Right Side Of Navbar -->
-                        <ul class="navbar-nav ms-auto">
-                            <!-- Authentication Links -->
-                            <li class="nav-item">
-                                
-                            </li>
-                            @guest
-                            @if (Route::has('login'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}"><i class="fa fa-user"></i> MASUK DAN
-                                    DAFTAR</a>
-                            </li>
-                            @endif
-                            @else
-                            <div class="dropdown">
-                                <a href="#" data-bs-toggle="dropdown" class="text-decoration-none " aria-expanded="false" class="">
-                                    <div class="user-menu d-flex">
-                                        <div class="user-img d-flex align-items-center">
-                                            <div class="avatar avatar-md d-flex align-items-center gap-2 text-white font-bold">
-                                                <img src="./assets/compiled/jpg/1.jpg" class="rounded-circle" height="32px">
-                                            <h6 class="mb-0 text-gray-600">{{ Auth::user()->nama }}</h6>
-
-                                            </div>
-                                        </div>
-                                    </div>
+        <div id="main" class="layout-horizontal">
+            <header class="mb-5">
+                <nav class="main-navbar p-1">
+                    <div class="container">
+                        <ul>
+                            <li class="menu-item">
+                                <a href="#" class="menu-link">
+                                    <span><i class="fa fa-circle-question"></i> FAQ</span>
                                 </a>
-                                
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
-                                    <li>
-                                        <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
-                                    </li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i>
-                                            Profile</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
-                                            Settings</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
-                                            Koleksi</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
-                                    <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();"><i class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
-                                    </a></li>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </ul>
-                            </div>
-
-                               
-                            @endguest
+                            </li>
+                            <li class="menu-item">
+                                <a href="https://ruangbaca.me" class="menu-link" target="_blank">
+                                    <span>Perpustakaan </span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="https://siapmhs.ulbi.ac.id" class="menu-link" target="_blank">
+                                    <span>SIAP Mahasiswa </span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
+                                    <span>D3 MI</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </nav>
-            </div>
-        </header>
+                <div class="header-top">
+                    <div class="container">
+                        <div class="logo">
+                            <h5 class="m-0"><a href="{{ url('/') }}">Repository MI</a></h5>
+                        </div>
+                        <div class="header-top-right">
+                            @guest
+                                @if (str_contains(Route::current()->getName(), 'login') || str_contains(Route::current()->getName(), 'register'))
+                                @else
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="{{ route('login') }}"><i class="fa fa-user"></i> MASUK DAN
+                                            DAFTAR</a>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="dropdown">
+                                    <a href="#" data-bs-toggle="dropdown" class="text-decoration-none "
+                                        aria-expanded="false" class="">
+                                        <div class="user-menu d-flex">
+                                            <div class="user-img d-flex align-items-center">
+                                                <div
+                                                    class="avatar avatar-md d-flex align-items-center gap-2 text-white font-bold">
+                                                    <img src="./assets/compiled/jpg/1.jpg" class="rounded-circle"
+                                                        height="32px">
+                                                    <h6 class="mb-0 text-gray-600">{{ Auth::user()->nama }}</h6>
 
-        <main class="py-4">
-            @yield('content')
-        </main>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
+                                        style="min-width: 11rem;">
+                                        <li>
+                                            <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"><i
+                                                    class="icon-mid bi bi-person me-2"></i>
+                                                Profile</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
+                                                Settings</a></li>
+                                        <li><a class="dropdown-item" href="#"><i
+                                                    class="icon-mid bi bi-wallet me-2"></i>
+                                                Koleksi</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
+                                        <li><a class="dropdown-item" href="{{ route('logout') }}"
+                                                onclick="event.preventDefault();
+                                                         document.getElementById('logout-form').submit();"><i
+                                                    class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
+                                            </a></li>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </ul>
+                                </div>
+                            @endguest
+                            <!-- Burger button responsive -->
+                            <a href="#" class="burger-btn d-block d-xl-none">
+                                <i class="bi bi-justify fs-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="content-wrapper container">
+                <main class="py-4">
+                    @yield('content')
+                </main>
+            </div>
+        </div>
     </div>
+    @include('layouts.partials.scripts')
+    @include('layouts.partials.scripts')
 </body>
 
 </html>

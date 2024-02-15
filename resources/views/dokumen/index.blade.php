@@ -31,19 +31,22 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="judul" class="form-label">Judul</label>
-                                    <input type="text" id="judul" class="form-control" placeholder="Judul dokumen" name="judul" required>
+                                    <input type="text" id="judul" class="form-control"
+                                        placeholder="Judul dokumen" name="judul" required>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="abstrak" class="form-label">Abstrak</label>
-                                    <textarea class="form-control" name="abstrak" id="abstrak" rows="4" placeholder="Abstrak minimal 100 karakter" style="resize: none;" required></textarea>
+                                    <textarea class="form-control" name="abstrak" id="abstrak" rows="4" placeholder="Abstrak minimal 100 karakter"
+                                        style="resize: none;" required></textarea>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="keyword" class="form-label">Keyword</label>
-                                    <input type="text" id="keyword" class="form-control" placeholder="Laravel, Prototyping, BPMN.." name="keyword" required>
+                                    <input type="text" id="keyword" class="form-control"
+                                        placeholder="Laravel, Prototyping, BPMN.." name="keyword" required>
                                 </div>
                             </div>
                         </div>
@@ -51,13 +54,17 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="penulis" class="form-label">Penulis</label>
-                                    <input type="text" id="penulis" class="form-control" placeholder="Penulis, Pembimbing 1, Pembimbing 2/Penguji" name="penulis" required>
+                                    <input type="text" id="penulis" class="form-control"
+                                        placeholder="Penulis, Pembimbing 1, Pembimbing 2/Penguji" name="penulis"
+                                        required>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="tahun" class="form-label">Tahun</label>
-                                    <input type="number" id="tahun" class="form-control" min="2000" max="{{ now() }}" placeholder="Tahun" name="tahun" required>
+                                    <input type="number" id="tahun" class="form-control" min="2000"
+                                        max="{{ now() }}" onKeyPress="if(this.value.length==4) return false;"
+                                        placeholder="Tahun" name="tahun" required>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -65,16 +72,19 @@
                                     <label for="jenis" class="form-label">Jenis Dokumen</label>
                                     <select id="jenis" class="form-select" name="jenis" required>
                                         <option value="">Pilih</option>
-                                        @foreach($jenis as $row)
-                                        <option value="{{ $row->hash_id }}">{{ $row->nama_jenis }}</option>
+                                        @foreach ($jenis as $row)
+                                            <option value="{{ $row->hash_id }}">{{ $row->nama_jenis }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="mb-3 mandtory">
-                                    <label for="file" class="form-label">File <span class="text-danger">*</span> <span class="text-muted small">Unggah file sampai dengan 10MB dalam format PDF.</span></label>
-                                    <input class="form-control" type="file" id="file" required>
+                                    <label for="file" class="form-label">File <span class="text-danger">*</span>
+                                    </label>
+                                    <input class="form-control" type="file" id="file" accept=".pdf" required>
+                                    <small><span class="text-muted small">Unggah file sampai dengan 10MB dalam format
+                                            PDF.</span></small>
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-end">
@@ -138,37 +148,62 @@
         <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var input = document.getElementById('tahun');
+
+                // Menonaktifkan tombol minus
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === '-' || e.key === 'e' || e.key === '.') {
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
+        <script>
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
             $(document).ready(function() {
+                let url;
+                let userRole = "{{ auth()->user()->role }}";
+
+                if (userRole === 'admin') {
+                    url = "{{ route('dokumens.getDocByUName') }}";
+                } else {
+                    url = "{{ route('dokumens.getAllDoc') }}";
+                }
+
                 let datatable = $('#datatable').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        url: "{{ route('dokumens.getDocByUName') }}",
+                        url: url,
                         type: "POST"
                     },
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    columns: [
-                        {
-                            data: 'judul', name: 'judul',
+                    columns: [{
+                            data: 'judul',
+                            name: 'judul',
                         },
                         {
-                            data: 'penulis', name: 'penulis',
+                            data: 'penulis',
+                            name: 'penulis',
                         },
                         {
-                            data: 'tahun', name: 'tahun',
-                        },  
-                        {
-                            data: 'nama_jenis', name: 'nama_jenis',
+                            data: 'tahun',
+                            name: 'tahun',
                         },
                         {
-                            data: 'file', name: 'file',
+                            data: 'nama_jenis',
+                            name: 'nama_jenis',
+                        },
+                        {
+                            data: 'file',
+                            name: 'file',
                         },
                         {
                             data: 'action',
@@ -263,7 +298,7 @@
                         jenis = $('#jenis'),
                         file = $('#file')
                     //Data for sending to server  
-                    var formData = new FormData()  
+                    var formData = new FormData()
                     formData.append('judul', judul.val())
                     formData.append('abstrak', abstrak.val())
                     formData.append('keyword', keyword.val())
@@ -280,7 +315,7 @@
                         processData: false,
                         contentType: false,
                         success: (response) => {
-                            if(response.success){
+                            if (response.success) {
                                 //Clear input value
                                 judul.val('')
                                 abstrak.val('')
@@ -291,7 +326,7 @@
                                 file.val('')
 
                                 refreshData(datatable)
-                                toast(undefined,undefined,response.success)
+                                toast(undefined, undefined, response.success)
                             }
                         },
                         error: function(xhr, status, error) {
@@ -299,29 +334,41 @@
 
                             if (errors.hasOwnProperty('judul')) {
                                 judul.addClass('is-invalid')
-                                judul.after(`<span class="invalid-feedback" role="alert">${errors.judul[0]}</span>`)
+                                judul.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.judul[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('abstrak')) {
                                 abstrak.addClass('is-invalid')
-                                abstrak.after(`<span class="invalid-feedback" role="alert">${errors.abstrak[0]}</span>`)
+                                abstrak.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.abstrak[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('keyword')) {
                                 keyword.addClass('is-invalid')
-                                keyword.after(`<span class="invalid-feedback" role="alert">${errors.keyword[0]}</span>`)
+                                keyword.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.keyword[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('penulis')) {
                                 penulis.addClass('is-invalid')
-                                penulis.after(`<span class="invalid-feedback" role="alert">${errors.penulis[0]}</span>`)
+                                penulis.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.penulis[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('jenis')) {
                                 jenis.addClass('is-invalid')
-                                jenis.after(`<span class="invalid-feedback" role="alert">${errors.jenis[0]}</span>`)
+                                jenis.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.jenis[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('file')) {
                                 file.addClass('is-invalid')
-                                file.after(`<span class="invalid-feedback" role="alert">${errors.file[0]}</span>`)
+                                file.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.file[0]}</span>`
+                                )
                             }
-                            toast("#dc3545","Failed","Gagal menambahkan dokumen")
+                            toast("#dc3545", "Failed", "Gagal menambahkan dokumen")
                         }
 
                     })
