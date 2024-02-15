@@ -41,12 +41,8 @@ Route::middleware('auth')->group(function() {
     Route::group(['prefix' => 'setting'],function(){
         Route::match(['get', 'post'] , '/profil',[UserController::class, 'settingLanding'])->name('user.settingLanding');
         Route::match(['get', 'post'] , '/keamanan',[UserController::class, 'keamananLanding'])->name('user.keamananLanding');
-        Route::match(['get', 'post'] , '/setting/{id}',[UserController::class, 'editLanding'])->name('user.editLanding');
     });
 
-
-    
-    
     Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
     Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
 

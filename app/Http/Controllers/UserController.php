@@ -243,4 +243,19 @@ class UserController extends Controller
             return response()->json(['errors' => $e->getMessage()],422);
         }
     }
+
+    public function profileLanding(){
+        $user = Auth::user();
+        return view ('profile',compact('user'));
+    }
+
+    public function settingLanding(){
+        $user = Auth::user();
+        return view ('setting.profile',compact('user'));
+    }
+
+    public function keamananLanding(){
+        $user = Auth::user();
+        return view ('setting.keamanan',compact('user'));
+    }
 }
