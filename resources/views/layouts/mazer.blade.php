@@ -26,8 +26,7 @@
                 <div class="page-title">
                     {{ $header }}
                 </div>
-            </div>
-            <div class="page-content">
+
                 {{ $slot }}
             </div>
             
