@@ -74,8 +74,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'pengguna') ? 'active' : '' }}">
-                    <a href="#" class='sidebar-link'>
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
+                    <a href="{{ route('approve.index') }}" class='sidebar-link'>
                         <i class="bi bi-person-check-fill"></i>
                         <span>Approve Pengguna</span>
                     </a>

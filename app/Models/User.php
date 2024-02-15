@@ -3,13 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Dokumen;
-use App\Models\Bookmark;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use App\Models\Dokumen;
+use App\Models\Bookmark;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable
 {
@@ -65,21 +65,14 @@ class User extends Authenticatable
         return $this->hasMany(Dokumen::class);
     }
 
-    public static function boot()
+    public function scopeToapprove(Builder $query)
     {
-        parent::boot();
-
-        // Memeriksa verifikasi pengguna sebelum login
-        static::creating(function ($user) {
-            if (!$user->terverifikasi) {
-                throw new \Exception('User not verified');
-            }
-        });
+        $query->where('terverifikasi', 0);
     }
 
-    // Metode untuk memeriksa login
-    public function checkLogin($password)
+    public function scopeApproved(Builder $query)
     {
-        return Hash::check($password, $this->password);
+        $query->where('terverifikasi', 1);
     }
+
 }

@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -30,6 +31,54 @@ class UserController extends Controller
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+    public function indexApprove() {
+        return view('super.approve.index');
+    }
+
+    public function getApproveUsers(Request $request) {
+        $users = User::toapprove()->latest()->get();
+            return DataTables::of($users)
+            ->editColumn('verifikasi_file', function($row){
+                $raw = '<a href="'.Storage::url('file-verifikasi/'.$row->verifikasi_file).'" data-lightbox="'.$row->verifikasi_file.'" data-title="'.$row->username.'">'.$row->verifikasi_file.'</a>';
+                return $raw;
+            })
+            ->addColumn('action', function($row) {
+                $actionBtn = '<button class="btn btn-success btn-sm approve-button" data-id="'.$row->username.'" id="btnApprove">Approve</button>
+                <button type="button" class="btn btn-danger text-white btn-sm reject-button" data-id="'.$row->username.'" id="btnReject">
+                    Reject
+                </button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['verifikasi_file','action'])
+            ->make(true);
+    }
+
+    public function setApprovedUser(Request $request) {
+        try {
+            $user = User::findOrFail($request->username);
+            $destination = 'public/file-verifikasi/';
+            Storage::delete($destination . $user->verifikasi_file);
+            $user->verifikasi_file = '';
+            $user->terverifikasi = true;
+            $user->save();
+            return response()->json(['success' => 'Berhasil mengapprove user','data' => ['username' => $request->username]],200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()],500);
+        }
+    }
+
+    public function setRejectedUser(Request $request) {
+        try {
+            $user = User::findOrFail($request->username);
+            $destination = 'public/file-verifikasi/';
+            Storage::delete($destination . $user->verifikasi_file);
+            $user->delete();
+            return response()->json(['success' => 'Berhasil menolak dan menghapus data user','data' => ['username' => $request->username]],200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()],500);
+        }
     }
 
     /**

@@ -31,12 +31,19 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('jenis', JenisController::class)->parameter('jenis','id');
-Route::post('/get-jenis', [JenisController::class,'getJenis'])->name('jenis.getJenis');
-
-Route::resource('users', UserController::class);
-Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
-
-Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
-Route::post('/get-doc-by-uname', [DokumenController::class, 'getDocByUName'])->name('dokumens.getDocByUName');
-Route::post('/get-all-doc', [DokumenController::class, 'getAllDoc'])->name('dokumens.getAllDoc');
+Route::middleware('auth')->group(function() {
+    Route::resource('jenis', JenisController::class)->parameter('jenis','id');
+    Route::post('/get-jenis', [JenisController::class,'getJenis'])->name('jenis.getJenis');
+    
+    Route::resource('users', UserController::class);
+    Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
+    
+    Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
+    Route::post('/get-documents', [DokumenController::class, 'getAllDoc'])->name('dokumens.getAllDoc');
+    Route::post('/get-documents-by-uname', [DokumenController::class, 'getDocByUName'])->name('dokumens.getDocByUName');
+    
+    Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
+    Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
+    Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
+    Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+});

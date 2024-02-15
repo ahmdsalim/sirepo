@@ -130,9 +130,11 @@ class DokumenController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Dokumen $dokumen)
+    public function edit(string $id)
     {
-        return view('dokumen.edit-dokumen', compact('dokumen'));
+        $dokumen = Dokumen::findOrFail($id);
+        $jenis = Jenis::select('id','nama_jenis')->get();
+        return view('dokumen.form-dokumen', compact('dokumen','jenis'));
     }
 
     /**
@@ -140,7 +142,46 @@ class DokumenController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required|string|min:15|max:250',
+            'abstrak' => 'required|string|min:100',
+            'keyword' => 'required|string|min:3',
+            'penulis' => 'required|string|min:3',
+            'tahun' => 'required|digits:4|integer|min:2000|max:'.(date('Y')),
+            'jenis' => 'required|string',
+            'file' => 'nullable|mimes:pdf|max:10240',
+        ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        
+        try {
+            $validData = $validator->validated();
+            $dokumen = Dokumen::findOrFail($id);
+            $dokumen->judul = $validData['judul'];
+            $dokumen->abstrak = $validData['abstrak'];
+            $dokumen->keyword = $validData['keyword'];
+            $dokumen->penulis = $validData['penulis'];
+            $dokumen->tahun = $validData['tahun'];
+            $dokumen->jenis_id = (new HashIdService())->decode($validData['jenis']);
+            $dokumen->username = auth()->user()->username;
+            
+            if($request->hasFile('file')){
+                $destination = 'public/file-dokumen/';
+                $file = $request->file('file');
+                $file_name = 'sirepo'.time().'.'.$file->getClientOriginalExtension();
+                Storage::delete($destination . $dokumen->file);
+                $file->storeAs($destination, $file_name);
+                $dokumen->file = $file_name;
+            }
+    
+            $dokumen->save();
+    
+            return to_route('dokumens.index')->with('success','Berhasil mengubah data');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Error: '.$e->getMessage());
+        }
     }
 
     /**
