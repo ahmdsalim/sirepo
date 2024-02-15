@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -79,6 +81,60 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()],500);
         }
+    }
+
+    public function profile() {
+        $user = auth()->user();
+        return view('akun.profile.index', compact('user'));
+    }
+    
+    public function updateProfile(Request $request) {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|min:2|max:150',
+            'email' => [
+                'required','email',
+                Rule::unique('users')->ignore($user->username, 'username')
+            ]
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['errors'=> $validator->errors()],422);
+        }
+        $data = $validator->validated();
+        $user->nama = $data['nama'];
+        $user->email = $data['email'];
+        $user->save();
+        
+        return response()->json(['success' => 'Berhasil mengupdate profile','data'=> ['nama' => $data['nama']]]);
+    }
+
+    public function security() {
+        return view('akun.keamanan.index');
+    }
+    
+    public function securityUpdate(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'password_confirmation' => 'required',
+            'password' => 'required|confirmed|min:8|different:current_password',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['errors' => $validator->errors()],422);
+        }
+        $data = $validator->validated();
+        $user = Auth::user();
+        if(Hash::check($data['current_password'], $user->password)){
+            $user->fill([
+                'password' => Hash::make($data['password'])
+            ])->save();
+            
+            return response()->json(['success' => 'Berhasil mengupdate password']);
+        }
+        return response()->json(['errors' => ['current_password' => [
+            "Password does not match"
+        ]]],422);
     }
 
     /**

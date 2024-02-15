@@ -45,4 +45,10 @@ Route::middleware('auth')->group(function() {
     Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
     Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
     Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+
+    Route::get('profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
+
+    Route::get('security', [UserController::class, 'security'])->name('security');
+    Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 });

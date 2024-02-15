@@ -50,19 +50,19 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ Request::is('profil*', 'keamanan*') ? 'active' : '' }}  has-sub">
+                <li class="sidebar-item {{ Request::is('profil*', 'security*') ? 'active' : '' }}  has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-circle"></i>
                         <span>Akun</span>
                     </a>
 
                     <ul class="submenu ">
-                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profil') ? 'active' : '' }}">
-                            <a href="#" class="submenu-link">Profil</a>
+                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}">
+                            <a href="{{ route('profile') }}" class="submenu-link">Profil</a>
                         </li>
 
-                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'keamanan') ? 'active' : '' }}">
-                            <a href="#" class="submenu-link">Keamanan</a>
+                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'security') ? 'active' : '' }}">
+                            <a href="{{ route('security') }}" class="submenu-link">Keamanan</a>
                         </li>
 
                         <li class="submenu-item">
