@@ -46,6 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('authtype:super.admin')->group(function () {
         Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
+
+        Route::get('profile', [UserController::class, 'profile'])->name('profile');
+        Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
+
+        Route::get('security', [UserController::class, 'security'])->name('security');
+        Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
     });
 
     Route::middleware('authtype:user')->group(function () {
@@ -56,10 +62,4 @@ Route::middleware('auth')->group(function () {
 
         Route::match(['get', 'post'], '/profil', [LandingController::class, 'profile'])->name('landing.profile');
     });
-
-    Route::get('profile', [UserController::class, 'profile'])->name('profile');
-    Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
-
-    Route::get('security', [UserController::class, 'security'])->name('security');
-    Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 });
