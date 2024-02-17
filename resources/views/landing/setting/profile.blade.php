@@ -1,4 +1,4 @@
-@extends('setting.sidebar')
+@extends('landing.setting.sidebar')
 
 @section('setting')
 <div class="card" id="settings-card">

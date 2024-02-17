@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\cekRole;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', function () {
-    return view('landing');
+    return view('landing.landing');
 });
 
 Route::get('/template', function () {
@@ -30,6 +31,7 @@ Auth::routes();
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('pencarian', [LandingController::class, 'search'])->name('landing.search');
 
 Route::middleware('auth')->group(function() {
     Route::resource('jenis', JenisController::class)->parameter('jenis','id');
@@ -39,10 +41,11 @@ Route::middleware('auth')->group(function() {
     Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
     // Route::get('/setting', [UserController::class, 'settingLanding'])->name('user.settingLanding');
     Route::group(['prefix' => 'setting'],function(){
-        Route::match(['get', 'post'] , '/profil',[UserController::class, 'settingLanding'])->name('user.settingLanding');
-        Route::match(['get', 'post'] , '/keamanan',[UserController::class, 'keamananLanding'])->name('user.keamananLanding');
+        Route::match(['get', 'post'] , '/profil',[LandingController::class, 'setting'])->name('landing.setting');
+        Route::match(['get', 'post'] , '/keamanan',[LandingController::class, 'keamanan'])->name('landing.keamanan');
     });
-
+    Route::match(['get', 'post'] , '/profil',[LandingController::class, 'profile'])->name('landing.profile');
+    
     Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
     Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
 
@@ -51,11 +54,11 @@ Route::middleware('auth')->group(function() {
     Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
     Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
 
-    // Route::get('profile', [UserController::class, 'profile'])->name('profile');
-    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profile'])->name('user.profile');
-    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profileLanding'])->name('user.profileLanding');
+    Route::get('profile', [UserController::class, 'profile'])->name('profile');
+    // Route::match(['get', 'post'] , '/profil',[UserController::class, 'profile'])->name('user.profile');
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
     Route::get('security', [UserController::class, 'security'])->name('security');
     Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
+    
 });
