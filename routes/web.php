@@ -20,40 +20,48 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('landing');
-});
+})->name('landing');
 
-Route::get('/template', function () {
-    return view('home');
-})->middleware('auth');
+// Route::get('/template', function () {
+//     return view('home');
+// })->middleware('auth');
 
 Auth::routes();
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::middleware('auth')->group(function() {
-    Route::resource('jenis', JenisController::class)->parameter('jenis','id');
-    Route::post('/get-jenis', [JenisController::class,'getJenis'])->name('jenis.getJenis');
-    
-    Route::resource('users', UserController::class);
-    Route::post('/get-users', [UserController::class,'getUsers'])->name('users.getUsers');
-    // Route::get('/setting', [UserController::class, 'settingLanding'])->name('user.settingLanding');
-    Route::group(['prefix' => 'setting'],function(){
-        Route::match(['get', 'post'] , '/profil',[UserController::class, 'settingLanding'])->name('user.settingLanding');
-        Route::match(['get', 'post'] , '/keamanan',[UserController::class, 'keamananLanding'])->name('user.keamananLanding');
+Route::middleware('auth')->group(function () {
+    Route::middleware('authtype:super')->group(function () {
+        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id');
+        Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
+
+        Route::resource('users', UserController::class);
+        Route::post('/get-users', [UserController::class, 'getUsers'])->name('users.getUsers');
+
+        Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
+        Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
+        Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
+        Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+        Route::post('/send-email-approved', [UserController::class, 'sendEmailApproved'])->name('sendEmailApproved');
     });
 
-    Route::resource('dokumens',DokumenController::class)->parameter('dokumens','id');
-    Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
+    Route::middleware('authtype:super.admin')->group(function () {
+        Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
+        Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
+    });
 
-    Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
-    Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
-    Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
-    Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+    Route::middleware('authtype:user')->group(function () {
+        Route::group(['prefix' => 'setting'], function () {
+            Route::match(['get', 'post'], '/profil', [UserController::class, 'settingLanding'])->name('user.settingLanding');
+            Route::match(['get', 'post'], '/keamanan', [UserController::class, 'keamananLanding'])->name('user.keamananLanding');
+        });
+    });
 
+    // Route::get('/setting', [UserController::class, 'settingLanding'])->name('user.settingLanding');
     // Route::get('profile', [UserController::class, 'profile'])->name('profile');
-    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profile'])->name('user.profile');
-    Route::match(['get', 'post'] , '/profil',[UserController::class, 'profileLanding'])->name('user.profileLanding');
+    Route::match(['get', 'post'], '/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::match(['get', 'post'], '/profil', [UserController::class, 'profileLanding'])->name('user.profileLanding');
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
     Route::get('security', [UserController::class, 'security'])->name('security');

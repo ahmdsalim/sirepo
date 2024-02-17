@@ -8,7 +8,8 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none" href="home">Dashboard</a></li>
+                        <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none"
+                                href="home">Dashboard</a></li>
                         <li class="breadcrumb-item  active" aria-current="page">Approve User</li>
                     </ol>
                 </nav>
@@ -20,11 +21,11 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title d-flex align-items-center">
-                    Kelola Approve User 
+                    Kelola Approve User
                     <button class="btn p-0 ms-1 border-0" id="refreshData">
                         <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
                     </button>
-                </h5>                
+                </h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -45,7 +46,11 @@
         <div class="toast-container position-fixed top-0 end-0 p-3">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#198754" id="toastRect"></rect></svg>
+                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice"
+                        focusable="false">
+                        <rect width="100%" height="100%" fill="#198754" id="toastRect"></rect>
+                    </svg>
                     <strong class="me-auto" id="toastType">Success</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
@@ -57,20 +62,20 @@
     </section>
 
     @push('styles')
-        @vite(['resources/assets/compiled/css/table-datatable-jquery.css','resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
+        @vite(['resources/assets/compiled/css/table-datatable-jquery.css', 'resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
         <link rel="stylesheet" href="{{ asset('assets/extensions/lightbox2/dist/css/lightbox.min.css') }}">
     @endpush
 
     @push('scripts')
-        <script src="{{asset('assets/extensions/jquery/jquery.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/lightbox2/dist/js/lightbox.min.js')}}"></script>
+        <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/lightbox2/dist/js/lightbox.min.js') }}"></script>
         <script>
             lightbox.option({
-            'resizeDuration': 300,
-            'imageFadeDuration': 200,
-            'fadeDuration': 200,
+                'resizeDuration': 300,
+                'imageFadeDuration': 200,
+                'fadeDuration': 200,
             })
         </script>
         <script>
@@ -90,15 +95,17 @@
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    columns: [
-                        {
-                            data: 'username', name: 'username',
+                    columns: [{
+                            data: 'username',
+                            name: 'username',
                         },
                         {
-                            data: 'nama', name: 'nama',
+                            data: 'nama',
+                            name: 'nama',
                         },
                         {
-                            data: 'email', name: 'email',
+                            data: 'email',
+                            name: 'email',
                         },
                         {
                             data: 'verifikasi_file',
@@ -134,11 +141,11 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.value) {
-                            const dataId = $(this).data('id') 
+                            const dataId = $(this).data('id')
                             const data = {
                                 username: dataId
                             }
-                            const url = "{{ route('setRejectedUser', ['username'=>':data']) }}"
+                            const url = "{{ route('setRejectedUser', ['username' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             $.ajax({
                                 url: bindUrl,
@@ -148,12 +155,12 @@
                                 proccessData: false,
                                 contentType: "application/json",
                                 success: (response) => {
-                                        refreshData(datatable)
-                                        toast(undefined,undefined,response.success)
+                                    refreshData(datatable)
+                                    toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
                                     const errors = `${status} : ${error}`
-                                    toast("#dc3545","Failed",errors)
+                                    toast("#dc3545", "Failed", errors)
                                 }
                             })
                         }
@@ -172,7 +179,7 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.value) {
-                            const dataId = $(this).data('id') 
+                            const dataId = $(this).data('id')
                             const data = {
                                 username: dataId
                             }
@@ -184,28 +191,50 @@
                                 proccessData: false,
                                 contentType: "application/json",
                                 success: (response) => {
-                                        refreshData(datatable)
-                                        toast(undefined,undefined,response.success)
+                                    refreshData(datatable)
+                                    sendEmailNotification(response.data.id)
+                                    toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
                                     const errors = `${status} : ${error}`
-                                    toast("#dc3545","Failed",errors)
+                                    toast("#dc3545", "Failed", errors)
                                 }
                             })
                         }
                     })
                 });
 
+                function sendEmailNotification(id) {
+                    const data = {
+                        id: id
+                    }
+                    $.ajax({
+                        url: "{{ route('sendEmailApproved') }}",
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "JSON",
+                        proccessData: false,
+                        contentType: "application/json",
+                        success: (response) => {
+                            toast(undefined, undefined, response.success)
+                        },
+                        error: function(xhr, status, error) {
+                            const errors = `${status} : ${error}`
+                            toast("#dc3545", "Failed", errors)
+                        }
+                    })
+                }
+
                 $('#refreshData').on('click', async () => {
-                    $('#refreshData').attr('disabled',true)
+                    $('#refreshData').attr('disabled', true)
                     await refreshData(datatable)
-                    $('#refreshData').attr('disabled',false)
+                    $('#refreshData').attr('disabled', false)
                 })
-                
+
                 function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
-                    $("#toastRect").attr("fill",color)
+                    $("#toastRect").attr("fill", color)
                     $("#toastType").text(type)
-                    $("#toastMessage").text(message) 
+                    $("#toastMessage").text(message)
                     const toastContainer = $("#liveToast")
                     const toast = new bootstrap.Toast(toastContainer)
                     toast.show()
@@ -217,7 +246,6 @@
                     })
                 }
             });
-
         </script>
     @endpush
 </x-app-layout>

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use App\Models\Dokumen;
 use App\Models\Bookmark;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use App\Notifications\UserModerationApproved;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -55,6 +56,16 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function sendModerationApprovedNotification()
+    {
+        $this->notify(new UserModerationApproved($this));
+    }
+
+    public function getHashUsernameAttribute()
+    {
+        return encryptString($this->username);
+    }
+
     public function bookmarks()
     {
         return $this->hasMany(Bookmark::class);
@@ -75,4 +86,8 @@ class User extends Authenticatable
         $query->where('terverifikasi', 1);
     }
 
+    public function scopeExceptlogged(Builder $query)
+    {
+        $query->where('username', '!=', auth()->user()->username);
+    }
 }

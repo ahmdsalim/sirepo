@@ -57,8 +57,8 @@
                     </a>
 
                     <ul class="submenu ">
-                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}">
-                            <a href="{{ route('profile') }}" class="submenu-link">Profil</a>
+                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profil') ? 'active' : '' }}">
+                            <a href="{{ route('user.profile') }}" class="submenu-link">Profil</a>
                         </li>
 
                         <li class="submenu-item {{ str_contains(Route::current()->getName(), 'security') ? 'active' : '' }}">
@@ -74,15 +74,17 @@
                         </li>
                     </ul>
                 </li>
+                @if(auth()->user()->role == 'super')
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
                     <a href="{{ route('approve.index') }}" class='sidebar-link'>
                         <i class="bi bi-person-check-fill"></i>
                         <span>Approve Pengguna</span>
                     </a>
                 </li>
+                @endif
 
                 <li class="sidebar-title">Kelola Data</li>
-
+                @if(auth()->user()->role == 'super')
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'users') ? 'active' : '' }}">
                     <a href="{{ route('users.index') }}" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
@@ -95,6 +97,7 @@
                         <span>Jenis</span>
                     </a>
                 </li>
+                @endif
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumen') ? 'active' : '' }}">
                     <a href="{{ route('dokumens.index') }}" class='sidebar-link'>
                         <i class="bi bi-file-earmark-pdf-fill"></i>
