@@ -13,6 +13,10 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     {{-- <link rel="dns-prefetch" href="//fonts.bunny.net"> --}}
     {{-- <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -30,7 +34,7 @@
     <script src="{{ asset('assets/static/js/initTheme.js') }}"></script>
     <div id="app">
         <div id="main" class="layout-horizontal">
-            <header class="mb-5">
+            <header class="mb-4">
                 <div class="header-top py-2">
                     <div class="container">
                         <div class="d-flex gap-3 ">
@@ -75,10 +79,10 @@
                                         <li>
                                             <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('user.profileLanding') }}"><i
+                                        <li><a class="dropdown-item" href="{{ route('landing.profile') }}"><i
                                                     class="icon-mid bi bi-person me-2"></i>
                                                 Profile</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('user.settingLanding') }}"><i
+                                        <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
                                                     class="icon-mid bi bi-gear me-2"></i>
                                                 Settings</a></li>
                                         <li><a class="dropdown-item" href="#"><i
@@ -128,11 +132,19 @@
                 </nav>
 
             </header>
-            <div class="content-wrapper container">
-                <main class="py-4">
+            <div class="content-wrapper container" >
+                <main>
                     @yield('content')
                 </main>
             </div>
+            <footer>
+                <div class="col-12 position-relative bottom-0 py-2 mt-lg-3 " style="background-color:#1D1D1D">
+                    <div class="container">
+                        <p class="m-0 text-white " style="font-size:12px"> © 2024 MANAJEMEN INFORMATIKA | UNIVERSITAS
+                            LOGISTIK DAN BISNIS INTERNASIONAL. All right reserved.</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
     @include('layouts.partials.scripts')
