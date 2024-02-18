@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -39,5 +40,18 @@ class LoginController extends Controller
 
     public function username(){
         return 'username';
+    }
+
+    public function authenticated(Request $request, $user){
+        $routeName = 'landing';
+        switch ($user->role) {
+            case 'super':
+                $routeName = 'home';
+                break;
+            case 'admin':
+                $routeName = 'home';
+                break;
+        }
+        return to_route($routeName);
     }
 }

@@ -50,51 +50,59 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ Request::is('profil*', 'security*') ? 'active' : '' }}  has-sub">
+                <li class="sidebar-item {{ Request::is('profile*', 'security*') ? 'active' : '' }}  has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-circle"></i>
                         <span>Akun</span>
                     </a>
 
                     <ul class="submenu ">
-                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}">
+                        <li
+                            class="submenu-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}">
                             <a href="{{ route('profile') }}" class="submenu-link">Profil</a>
                         </li>
 
-                        <li class="submenu-item {{ str_contains(Route::current()->getName(), 'security') ? 'active' : '' }}">
+                        <li
+                            class="submenu-item {{ str_contains(Route::current()->getName(), 'security') ? 'active' : '' }}">
                             <a href="{{ route('security') }}" class="submenu-link">Keamanan</a>
                         </li>
 
                         <li class="submenu-item">
-                            <a href="{{ route('logout') }}" onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();" class="submenu-link">{{ __('Logout') }}</a>
+                            <a href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();"
+                                class="submenu-link">{{ __('Logout') }}</a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
-                    <a href="{{ route('approve.index') }}" class='sidebar-link'>
-                        <i class="bi bi-person-check-fill"></i>
-                        <span>Approve Pengguna</span>
-                    </a>
-                </li>
+                @if (auth()->user()->role == 'super')
+                    <li
+                        class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
+                        <a href="{{ route('approve.index') }}" class='sidebar-link'>
+                            <i class="bi bi-person-check-fill"></i>
+                            <span>Approve Pengguna</span>
+                        </a>
+                    </li>
+                @endif
 
                 <li class="sidebar-title">Kelola Data</li>
-
-                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'users') ? 'active' : '' }}">
-                    <a href="{{ route('users.index') }}" class='sidebar-link'>
-                        <i class="bi bi-people-fill"></i>
-                        <span>Pengguna</span>
-                    </a>
-                </li>
-                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'jenis') ? 'active' : '' }}">
-                    <a href="{{ route('jenis.index') }}" class='sidebar-link'>
-                        <i class="bi bi-tag-fill"></i>
-                        <span>Jenis</span>
-                    </a>
-                </li>
+                @if (auth()->user()->role == 'super')
+                    <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'users') ? 'active' : '' }}">
+                        <a href="{{ route('users.index') }}" class='sidebar-link'>
+                            <i class="bi bi-people-fill"></i>
+                            <span>Pengguna</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'jenis') ? 'active' : '' }}">
+                        <a href="{{ route('jenis.index') }}" class='sidebar-link'>
+                            <i class="bi bi-tag-fill"></i>
+                            <span>Jenis</span>
+                        </a>
+                    </li>
+                @endif
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumen') ? 'active' : '' }}">
                     <a href="{{ route('dokumens.index') }}" class='sidebar-link'>
                         <i class="bi bi-file-earmark-pdf-fill"></i>
