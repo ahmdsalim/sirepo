@@ -75,30 +75,17 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column">
-                        <div class="row mx-2 ">
-                            <div class="col-12">
-                                <h4><a href="">Sistem Informasi Inventarisasi Barang Prodi D3 SI</a></h4>
-                                <p class="m-0">Viki Eka Pratama, Mubassiran St.MT, Ibnu Choldun. St</p>
-                                <p>2024 | Tugas Akhir</p>
-                                <hr class="my-2">
+                        @for ($i = 0; $i < 3; $i++)
+                            <div class="row mx-2 ">
+                                <div class="col-12">
+                                    <h4 class="pt-serif"><a href="{{ route('landing.detail') }}">Sistem Informasi Inventarisasi Barang Prodi D3
+                                            SI</a></h4>
+                                    <p class="m-0">Viki Eka Pratama, Mubassiran St.MT, Ibnu Choldun. St</p>
+                                    <p>2024 | Tugas Akhir</p>
+                                    <hr class="my-2">
+                                </div>
                             </div>
-                        </div>
-                        <div class="row mx-2 ">
-                            <div class="col-12">
-                                <h4><a href="">Sistem Informasi Monitoring Kinerja</a></h4>
-                                <p class="m-0">Eka Melinda, Mubassiran St.MT, Ibnu Choldun. St</p>
-                                <p>2024 | Tugas Akhir</p>
-                                <hr class="my-2">
-                            </div>
-                        </div>
-                        <div class="row mx-2 ">
-                            <div class="col-12">
-                                <h4><a href="">Sistem Informasi Pengambil Keputusan Karyawan</a></h4>
-                                <p class="m-0">Dimas Ocong, Mubassiran St.MT, Ibnu Choldun. St</p>
-                                <p>2024 | Tugas Akhir</p>
-                                <hr class="my-2">
-                            </div>
-                        </div>
+                        @endfor
                     </div>
                 </div>
             </div>

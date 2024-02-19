@@ -69,6 +69,10 @@ class LandingController extends Controller
         //
     }
 
+    public function detail(){
+        return view('landing.detail');
+    }
+
     public function profile(){
         $user = Auth::user();
         return view ('landing.profile',compact('user'));

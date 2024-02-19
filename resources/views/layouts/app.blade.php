@@ -27,6 +27,16 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
     @include('layouts.partials.styles')
+    <style>
+        @font-face {
+            font-family: 'Pt Serif';
+            src: url({{ asset('assets/static/fonts/PTSerif-Regular.ttf') }});
+        }
+
+        .pt-serif{
+            font-family: 'Pt Serif', serif;
+        }
+    </style>
 </head>
 
 <body class="light">
@@ -98,7 +108,8 @@
                                                     class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
                                             </a></li>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            class="d-none">
                                             @csrf
                                         </form>
                                     </ul>
@@ -132,7 +143,7 @@
                 </nav>
 
             </header>
-            <div class="content-wrapper container" >
+            <div class="content-wrapper container">
                 <main>
                     @yield('content')
                 </main>
