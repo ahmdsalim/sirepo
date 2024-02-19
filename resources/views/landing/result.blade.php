@@ -78,8 +78,16 @@
                         @for ($i = 0; $i < 3; $i++)
                             <div class="row mx-2 ">
                                 <div class="col-12">
-                                    <h4 class="pt-serif"><a href="{{ route('landing.detail') }}">Sistem Informasi Inventarisasi Barang Prodi D3
-                                            SI</a></h4>
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <h4 class="pt-serif"><a href="{{ route('landing.detail') }}">Sistem Informasi Inventarisasi Barang Prodi D3
+                                                SI</a></h4>
+                                        </div>
+                                        <div class="col-1">
+                                            <button class="btn "><i class="bi bi-bookmarks"></i></button>
+                                        </div>
+                                    </div>
+                                    
                                     <p class="m-0">Viki Eka Pratama, Mubassiran St.MT, Ibnu Choldun. St</p>
                                     <p>2024 | Tugas Akhir</p>
                                     <hr class="my-2">

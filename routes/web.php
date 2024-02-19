@@ -5,6 +5,7 @@ use App\Http\Controllers\JenisController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\cekRole;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
 
-        Route::get('profile', [UserController::class, 'profile'])->name('profile');
+        Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
         Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
@@ -61,6 +62,6 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
 
-        Route::match(['get', 'post'], '/profile', [LandingController::class, 'profile'])->name('landing.profile');
+        Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
     });
 });

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container position-absolute bottom-25" style="top:40%">
         <div class="row justify-content-center gap-4">
             <div class="col-md-8">
                 <h1 class="text-center pt-serif">AYO JANGAN MALU MENCARI</h1>
