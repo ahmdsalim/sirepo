@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Services\HashIdService;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Bookmark;
 use App\Models\Jenis;
+use App\Models\Bookmark;
+use App\Services\HashIdService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Dokumen extends Model
 {
@@ -14,11 +15,13 @@ class Dokumen extends Model
 
     protected $guarded = [];
 
-    public function getHashIdAttribute() {
+    public function getHashIdAttribute()
+    {
         return (new HashIdService)->encode($this->id);
     }
 
-    public function getHashJenisIdAttribute() {
+    public function getHashJenisIdAttribute()
+    {
         return (new HashIdService)->encode($this->jenis_id);
     }
 
@@ -32,7 +35,13 @@ class Dokumen extends Model
         return $this->belongsTo(Jenis::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'username', 'username');
+    }
+
+    public function scopeOnlyLogged(Builder $query)
+    {
+        $query->where('username', auth()->user()->username);
     }
 }

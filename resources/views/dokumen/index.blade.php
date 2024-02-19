@@ -113,6 +113,7 @@
                                 <th>Penulis</th>
                                 <th>Tahun</th>
                                 <th>Jenis Dokumen</th>
+                                <th>Uploader</th>
                                 <th>File</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -179,6 +180,7 @@
                     columns: [{
                             data: 'judul',
                             name: 'judul',
+                            width: "20%",
                         },
                         {
                             data: 'penulis',
@@ -189,18 +191,25 @@
                             name: 'tahun',
                         },
                         {
-                            data: 'nama_jenis',
-                            name: 'nama_jenis',
+                            data: 'jenis.nama_jenis',
+                            name: 'jenis.nama_jenis',
+                        },
+                        {
+                            data: 'user.nama',
+                            name: 'user.nama',
                         },
                         {
                             data: 'file',
                             name: 'file',
+                            orderable: false,
+                            searchable: false,
                         },
                         {
                             data: 'action',
                             name: 'action',
                             orderable: false,
-                            width: "20%",
+                            searchable: false,
+                            width: "15%",
                         }
                     ]
                 });

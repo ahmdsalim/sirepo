@@ -90,4 +90,9 @@ class User extends Authenticatable
     {
         $query->where('username', '!=', auth()->user()->username);
     }
+
+    public function scopeOnlyuser(Builder $query)
+    {
+        $query->where('role', 'user');
+    }
 }

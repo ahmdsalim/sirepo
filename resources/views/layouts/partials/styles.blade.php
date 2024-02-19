@@ -1,3 +1,3 @@
-@vite(['resources/assets/compiled/css/app.css','resources/assets/compiled/css/app-dark.css','resources/assets/compiled/css/iconly.css'])
+@vite(['resources/assets/compiled/css/app.css', 'resources/assets/compiled/css/app-dark.css'])
 
 @stack('styles')
