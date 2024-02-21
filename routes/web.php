@@ -27,8 +27,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('pencarian', [LandingController::class, 'search'])->name('landing.search');
-Route::get('pencarian/nama', [LandingController::class, 'detail'])->name('landing.detail');
+Route::get('search', [LandingController::class, 'search'])->name('landing.search');
+Route::get('pencarian/{judul}', [LandingController::class, 'detail'])->name('landing.detail');
+// Route::get('/search',[LandingController::class, 'search'])->name('landing.search');
 
 Route::middleware('auth')->group(function () {
     Route::middleware('authtype:super')->group(function () {
@@ -61,7 +62,6 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/profile', [LandingController::class, 'setting'])->name('landing.setting');
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
-
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
     });
 });

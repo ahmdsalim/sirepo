@@ -5,15 +5,12 @@
         <div class="row justify-content-center gap-4">
             <div class="col-md-8">
                 <h1 class="text-center pt-serif">AYO JANGAN MALU MENCARI</h1>
-                <form id="">
-                    @csrf
-                    <input class="form-control py-3 px-4 shadow-sm" type="search" name="search"
-                        placeholder="Judul,Author,Proyek1,Proyek2,....">
-                </form>
+                @include('landing.searchbar')
             </div>
+
             <div class="d-flex justify-content-center gap-2">
                 <div class="card p-2 shadow-sm">
-                    <p class="m-0">Proyek 1: 20000</p>
+                    <p class="m-0">Proyek 1: </p>
                 </div>
                 <div class="card p-2 shadow-sm">
                     <p class="m-0">Proyek 2: 20000</p>

@@ -16,7 +16,7 @@
                     <li class="breadcrumb-item active"><a class="text-decoration-none" href="{{ url('/') }}">Home</a></li>
                     <li class="breadcrumb-item active"><a class="text-decoration-none" href="#"
                             onclick="history.back()">Hasil Pencarian</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Detail</li>
+                    <li class="breadcrumb-item" aria-current="page">{{ $dokumen->judul }}</li>
                 </ol>
             </nav>
         </div>
@@ -28,12 +28,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="d-flex justify-content-between">
-                            <h4 class="pt-serif"><a href="{{ route('landing.detail') }}">Sistem Informasi Inventarisasi
-                                    Barang (SIIBA)
-                                    Prodi
-                                    D3
-                                    SI </a></h4>
-                            <button class="btn align-self-start"><i class="bi bi-bookmarks"></i></button>
+                            <h4 class="pt-serif">{{ $dokumen->judul }}</h4>
+                            @if (auth()->check())
+                                <button class="btn align-self-start"><i class="bi bi-bookmarks"></i></button>
+                            @endif
+
                         </div>
                     </div>
                     <div class="row">
@@ -51,33 +50,32 @@
                             <div class="tab-pane fade active show" id="home" role="tabpanel"
                                 aria-labelledby="home-tab">
                                 <p class="my-2 text-justify">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullaut nullaneque. Ut
-                                    hendrerit nulla a euismod pretium. Fusce venenatis sagittis ex efficitur suscipit. In
-                                    tempor mattis fringilla. Sed idtincidunt orci, et volutpat ligula. Aliquam sollicitudin
-                                    sagittis ex, a rhoncus nisl feugiat quis. Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Nunc ultricies ligula a tempor vulputate. Suspendisse pretium mollis
-                                    ultrices.</p>
-                                <h6>Kata Kunci/Keyword : Laravel, BPMN</h6>
+                                    {{ $dokumen->abstrak }}</p>
+                                <h6>Kata Kunci/Keyword : {{ $dokumen->keyword }}</h6>
 
                             </div>
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <p class="mb-1">Laporan Siiba.pdf</p>
-                                            <small>Download</small>
-                                        </div>
+                            @if (auth()->check())
+                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <p class="mb-1">{{ $dokumen->file }}</p>
+                                                <small>Download</small>
+                                            </div>
 
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <p class="mb-1">DPL Siiba.pdf</p>
-                                            <small>Download</small>
-                                        </div>
-
-                                    </a>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <p class="mb-1">{{ $dokumen->file }}</p>
+                                                <small>Download</small>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
+                            @else
+                                <p>Silahkan login atau Buat akun terlebih dahulu.</p>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -93,7 +91,7 @@
                             Nama
                         </div>
                         <div class="col-md-8 col-sm-12">
-                            Viki Eka Pratama
+                            {{ $dokumen->penulis }}
                         </div>
                     </div>
                     <div class="row">
@@ -120,7 +118,7 @@
                             Publish
                         </div>
                         <div class="col-md-8 col-sm-12">
-                            24 Januari 2024
+                            {{ $dokumen->tahun }}
                         </div>
                     </div>
                     <div class="row">
@@ -129,7 +127,7 @@
                             Jenis Dokumen
                         </div>
                         <div class="col-md-8 col-sm-12">
-                            Tugas Akhir
+                            {{ $dokumen->jenis->nama_jenis }}
                         </div>
                     </div>
                 </div>
