@@ -3,11 +3,7 @@
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
                 <h3>Dashboard</h3>
-                @if (!Auth::user()->role === 'user')
-                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
-                @else
-                    <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
-                @endif
+                <p class="text-subtitle text-muted">Anda login sebagai {{ ucfirst(Auth::user()->role) }}</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -86,7 +82,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Documents</h6>
+                                        <h6 class="text-muted font-semibold">Dok. Penelitian</h6>
                                         <h6 class="font-extrabold mb-0">{{ $totalDocument }}</h6>
                                     </div>
                                 </div>
@@ -95,6 +91,21 @@
                     </div>
                 @endif
             </div>
+            @if (auth()->user()->role == 'super')
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Stats Dok. Penelitian {{ date('Y') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-document" style="min-height: 315px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
         <div class="col-12 col-lg-3">
             <div class="card">
@@ -112,6 +123,79 @@
                     </div>
                 </div>
             </div>
+            @if (auth()->user()->role == 'super')
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Jenis Dokumen</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart-jenis" style="min-height: 187.7px;"></div>
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
+    @if (auth()->user()->role == 'super')
+        @push('scripts')
+            <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+            <script>
+                var options = {
+                    series: [{
+                        name: "Dok. Penelitian",
+                        data: @json($dataTotalDoc)
+                    }],
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        zoom: {
+                            enabled: true
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    xaxis: {
+                        categories: @json($dataBulan),
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: (value) => {
+                                return value;
+                            }
+                        }
+                    }
+                };
+
+                var chart = new ApexCharts(document.querySelector("#chart-document"), options);
+                chart.render();
+            </script>
+            <script>
+                var dataJenis = {!! json_encode($dataJenis) !!}
+                var seriesJenis = dataJenis.map((item) => Object.values(item)[0])
+                var labelsJenis = dataJenis.map((item) => Object.keys(item)[0])
+                var optionsJenis = {
+                    series: seriesJenis,
+                    chart: {
+                        type: "pie",
+                        width: "100%",
+                        height: "350px",
+                    },
+                    labels: labelsJenis,
+                    legend: {
+                        position: "bottom",
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: "30%",
+                            },
+                        },
+                    },
+                };
+
+                var chartJenis = new ApexCharts(document.querySelector("#chart-jenis"), optionsJenis);
+                chartJenis.render();
+            </script>
+        @endpush
+    @endif
 </x-app-layout>
