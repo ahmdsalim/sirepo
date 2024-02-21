@@ -13,11 +13,13 @@
     </div>
 
     <div class="row">
-        <div class="col-12 my-3 ">
+        <div class="col-12 my-3">
             <div class="d-flex flex-column gap-4">
-                @include('landing.searchbar')
-                <h5 class="mx-3"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
-                    {{ $keyword }}</h5>
+                <form id="filterForm" action="{{ route('landing.search') }}" method="get">
+                    <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
+                        placeholder="Judul, Author...." value="{{ session('searchKeyword') }}">
+                    <h5 class="mx-3 mb-1"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
+                        {{ $keyword }}</h5>
             </div>
         </div>
     </div>
@@ -25,42 +27,20 @@
         <div class="col-md-4 col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Cari berdasarakan Jenis</h6>
+                    <h6 class="mb-2 text-center">Cari berdasarkan Jenis</h6>
                     <hr>
-                    <div class="d-flex flex-column gap-2 ">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="filter" id="proyek1"
-                                {{ old('filter') ? 'checked' : '' }}>
-
-                            <label class="form-check-label" for="proyek1">
-                                Proyek1
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="filter" id="proyek2"
-                                {{ old('filter') ? 'checked' : '' }}>
-
-                            <label class="form-check-label" for="proyek2">
-                                Proyek2
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="filter" id="pkl"
-                                {{ old('filter') ? 'checked' : '' }}>
-
-                            <label class="form-check-label" for="pkl">
-                                PKL
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="filter" id="ta"
-                                {{ old('filter') ? 'checked' : '' }}>
-
-                            <label class="form-check-label" for="ta">
-                                Tugas Akhir
-                            </label>
-                        </div>
+                    <div class="d-flex flex-column gap-2">
+                        @foreach ($jenis as $jen)
+                            <div class="form-check">
+                                <input class="form-check-input filter-checkbox" type="checkbox" name="filter[]"
+                                    id="jenis_{{ $jen->id }}" value="{{ $jen->id }}"
+                                    @if (is_array($filters) && in_array($jen->id, $filters)) checked @endif>
+                                <label class="form-check-label"
+                                    for="jenis_{{ $jen->id }}">{{ $jen->nama_jenis }}</label>
+                            </div>
+                        @endforeach
                     </div>
+                    </form>
 
                 </div>
             </div>
@@ -68,11 +48,11 @@
         <div class="col-md-8 col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h6>Thesis</h6>
+                    <h6 class="mb-2">Hasil Pencarian</h6>
+                    <hr class="mb-0">
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column">
-
                         @forelse ($dokumen as $dok)
                             <div class="row mx-2 ">
                                 <div class="col-12">
@@ -104,3 +84,14 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.filter-checkbox').on('change', function() {
+                $('#filterForm').submit(); // Submit formulir ketika checkbox berubah
+            });
+        });
+    </script>
+@endpush

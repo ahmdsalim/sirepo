@@ -9,21 +9,11 @@
             </div>
 
             <div class="d-flex justify-content-center gap-2">
+                @foreach ($jenis as $jen)
                 <div class="card p-2 shadow-sm">
-                    <p class="m-0">Proyek 1: </p>
+                    <p class="m-0">{{ $jen->nama_jenis .': '. $jen->dokumens_count }}</p>
                 </div>
-                <div class="card p-2 shadow-sm">
-                    <p class="m-0">Proyek 2: 20000</p>
-                </div>
-                <div class="card p-2 shadow-sm">
-                    <p class="m-0">PKL: 20000</p>
-                </div>
-                <div class="card p-2 shadow-sm">
-                    <p class="m-0">Tugas Akhir: 20000</p>
-                </div>
-                <div class="card p-2 shadow-sm">
-                    <p class="m-0">E-Jurnal: 20000</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
