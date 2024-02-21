@@ -5,6 +5,7 @@ use App\Http\Controllers\JenisController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\cekRole;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,8 +27,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('pencarian', [LandingController::class, 'search'])->name('landing.search');
-Route::get('pencarian/nama', [LandingController::class, 'detail'])->name('landing.detail');
+Route::get('search', [LandingController::class, 'search'])->name('landing.search');
+Route::get('pencarian/{judul}', [LandingController::class, 'detail'])->name('landing.detail');
+// Route::get('/search',[LandingController::class, 'search'])->name('landing.search');
 
 Route::middleware('auth')->group(function () {
     Route::middleware('authtype:super')->group(function () {
@@ -50,7 +52,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
 
-        Route::get('profile', [UserController::class, 'profile'])->name('profile');
+        Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
         Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
@@ -62,7 +64,6 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/profile', [LandingController::class, 'setting'])->name('landing.setting');
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
-
-        Route::get('user/profile', [LandingController::class, 'profile'])->name('landing.profile');
+        Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
     });
 });

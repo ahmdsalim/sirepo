@@ -15,12 +15,9 @@
     <div class="row">
         <div class="col-12 my-3 ">
             <div class="d-flex flex-column gap-4">
-                <form id="">
-                    @csrf
-                    <input class="form-control py-3 px-4 shadow-sm" type="search" name="search"
-                        placeholder="Judul,Author,Proyek1,Proyek2,....">
-                </form>
-                <h5 class="mx-3"><a href="">200</a> Hasil Pencarian dengan kata kunci "Tugas Akhir"</h5>
+                @include('landing.searchbar')
+                <h5 class="mx-3"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
+                    {{ $keyword }}</h5>
             </div>
         </div>
     </div>
@@ -75,17 +72,32 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column">
-                        @for ($i = 0; $i < 3; $i++)
+
+                        @forelse ($dokumen as $dok)
                             <div class="row mx-2 ">
                                 <div class="col-12">
-                                    <h4 class="pt-serif"><a href="{{ route('landing.detail') }}">Sistem Informasi Inventarisasi Barang Prodi D3
-                                            SI</a></h4>
-                                    <p class="m-0">Viki Eka Pratama, Mubassiran St.MT, Ibnu Choldun. St</p>
-                                    <p>2024 | Tugas Akhir</p>
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <h4 class="pt-serif"><a
+                                                    href="{{ route('landing.detail', $dok->judul) }}">{{ $dok->judul }}</a>
+                                            </h4>
+                                        </div>
+                                        <div class="col-1">
+                                            @if (auth()->check())
+                                                <button class="btn align-self-start"><i
+                                                        class="bi bi-bookmarks"></i></button>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <p class="m-0">{{ $dok->penulis }}</p>
+                                    <p>{{ $dok->tahun . ' | ' . $dok->jenis->nama_jenis }}</p>
                                     <hr class="my-2">
                                 </div>
                             </div>
-                        @endfor
+                        @empty
+                            <p>Data Tidak Ditemukan</p>
+                        @endforelse
                     </div>
                 </div>
             </div>

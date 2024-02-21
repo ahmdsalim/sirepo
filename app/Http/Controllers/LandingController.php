@@ -14,11 +14,12 @@ class LandingController extends Controller
      */
     public function index()
     {
-        $jenis = Jenis::all();
-        // $data['CProyek2'] = Dokumen::where('jenis_id',1)->count();
-        // $data['CProyek1'] = Dokumen::where('jenis_id',2)->count();
-        // $data['CTA'] = Dokumen::where('jenis_id',3)->count();
-        return view('landing.landing',compact('jenis'));
+        $data['jenis'] = Jenis::all();
+        $data['dokumen']= Dokumen::with('jenis');
+        $data['CProyek1'] = Dokumen::where('jenis_id',1)->count();
+        $data['CProyek2'] = Dokumen::where('jenis_id',2)->count();
+        $data['CTA'] = Dokumen::where('jenis_id',3)->count();
+        return view('landing.landing', $data);
     }
 
     /**
@@ -69,26 +70,45 @@ class LandingController extends Controller
         //
     }
 
-    public function detail(){
-        return view('landing.detail');
-    }
 
-    public function profile(){
+    public function profile()
+    {
         $user = Auth::user();
-        return view ('landing.profile',compact('user'));
+        return view('landing.profile', compact('user'));
     }
 
-    public function setting(){
+    public function setting()
+    {
         $user = Auth::user();
-        return view ('landing.setting.profile',compact('user'));
+        return view('landing.setting.profile', compact('user'));
     }
 
-    public function keamanan(){
+    public function keamanan()
+    {
         $user = Auth::user();
-        return view ('landing.setting.keamanan',compact('user'));
+        return view('landing.setting.keamanan', compact('user'));
     }
 
-    public function search(){
-        return view('landing.result');
+    public function search(Request $request)
+    {
+        $keyword = $request->input('search');        
+        $request->session()->put('searchKeyword', $keyword);        $dokumen = Dokumen::with('jenis')
+            ->where('judul', 'like', "%$keyword%")
+            ->orWhere('penulis', 'like', "%$keyword%")
+            ->orWhereHas('jenis', function ($query) use ($keyword) {
+                $query->where('nama_jenis', 'like', "%$keyword%");
+            })
+            ->orderBy('tahun')
+            ->get();
+        // dd($dokumen);
+
+        return view('landing.result', compact('dokumen', 'keyword'));
+    }
+
+    public function detail($judul)
+    {
+        $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
+        $pebimbing = Dokumen::all();
+        return view('landing.detail',compact('dokumen'));
     }
 }
