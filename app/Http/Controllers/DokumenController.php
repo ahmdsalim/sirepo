@@ -35,12 +35,20 @@ class DokumenController extends Controller
                 return Str::limit($row->penulis, 50, '...');
             })
             ->addColumn('file', function ($row) {
-                $actionBtn = '<a href="' . Storage::url('file-dokumen/' . $row->file) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($row->file, 10, '...') . '</a>';
+                $actionBtn = '<ul style="
+                    list-style: none;
+                    padding-left: 0;
+                ">';
+                foreach ($row->file as $val) {
+                    $actionBtn .= '<li><a href="' . Storage::url('file-dokumen/' . $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
+                }
+                $actionBtn .= '</ul>';
                 return $actionBtn;
             })
             ->addColumn('action', function ($row) {
                 $actionBtn =
-                    '<a class="btn btn-primary btn-sm" href="' .
+                    '<button class="btn btn-success btn-sm" data-id="' . $row->hash_id . '" id="btnShow">Lihat</button>
+                    <a class="btn btn-primary btn-sm" href="' .
                     route('dokumens.edit', ['id' => $row->hash_id]) .
                     '">Edit</a>
                 <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' .
@@ -52,6 +60,39 @@ class DokumenController extends Controller
             })
             ->rawColumns(['file', 'action'])
             ->toJson();
+    }
+
+    public function destroyFile(Request $request, string $id)
+    {
+        try {
+            $dokumen = Dokumen::findOrFail($id);
+            if (count($dokumen->file) == 1) {
+                throw new \Exception('Required at least one file document', 422);
+            }
+
+            $indexFile = (new HashIdService())->decode($request->fileid);
+            $destination = 'public/file-dokumen/';
+            Storage::delete($destination . $dokumen->file[$indexFile]);
+            $files = collect($dokumen->file)->forget($indexFile)->values()->all();
+            $dokumen->file = json_encode($files);
+            $dokumen->save();
+
+            return response()->json(['success' => 'Berhasil menghapus data'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getDocumentById(Request $request)
+    {
+        try {
+            $id = (new HashIdService())->decode($request->id);
+            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])->findOrFail($id);
+
+            return response()->json(['success' => 'Berhasil mengambil data', 'data' => $dokumen], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -72,9 +113,14 @@ class DokumenController extends Controller
             'abstrak' => 'required|string|min:100',
             'keyword' => 'required|string|min:3',
             'penulis' => 'required|string|min:3',
+            'pembimbing' => 'required|string|min:3',
+            'penguji' => 'required|string|min:3',
             'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'jenis' => 'required|string',
-            'file' => 'required|mimes:pdf|max:10240',
+            'files' => 'required',
+            'files.*' => 'mimes:pdf|max:10240',
+            'filenames' => 'required',
+            'filenames.*' => 'string|max:50',
         ]);
 
         if ($validator->fails()) {
@@ -88,21 +134,33 @@ class DokumenController extends Controller
             $dokumen->abstrak = $validData['abstrak'];
             $dokumen->keyword = $validData['keyword'];
             $dokumen->penulis = $validData['penulis'];
+            $dokumen->pembimbing = $validData['pembimbing'];
+            $dokumen->penguji = $validData['penguji'];
             $dokumen->tahun = $validData['tahun'];
             $dokumen->jenis_id = (new HashIdService())->decode($validData['jenis']);
             $dokumen->username = auth()->user()->username;
 
-            if ($request->hasFile('file')) {
-                $destination = 'public/file-dokumen/';
-                $file = $request->file('file');
-                $file_name = 'sirepo' . time() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs($destination, $file_name);
-                $dokumen->file = $file_name;
+            $fileuploaded = [];
+            $totalUploaded = $request->totalUploaded;
+            $filenamesLength = count($request->filenames);
+            if ($totalUploaded == $filenamesLength) {
+                $filenames = $request->filenames;
+                for ($i = 0; $i < $totalUploaded; $i++) {
+                    if ($request->hasFile('files.' . $i)) {
+                        $destination = 'public/file-dokumen/';
+                        $file = $request->file('files.' . $i);
+                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->storeAs($destination, $filename);
+                        array_push($fileuploaded, $filename);
+                    }
+                }
+                $dokumen->file = json_encode($fileuploaded);
             }
 
             $dokumen->save();
 
-            return response()->json(['success' => 'Berhasil menambah data', 'data' => $dokumen], 200);
+            // return response()->json(['success' => 'Berhasil menambah data', 'data' => $dokumen], 200);
+            return response()->json(['success' => 'Berhasil menambah data'], 200);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
@@ -137,9 +195,14 @@ class DokumenController extends Controller
             'abstrak' => 'required|string|min:100',
             'keyword' => 'required|string|min:3',
             'penulis' => 'required|string|min:3',
+            'pembimbing' => 'required|string|min:3',
+            'penguji' => 'required|string|min:3',
             'tahun' => 'required|digits:4|integer|min:2000|max:' . (date('Y')),
             'jenis' => 'required|string',
-            'file' => 'nullable|mimes:pdf|max:10240',
+            'files' => 'nullable',
+            'files.*' => 'mimes:pdf|max:10240',
+            'filenames' => 'nullable',
+            'filenames.*' => 'string|max:50',
         ]);
 
         if ($validator->fails()) {
@@ -153,21 +216,30 @@ class DokumenController extends Controller
             $dokumen->abstrak = $validData['abstrak'];
             $dokumen->keyword = $validData['keyword'];
             $dokumen->penulis = $validData['penulis'];
+            $dokumen->pembimbing = $validData['pembimbing'];
+            $dokumen->penguji = $validData['penguji'];
             $dokumen->tahun = $validData['tahun'];
             $dokumen->jenis_id = (new HashIdService())->decode($validData['jenis']);
             $dokumen->username = auth()->user()->username;
 
-            if ($request->hasFile('file')) {
-                $destination = 'public/file-dokumen/';
-                $file = $request->file('file');
-                $file_name = 'sirepo' . time() . '.' . $file->getClientOriginalExtension();
-                Storage::delete($destination . $dokumen->file);
-                $file->storeAs($destination, $file_name);
-                $dokumen->file = $file_name;
+            $fileuploaded = $dokumen->file;
+            if ($request->file('files') && $request->filenames) {
+                $totalFilesUploaded = count($request->file('files'));
+                $filenamesLength = count($request->filenames);
+                if ($totalFilesUploaded == $filenamesLength) {
+                    $filenames = $request->filenames;
+                    foreach ($request->file('files') as $i => $file) {
+                        $destination = 'public/file-dokumen/';
+                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->storeAs($destination, $filename);
+                        array_push($fileuploaded, $filename);
+                    }
+
+                    $dokumen->file = json_encode($fileuploaded);
+                }
             }
 
             $dokumen->save();
-
             return to_route('dokumens.index')->with('success', 'Berhasil mengubah data');
         } catch (\Exception $e) {
             return back()->with('failed', 'Error: ' . $e->getMessage());
@@ -182,7 +254,9 @@ class DokumenController extends Controller
         try {
             $dokumen = Dokumen::findOrFail($id);
             $destination = 'public/file-dokumen/';
-            Storage::delete($destination . $dokumen->file);
+            foreach ($dokumen->file as $i => $file) {
+                Storage::delete($destination . $dokumen->file[$i]);
+            }
             $dokumen->delete();
 
             return response()->json(['success' => 'Berhasil menghapus data'], 200);

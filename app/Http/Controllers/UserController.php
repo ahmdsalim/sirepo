@@ -65,13 +65,12 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($request->username);
-            // $destination = 'public/file-verifikasi/';
-            // Storage::delete($destination . $user->verifikasi_file);
-            // $user->verifikasi_file = '';
-            // $user->terverifikasi = true;
-            // $user->save();
-            // event(new UserModerationApproved($user));
-            // Mail::to($user->email)->send(new UserModerationApprovedMail($user));
+            $destination = 'public/file-verifikasi/';
+            Storage::delete($destination . $user->verifikasi_file);
+            $user->verifikasi_file = '';
+            $user->terverifikasi = true;
+            $user->save();
+
             return response()->json(['success' => 'Berhasil mengapprove user', 'data' => ['id' => $user->hash_username]], 200);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);

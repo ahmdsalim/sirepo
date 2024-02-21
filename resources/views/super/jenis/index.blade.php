@@ -22,7 +22,8 @@
                 <form class="row" id="formJenis">
                     <div class="col-md-5 col-sm-12">
                         <div class="input-group" id="jenisGroup">
-                            <input class="form-control" type="text" name="nama_jenis" required="true" id="namajenis" placeholder="Jenis dokumen">
+                            <input class="form-control" type="text" name="nama_jenis" required="true" id="namajenis"
+                                placeholder="Jenis dokumen">
                             <button class="btn btn-primary" type="submit">Tambah</button>
                         </div>
                     </div>
@@ -32,7 +33,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title d-flex align-items-center">
-                    Data Jenis 
+                    Data Jenis
                     <button class="btn p-0 ms-1 border-0" id="refreshData">
                         <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
                     </button>
@@ -44,6 +45,7 @@
                         <thead>
                             <tr>
                                 <th>Jenis Dokumen</th>
+                                <th>Jml. Penelitian</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -54,7 +56,11 @@
         <div class="toast-container position-fixed top-0 end-0 p-3">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#198754" id="toastRect"></rect></svg>
+                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice"
+                        focusable="false">
+                        <rect width="100%" height="100%" fill="#198754" id="toastRect"></rect>
+                    </svg>
                     <strong class="me-auto" id="toastType">Success</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
@@ -66,13 +72,13 @@
     </section>
 
     @push('styles')
-        @vite(['resources/assets/compiled/css/table-datatable-jquery.css','resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
+        @vite(['resources/assets/compiled/css/table-datatable-jquery.css', 'resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
     @endpush
 
     @push('scripts')
-        <script src="{{asset('assets/extensions/jquery/jquery.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js')}}"></script>
+        <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
         <script>
             $.ajaxSetup({
                 headers: {
@@ -90,10 +96,13 @@
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    columns: [
-                        {
+                    columns: [{
                             data: 'nama_jenis',
                             name: 'nama_jenis',
+                        },
+                        {
+                            data: 'doc',
+                            name: 'doc',
                         },
                         {
                             data: 'action',
@@ -131,17 +140,19 @@
                         proccessData: false,
                         contentType: "application/json",
                         success: (response) => {
-                                namajenis.val('')
-                                refreshData(datatable)
-                                toast()
+                            namajenis.val('')
+                            refreshData(datatable)
+                            toast()
                         },
                         error: function(xhr, status, error) {
                             var errors = xhr.responseJSON.errors
                             if (errors.hasOwnProperty('nama_jenis')) {
                                 namajenis.addClass('is-invalid')
-                                $('#jenisGroup').append(`<span class="invalid-feedback" role="alert">${errors.nama_jenis[0]}</span>`)
+                                $('#jenisGroup').append(
+                                    `<span class="invalid-feedback" role="alert">${errors.nama_jenis[0]}</span>`
+                                )
                             }
-                            toast("#dc3545","Failed","Gagal menambahkan data")
+                            toast("#dc3545", "Failed", "Gagal menambahkan data")
                         }
 
                     })
@@ -159,11 +170,11 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.value) {
-                            const dataId = $(this).data('id') 
+                            const dataId = $(this).data('id')
                             const data = {
                                 id: dataId
                             }
-                            const url = "{{ route('jenis.destroy', ['id'=>':data']) }}"
+                            const url = "{{ route('jenis.destroy', ['id' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             $.ajax({
                                 url: bindUrl,
@@ -174,11 +185,11 @@
                                 contentType: "application/json",
                                 success: (response) => {
                                     refreshData(datatable)
-                                    toast(undefined,undefined,response.success)
+                                    toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
                                     const errors = `${status} : ${error}`
-                                    toast("#dc3545","Failed",errors)
+                                    toast("#dc3545", "Failed", errors)
                                 }
                             })
                         }
@@ -190,11 +201,11 @@
                     await refreshData(datatable)
                     $('#refreshData').attr('disabled', false)
                 })
-                
+
                 function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
-                    $("#toastRect").attr("fill",color)
+                    $("#toastRect").attr("fill", color)
                     $("#toastType").text(type)
-                    $("#toastMessage").text(message) 
+                    $("#toastMessage").text(message)
                     const toastContainer = $("#liveToast")
                     const toast = new bootstrap.Toast(toastContainer)
                     toast.show()
@@ -206,7 +217,6 @@
                     })
                 }
             });
-
         </script>
     @endpush
 </x-app-layout>
