@@ -14,12 +14,8 @@ class LandingController extends Controller
      */
     public function index()
     {
-        $data['jenis'] = Jenis::all();
-        $data['dokumen']= Dokumen::with('jenis');
-        $data['CProyek1'] = Dokumen::where('jenis_id',1)->count();
-        $data['CProyek2'] = Dokumen::where('jenis_id',2)->count();
-        $data['CTA'] = Dokumen::where('jenis_id',3)->count();
-        return view('landing.landing', $data);
+        $jenis = Jenis::withCount('dokumens')->get();
+        return view('landing.landing', compact('jenis'));
     }
 
     /**
@@ -70,7 +66,6 @@ class LandingController extends Controller
         //
     }
 
-
     public function profile()
     {
         $user = Auth::user();
@@ -91,24 +86,52 @@ class LandingController extends Controller
 
     public function search(Request $request)
     {
-        $keyword = $request->input('search');        
-        $request->session()->put('searchKeyword', $keyword);        $dokumen = Dokumen::with('jenis')
-            ->where('judul', 'like', "%$keyword%")
-            ->orWhere('penulis', 'like', "%$keyword%")
-            ->orWhereHas('jenis', function ($query) use ($keyword) {
-                $query->where('nama_jenis', 'like', "%$keyword%");
-            })
-            ->orderBy('tahun')
-            ->get();
-        // dd($dokumen);
+        $keyword = $request->input('search');
+        $request->session()->put('searchKeyword', $keyword);
+        $jenis = Jenis::all();
+        $filters = $request->input('filter');
 
-        return view('landing.result', compact('dokumen', 'keyword'));
+        $dokumen = Dokumen::query()->with('jenis');
+        // ->where('judul', 'like', "%$keyword%")
+        // ->orWhere('penulis', 'like', "%$keyword%")
+        // ->orWhereHas('jenis', function ($query) use ($keyword) {
+        //     $query->where('nama_jenis', 'like', "%$keyword%");
+        // });
+        // ->orderBy('tahun')
+        // ->get();
+        if ($keyword) {
+            $dokumen->where('judul', 'like', "%$keyword%")
+            ->orWhere('penulis', 'like', "%$keyword%");
+        }
+        // $query = Dokumen::query();
+        if ($filters) {
+            $dokumen->whereIn('jenis_id', $filters);
+        }
+        $dokumen = $dokumen->orderBy('tahun')->get();
+
+        return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters'));
+    }
+
+    public function filter(Request $request)
+    {
+        $keyword = $request->input('search');
+        $request->session()->put('searchKeyword', $keyword);
+        $jenis = Jenis::all();
+        $filters = $request->input('filter');
+        // Lakukan query sesuai dengan filter yang dipilih
+        $query = Dokumen::query();
+        if ($filters) {
+            $query->whereIn('jenis_id', $filters);
+        }
+        $dokumen = $query->orderBy('tahun')->get();
+
+        return view('landing.result', compact('dokumen', 'jenis', 'keyword', 'filters'));
     }
 
     public function detail($judul)
     {
         $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
         $pebimbing = Dokumen::all();
-        return view('landing.detail',compact('dokumen'));
+        return view('landing.detail', compact('dokumen'));
     }
 }

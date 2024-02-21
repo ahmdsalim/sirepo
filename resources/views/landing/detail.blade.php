@@ -27,12 +27,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-wrap justify-content-between">
                             <h4 class="pt-serif">{{ $dokumen->judul }}</h4>
                             @if (auth()->check())
                                 <button class="btn align-self-start"><i class="bi bi-bookmarks"></i></button>
                             @endif
-
                         </div>
                     </div>
                     <div class="row">
