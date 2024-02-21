@@ -17,18 +17,22 @@ class JenisController extends Controller
         return view('super.jenis.index');
     }
 
-    public function getJenis(Request $request) {
+    public function getJenis(Request $request)
+    {
         $jenis = Jenis::latest()->get();
-            return DataTables::of($jenis)
-                ->addColumn('action', function($row) {
-                    $actionBtn = '<a class="btn btn-primary btn-sm" href="'.route("jenis.edit",["id"=>$row->hash_id]).'">Edit</a>
-                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="'.$row->hash_id.'" id="btnDelete">
+        return DataTables::of($jenis)
+            ->addColumn('doc', function ($row) {
+                return $row->dokumens->count();
+            })
+            ->addColumn('action', function ($row) {
+                $actionBtn = '<a class="btn btn-primary btn-sm" href="' . route("jenis.edit", ["id" => $row->hash_id]) . '">Edit</a>
+                    <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' . $row->hash_id . '" id="btnDelete">
                         Hapus
                     </button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**
@@ -48,15 +52,15 @@ class JenisController extends Controller
             'nama_jenis' => 'required|min:1|max:150'
         ]);
 
-        if($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()],422);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         Jenis::create([
             'nama_jenis' => $request->nama_jenis
         ]);
 
-        return response()->json(['success'=>'Berhasil menambahkan data'],200);
+        return response()->json(['success' => 'Berhasil menambahkan data'], 200);
     }
 
     /**
@@ -86,7 +90,7 @@ class JenisController extends Controller
             'nama_jenis' => 'required|min:1|max:150'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -105,12 +109,12 @@ class JenisController extends Controller
      */
     public function destroy(string $id)
     {
-        try{
+        try {
             $jenis = Jenis::findOrFail($id);
             $jenis->delete();
-    
+
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
