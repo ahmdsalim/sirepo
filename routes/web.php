@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('authtype:super.admin')->group(function () {
         Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
+        Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
+        Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
 
         Route::get('profile', [UserController::class, 'profile'])->name('profile');
         Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
@@ -61,6 +63,6 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
 
-        Route::match(['get', 'post'], '/profile', [LandingController::class, 'profile'])->name('landing.profile');
+        Route::get('user/profile', [LandingController::class, 'profile'])->name('landing.profile');
     });
 });

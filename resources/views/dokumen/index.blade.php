@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="card-body" id="formContainer" style="display: none;">
-                <form class="form" id="formDokumen">
+                <form class="form" id="formDokumen" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="col-12">
@@ -38,8 +38,8 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="abstrak" class="form-label">Abstrak</label>
-                                    <textarea class="form-control" name="abstrak" id="abstrak" rows="4" placeholder="Abstrak minimal 100 karakter"
-                                        style="resize: none;" required></textarea>
+                                    <textarea class="form-control" name="abstrak" id="abstrak" rows="4" required
+                                        placeholder="Abstrak minimal 100 karakter" style="resize: none;"></textarea>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -47,24 +47,6 @@
                                     <label for="keyword" class="form-label">Keyword</label>
                                     <input type="text" id="keyword" class="form-control"
                                         placeholder="Laravel, Prototyping, BPMN.." name="keyword" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <div class="col-12">
-                                <div class="form-group mandatory">
-                                    <label for="penulis" class="form-label">Penulis</label>
-                                    <input type="text" id="penulis" class="form-control"
-                                        placeholder="Penulis, Pembimbing 1, Pembimbing 2/Penguji" name="penulis"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group mandatory">
-                                    <label for="tahun" class="form-label">Tahun</label>
-                                    <input type="number" id="tahun" class="form-control" min="2000"
-                                        max="{{ now() }}" onKeyPress="if(this.value.length==4) return false;"
-                                        placeholder="Tahun" name="tahun" required>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -78,11 +60,43 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="penulis" class="form-label">Penulis</label>
+                                    <input type="text" id="penulis" class="form-control" placeholder="Penulis"
+                                        name="penulis" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="pembimbing" class="form-label">Pembimbing</label>
+                                    <input type="text" id="pembimbing" class="form-control"
+                                        placeholder="Pembimbing 1, Pembimbing 2" name="pembimbing" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="penguji" class="form-label">Penguji</label>
+                                    <input type="text" id="penguji" class="form-control" placeholder="Penguji"
+                                        name="penguji" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mandatory">
+                                    <label for="tahun" class="form-label">Tahun</label>
+                                    <input type="number" id="tahun" class="form-control" min="2000"
+                                        max="{{ now() }}" onKeyPress="if(this.value.length==4) return false;"
+                                        placeholder="Tahun" name="tahun" required>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <div class="mb-3 mandtory">
                                     <label for="file" class="form-label">File <span class="text-danger">*</span>
                                     </label>
-                                    <input class="form-control" type="file" id="file" accept=".pdf" required>
+                                    <input class="form-control" type="file" name="files[]" id="files"
+                                        accept=".pdf" multiple required>
                                     <small><span class="text-muted small">Unggah file sampai dengan 10MB dalam format
                                             PDF.</span></small>
                                 </div>
@@ -119,6 +133,63 @@
                             </tr>
                         </thead>
                     </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade text-left" id="detailDokumen" tabindex="-1" aria-labelledby="myModalLabel1"
+            style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel1">Detail Dok. Penelitian</h5>
+                        <button type="button" class="close rounded-pill" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="small text-muted">Judul</label>
+                                <div class="mb-2 modal-data" id="dataJudul">SIBAL Sistem Informasi Ilmu Kebal</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Penulis</label>
+                                <div class="mb-2 modal-data" id="dataPenulis">Akmal Nur Sidiq</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Pembimbing</label>
+                                <div class="mb-2 modal-data" id="dataPembimbing">Dr. Muh. Ibnu Choldun R.</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Penguji</label>
+                                <div class="mb-2 modal-data" id="dataPenguji">Dr. Maniah, M.Kom</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Jenis Dok. Penelitian</label>
+                                <div class="mb-2 modal-data" id="dataJenis">Proyek 1</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Tahun</label>
+                                <div class="mb-2 modal-data" id="dataTahun">2022</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Uploader</label>
+                                <div class="mb-2 modal-data" id="dataUploader">Admin</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">File</label>
+                                <ul class="modal-data p-0" style="list-style: none;" id="dataFile">
+                                    <li><a href="">Laporan.pdf</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,7 +251,6 @@
                     columns: [{
                             data: 'judul',
                             name: 'judul',
-                            width: "20%",
                         },
                         {
                             data: 'penulis',
@@ -209,7 +279,7 @@
                             name: 'action',
                             orderable: false,
                             searchable: false,
-                            width: "15%",
+                            width: "20%",
                         }
                     ]
                 });
@@ -248,16 +318,12 @@
                                 proccessData: false,
                                 contentType: "application/json",
                                 success: (response) => {
-                                    if (response.errors) {
-                                        var errorMsg = response.errors
-                                        toast("#dc3545", "Failed", errorMsg)
-                                    } else {
-                                        refreshData(datatable)
-                                        toast(undefined, undefined, response.success)
-                                    }
+                                    refreshData(datatable)
+                                    toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
-                                    toast("#dc3545", "Failed", error)
+                                    var errors = xhr.responseJSON.errors;
+                                    toast("#dc3545", "Failed", errors)
                                 }
                             })
                         }
@@ -286,44 +352,31 @@
                 const formDokumen = document.getElementById('formDokumen')
                 formDokumen.addEventListener('submit', (event) => {
                     event.preventDefault()
-                    //Clear error message
-                    $('.invalid-feedback').remove()
-                    $('.is-invalid').removeClass('is-invalid')
-                    //Prepare input element
-                    let judul = $('#judul'),
-                        abstrak = $('#abstrak'),
-                        keyword = $('#keyword'),
-                        penulis = $('#penulis'),
-                        tahun = $('#tahun'),
-                        jenis = $('#jenis'),
-                        file = $('#file')
-                    //Data for sending to server  
-                    var formData = new FormData()
-                    formData.append('judul', judul.val())
-                    formData.append('abstrak', abstrak.val())
-                    formData.append('keyword', keyword.val())
-                    formData.append('penulis', penulis.val())
-                    formData.append('tahun', tahun.val())
-                    formData.append('jenis', jenis.val())
-                    formData.append('file', file[0].files[0])
 
+                    //Data for sending to server  
+                    var formData = new FormData($('#formDokumen')[0])
+                    let totalUploaded = $('#files')[0].files.length
+                    let fileName = JSON.parse($('#files').attr('data-filenames'))
+                    for (let i = 0; i < fileName.length; i++) {
+                        formData.append(`filenames[]`, fileName[i])
+                    }
+                    formData.append('totalUploaded', totalUploaded)
                     $.ajax({
                         url: "{{ route('dokumens.store') }}",
                         type: "POST",
                         data: formData,
+                        contentType: false,
                         cache: false,
                         processData: false,
-                        contentType: false,
+                        beforeSend: () => {
+                            //Clear error message
+                            $('.invalid-feedback').remove()
+                            $('.is-invalid').removeClass('is-invalid')
+                        },
                         success: (response) => {
                             if (response.success) {
-                                //Clear input value
-                                judul.val('')
-                                abstrak.val('')
-                                keyword.val('')
-                                penulis.val('')
-                                tahun.val('')
-                                jenis.val('')
-                                file.val('')
+                                $('#files').removeAttr('data-filenames')
+                                $('#formDokumen')[0].reset()
 
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)
@@ -331,44 +384,88 @@
                         },
                         error: function(xhr, status, error) {
                             var errors = xhr.responseJSON.errors;
-
-                            if (errors.hasOwnProperty('judul')) {
-                                judul.addClass('is-invalid')
-                                judul.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.judul[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('abstrak')) {
-                                abstrak.addClass('is-invalid')
-                                abstrak.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.abstrak[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('keyword')) {
-                                keyword.addClass('is-invalid')
-                                keyword.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.keyword[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('penulis')) {
-                                penulis.addClass('is-invalid')
-                                penulis.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.penulis[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('jenis')) {
-                                jenis.addClass('is-invalid')
-                                jenis.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.jenis[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('file')) {
-                                file.addClass('is-invalid')
-                                file.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.file[0]}</span>`
-                                )
-                            }
+                            $.each(errors, function(key, value) {
+                                if (key.includes('files') || key.includes('filenames')) {
+                                    key = 'files'
+                                }
+                                $('#' + key).addClass('is-invalid').after(
+                                    '<span class="invalid-feedback">' + value[0] +
+                                    '</span>');
+                            });
                             toast("#dc3545", "Failed", "Gagal menambahkan dokumen")
+                        }
+
+                    })
+                })
+
+                $('#files').on('change', function(e) {
+                    var files = e.target.files
+                    var filenames = []
+
+                    for (var i = 0; i < files.length; i++) {
+                        // Meminta pengguna memberikan nama untuk setiap file yang dipilih
+                        var name = prompt('Masukkan nama untuk file ' + files[i].name + ':')
+                        if (name === null) {
+                            // Jika pengguna membatalkan input, hentikan proses
+                            $('#files').val('')
+                            return
+                        }
+                        filenames.push(name)
+                    }
+
+                    // Simpan nama-nama file yang diberikan dalam atribut data
+                    this.setAttribute('data-filenames', JSON.stringify(filenames))
+
+                    if ($(this)[0].files.length === 0) {
+                        $(this).removeAttr('data-filenames')
+                    }
+                })
+
+                $('#datatable').on('click', '#btnShow', function() {
+                    const dataId = $('#btnShow').data('id')
+                    formData = new FormData()
+                    formData.append('id', dataId)
+                    $.ajax({
+                        url: "{{ route('dokumens.getDocumentById') }}",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        beforeSend: () => {
+                            //Clear data
+                            $('.modal-data').empty()
+                            $(this).attr('disabled', true)
+                            $(this).html(
+                                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                            )
+                        },
+                        success: (response) => {
+                            $(this).removeAttr('disabled')
+                            $(this).text('Lihat')
+                            var myModal = new bootstrap.Modal($('#detailDokumen'), {})
+                            $('#dataJudul').text(response.data.judul)
+                            $('#dataPenulis').text(response.data.penulis)
+                            $('#dataPembimbing').text(response.data.pembimbing)
+                            $('#dataPenguji').text(response.data.penguji)
+                            $('#dataJenis').text(response.data.jenis.nama_jenis)
+                            $('#dataTahun').text(response.data.tahun)
+                            $('#dataUploader').text(response.data.user.nama)
+                            $.each(response.data.file, (key, val) => {
+                                var elmLi = $('<li>')
+                                let url = "{{ Storage::url('file-dokumen/:data') }}"
+                                let bindUrl = url.replace(':data', val)
+                                var elmA = $('<a>').attr('href', bindUrl).attr('target',
+                                    '_blank').text(val)
+
+                                elmLi.append(elmA)
+                                $('#dataFile').append(elmLi)
+                            })
+                            myModal.show()
+                        },
+                        error: function(xhr, status, error) {
+                            var errors = xhr.responseJSON.errors;
+                            toast("#dc3545", "Failed", errors)
                         }
 
                     })
