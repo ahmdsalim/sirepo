@@ -48,14 +48,11 @@
                 <div class="header-top py-2">
                     <div class="container flex-wrap">
                         <div class="d-flex gap-3 ">
-                            <a href="#" class="menu-link">
-                                <span><i class="fa fa-circle-question"></i> FAQ</span>
-                            </a>
                             <a href="https://ruangbaca.me" class="menu-link" target="_blank">
                                 <span>Perpustakaan </span>
                             </a>
-                            <a href="https://siapmhs.ulbi.ac.id" class="menu-link" target="_blank">
-                                <span>SIAP Mahasiswa </span>
+                            <a href="https://ulbi.siakadcloud.com" class="menu-link" target="_blank">
+                                <span>SIAKAD </span>
                             </a>
                             <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
                                 <span>D3 MI </span>
@@ -164,14 +161,14 @@
                     <div class="container">
                         <div class="d-flex justify-content-between ">
                             <div class="">
-                                <h4 class="m-0"><a href="{{ url('/') }}" class="text-white">Repository
+                                <h4 class="m-0"><a href="{{ route('landing') }}" class="text-white">Repository
                                         MI</a>
                                 </h4>
                             </div>
                             <ul>
                                 <li
                                     class="menu-item {{ str_contains(Route::current()->getName(), '') ? 'active' : '' }}">
-                                    <a href="{{ url('/') }}" class="menu-link">
+                                    <a href="{{ route('landing') }}" class="menu-link">
                                         <span>Home</span>
                                     </a>
                                 </li>

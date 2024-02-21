@@ -20,18 +20,19 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('landing.landing');
-})->name('landing');
+Route::get('/',[LandingController::class, 'index'])->name('landing');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('search', [LandingController::class, 'search'])->name('landing.search');
+Route::post('search/filter', [LandingController::class, 'filter'])->name('landing.filter');
 Route::get('pencarian/{judul}', [LandingController::class, 'detail'])->name('landing.detail');
-// Route::get('/search',[LandingController::class, 'search'])->name('landing.search');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
+
     Route::middleware('authtype:super')->group(function () {
         Route::resource('jenis', JenisController::class)->parameter('jenis', 'id');
         Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
@@ -51,10 +52,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
 
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
-        Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
-        Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
     });
 
     Route::middleware('authtype:user')->group(function () {

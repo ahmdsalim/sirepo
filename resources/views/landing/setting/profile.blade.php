@@ -35,7 +35,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body" id="toastMessage">
-                Berhasil mengubah data.
+                Berhasil mengubah data profile.
             </div>
         </div>
     </div>
@@ -50,8 +50,8 @@
             }
         });
         $(document).ready(function() {
-            const formProfile = document.getElementById('formProfile')
-            formProfile.addEventListener("submit", (event) => {
+            // const formProfile = document.getElementById('formProfile')
+            $('#formProfile').on("submit", (event) => {
                 event.preventDefault()
                 //Clear error message
                 $('.invalid-feedback').remove()
