@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>SIREPO - {{ $title }}</title>
+    <title>{{ $title }} | SIREPO</title>
     <link rel="shortcut icon" href="{{ asset('./assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
 
     @include('layouts.partials.styles')
@@ -29,7 +29,7 @@
 
                 {{ $slot }}
             </div>
-            
+
             @include('layouts.partials.footer')
         </div>
     </div>
