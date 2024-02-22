@@ -39,9 +39,19 @@ class DokumenController extends Controller
                 $actionBtn = '<ul style="
                     list-style: none;
                     padding-left: 0;
+                    margin: auto 0;
                 ">';
-                foreach ($row->file as $val) {
-                    $actionBtn .= '<li><a href="' . route('file.get', $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
+                $rowLength = count($row->file);
+                if ($rowLength > 0) {
+                    if ($rowLength > 2) {
+                        $actionBtn .= '<li><span class="badge text-bg-secondary">' . $rowLength . ' File</span></li>';
+                    } else {
+                        foreach ($row->file as $val) {
+                            $actionBtn .= '<li><a href="' . route('file.get', $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
+                        }
+                    }
+                } else {
+                    $actionBtn .= '<li>Tidak ada file</li>';
                 }
                 $actionBtn .= '</ul>';
                 return $actionBtn;
