@@ -112,22 +112,6 @@ class LandingController extends Controller
         return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters'));
     }
 
-    public function filter(Request $request)
-    {
-        $keyword = $request->input('search');
-        $request->session()->put('searchKeyword', $keyword);
-        $jenis = Jenis::all();
-        $filters = $request->input('filter');
-        // Lakukan query sesuai dengan filter yang dipilih
-        $query = Dokumen::query();
-        if ($filters) {
-            $query->whereIn('jenis_id', $filters);
-        }
-        $dokumen = $query->orderBy('tahun')->get();
-
-        return view('landing.result', compact('dokumen', 'jenis', 'keyword', 'filters'));
-    }
-
     public function detail($judul)
     {
         $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
