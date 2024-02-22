@@ -10,6 +10,7 @@ use App\Services\HashIdService;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DokumenController extends Controller
 {
@@ -40,7 +41,7 @@ class DokumenController extends Controller
                     padding-left: 0;
                 ">';
                 foreach ($row->file as $val) {
-                    $actionBtn .= '<li><a href="' . Storage::url('file-dokumen/' . $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
+                    $actionBtn .= '<li><a href="' . route('file.get', $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
                 }
                 $actionBtn .= '</ul>';
                 return $actionBtn;
@@ -71,7 +72,7 @@ class DokumenController extends Controller
             }
 
             $indexFile = (new HashIdService())->decode($request->fileid);
-            $destination = 'public/file-dokumen/';
+            $destination = 'file-penelitian/';
             Storage::delete($destination . $dokumen->file[$indexFile]);
             $files = collect($dokumen->file)->forget($indexFile)->values()->all();
             $dokumen->file = json_encode($files);
@@ -93,6 +94,20 @@ class DokumenController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
+    }
+
+    public function getFile(string $filename)
+    {
+        $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
+        if ($isFileExist) {
+            // Retrieve the file from storage
+            $file = Storage::disk('local')->get('file-penelitian/' . $filename);
+
+            // Return the file as response
+            return response($file, 200)->header('Content-Type', 'application/pdf');
+        }
+        // Throw a 404 Not Found exception
+        throw new NotFoundHttpException('File not found.');
     }
 
     /**
@@ -147,7 +162,7 @@ class DokumenController extends Controller
                 $filenames = $request->filenames;
                 for ($i = 0; $i < $totalUploaded; $i++) {
                     if ($request->hasFile('files.' . $i)) {
-                        $destination = 'public/file-dokumen/';
+                        $destination = 'file-penelitian';
                         $file = $request->file('files.' . $i);
                         $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
@@ -229,7 +244,7 @@ class DokumenController extends Controller
                 if ($totalFilesUploaded == $filenamesLength) {
                     $filenames = $request->filenames;
                     foreach ($request->file('files') as $i => $file) {
-                        $destination = 'public/file-dokumen/';
+                        $destination = 'file-penelitian';
                         $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
                         array_push($fileuploaded, $filename);
@@ -253,7 +268,7 @@ class DokumenController extends Controller
     {
         try {
             $dokumen = Dokumen::findOrFail($id);
-            $destination = 'public/file-dokumen/';
+            $destination = 'file-penelitian/';
             foreach ($dokumen->file as $i => $file) {
                 Storage::delete($destination . $dokumen->file[$i]);
             }
