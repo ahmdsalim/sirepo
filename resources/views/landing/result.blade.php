@@ -64,8 +64,19 @@
                                         </div>
                                         <div class="col-1">
                                             @if (auth()->check())
-                                                <button class="btn align-self-start"><i
-                                                        class="bi bi-bookmarks"></i></button>
+                                                <button id="btnCollection" type="button" class="btn btn-lg "
+                                                    data-id="{{ Crypt::encryptString($dok->id) }}"
+                                                    data-collected="{{ $dok->collectedBy(auth()->user()) ? 'true' : 'false' }}"
+                                                    data-baseurl="{{ url('') }}">
+                                                    <svg id="collectionIcon" xmlns="http://www.w3.org/2000/svg"
+                                                        width="32" height="32"
+                                                        fill="{{ $dok->collectedBy(auth()->user()) ? '#face15' : 'none' }}"
+                                                        viewBox="0 0 24 24" class="icon" style="color: #face15;">
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="2"
+                                                            d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z"></path>
+                                                    </svg>
+                                                </button>
                                             @endif
                                         </div>
                                     </div>
@@ -93,5 +104,37 @@
                 $('#filterForm').submit(); // Submit formulir ketika checkbox berubah
             });
         });
+    </script>
+
+    <script type="text/javascript">
+        const btnCollection = document.getElementById('btnCollection')
+        const collectionIcon = document.getElementById('collectionIcon')
+
+        btnCollection.addEventListener('click', async () => {
+            const bookId = btnCollection.getAttribute('data-id')
+            const collected = btnCollection.getAttribute('data-collected') === 'true';
+            const baseUrl = btnCollection.getAttribute('data-baseurl')
+            const url = collected ? `${baseUrl}/api/collection/uncollect` : `${baseUrl}/api/collection/collect`
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
+            try {
+                const response = await axios.post(url, {
+                    id: bookId
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    }
+                })
+
+                const data = response.data
+
+                if (data.message === 'collected' || data.message === 'uncollected') {
+                    collectionIcon.style.fill = collected ? 'none' : '#face15'
+                    btnCollection.setAttribute('data-collected', collected ? 'false' : 'true')
+                }
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        })
     </script>
 @endpush

@@ -30,7 +30,18 @@
                         <div class="d-flex flex-wrap justify-content-between">
                             <h4 class="pt-serif">{{ $dokumen->judul }}</h4>
                             @if (auth()->check())
-                                <button class="btn align-self-start"><i class="bi bi-bookmarks"></i></button>
+                                <button id="btnCollection" type="button" class="btn btn-md "
+                                    data-id="{{ Crypt::encryptString($dokumen->id) }}"
+                                    data-collected="{{ $dokumen->collectedBy(auth()->user()) ? 'true' : 'false' }}"
+                                    data-baseurl="{{ url('') }}">
+                                    <svg id="collectionIcon" xmlns="http://www.w3.org/2000/svg" width="32"
+                                        height="32"
+                                        fill="{{ $dokumen->collectedBy(auth()->user()) ? '#face15' : 'none' }}"
+                                        viewBox="0 0 24 24" class="icon" style="color: #face15;">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z"></path>
+                                    </svg>
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -58,17 +69,17 @@
                                     <div class="list-group">
                                         <a href="#" class="list-group-item list-group-item-action">
                                             <div class="d-flex w-100 justify-content-between">
-                                                <p class="mb-1">{{ $dokumen->file }}</p>
+                                                <p class="mb-1" id="dataUploader"></p>
                                                 <small>Download</small>
                                             </div>
 
                                         </a>
-                                        <a href="#" class="list-group-item list-group-item-action">
+                                        {{-- <a href="#" class="list-group-item list-group-item-action">
                                             <div class="d-flex w-100 justify-content-between">
                                                 <p class="mb-1">{{ $dokumen->file }}</p>
                                                 <small>Download</small>
                                             </div>
-                                        </a>
+                                        </a> --}}
                                     </div>
                                 </div>
                             @else
@@ -82,15 +93,15 @@
         </div>
         <div class="col-md-4 col-sm-12 ">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" id="dokInfo">
                     <h5>Informasi Dokumen</h5>
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
                             Nama
                         </div>
-                        <div class="col-md-8 col-sm-12">
-                            {{ $dokumen->penulis }}
+                        <div class="col-md-8 col-sm-12" id="dataPenulis">
+
                         </div>
                     </div>
                     <div class="row">
@@ -98,7 +109,7 @@
                         <div class="col-md-4 col-sm-12">
                             Pebimbing
                         </div>
-                        <div class="col-md-8 col-sm-12">
+                        <div class="col-md-8 col-sm-12" id="dataPebimbing">
                             Mubassiran St.MT
                         </div>
                     </div>
@@ -107,7 +118,7 @@
                         <div class="col-md-4 col-sm-12">
                             Penguji
                         </div>
-                        <div class="col-md-8 col-sm-12">
+                        <div class="col-md-8 col-sm-12" id="dataPenguji">
                             Ibnu Choldun. St
                         </div>
                     </div>
@@ -116,8 +127,8 @@
                         <div class="col-md-4 col-sm-12">
                             Publish
                         </div>
-                        <div class="col-md-8 col-sm-12">
-                            {{ $dokumen->tahun }}
+                        <div class="col-md-8 col-sm-12" id="dataTahun">
+
                         </div>
                     </div>
                     <div class="row">
@@ -125,8 +136,8 @@
                         <div class="col-md-4 col-sm-12">
                             Jenis Dokumen
                         </div>
-                        <div class="col-md-8 col-sm-12">
-                            {{ $dokumen->jenis->nama_jenis }}
+                        <div class="col-md-8 col-sm-12" id="dataJenis">
+
                         </div>
                     </div>
                 </div>
@@ -134,3 +145,37 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script type="text/javascript">
+        const btnCollection = document.getElementById('btnCollection')
+        const collectionIcon = document.getElementById('collectionIcon')
+
+        btnCollection.addEventListener('click', async () => {
+            const bookId = btnCollection.getAttribute('data-id')
+            const collected = btnCollection.getAttribute('data-collected') === 'true';
+            const baseUrl = btnCollection.getAttribute('data-baseurl')
+            const url = collected ? `${baseUrl}/api/collection/uncollect` : `${baseUrl}/api/collection/collect`
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
+            try {
+                const response = await axios.post(url, {
+                    id: bookId
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    }
+                })
+
+                const data = response.data
+
+                if (data.message === 'collected' || data.message === 'uncollected') {
+                    collectionIcon.style.fill = collected ? 'none' : '#face15'
+                    btnCollection.setAttribute('data-collected', collected ? 'false' : 'true')
+                }
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        })
+    </script>
+@endpush

@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\cekRole;
+use App\Models\Bookmark;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +55,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
 
+        
+
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
@@ -63,6 +67,12 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/profile', [LandingController::class, 'setting'])->name('landing.setting');
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
+
+        Route::group(['prefix' => 'api'], function () {
+            Route::post('collection/collect', [KoleksiController::class, 'collect'])->name('api.collection.collect');
+            Route::post('collection/uncollect', [KoleksiController::class, 'uncollect'])->name('api.collection.uncollect');
+        });
+
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
     });
 });
