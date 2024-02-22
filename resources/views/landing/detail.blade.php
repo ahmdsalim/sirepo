@@ -30,12 +30,11 @@
                         <div class="d-flex flex-wrap justify-content-between">
                             <h4 class="pt-serif">{{ $dokumen->judul }}</h4>
                             @if (auth()->check())
-                                <button id="btnCollection" type="button" class="btn btn-md "
+                                <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                     data-id="{{ Crypt::encryptString($dokumen->id) }}"
                                     data-collected="{{ $dokumen->collectedBy(auth()->user()) ? 'true' : 'false' }}"
                                     data-baseurl="{{ url('') }}">
-                                    <svg id="collectionIcon" xmlns="http://www.w3.org/2000/svg" width="32"
-                                        height="32"
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                         fill="{{ $dokumen->collectedBy(auth()->user()) ? '#face15' : 'none' }}"
                                         viewBox="0 0 24 24" class="icon" style="color: #face15;">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -148,34 +147,36 @@
 
 @push('scripts')
     <script type="text/javascript">
-        const btnCollection = document.getElementById('btnCollection')
-        const collectionIcon = document.getElementById('collectionIcon')
+        async function toggleCollect(el) {
+            var btn = el
+            const collectionIcon = btn.childNodes
+            const docId = btn.getAttribute('data-id')
+            const baseUrl = btn.getAttribute('data-baseurl')
+            const collected = btn.getAttribute('data-collected') === 'true'
 
-        btnCollection.addEventListener('click', async () => {
-            const bookId = btnCollection.getAttribute('data-id')
-            const collected = btnCollection.getAttribute('data-collected') === 'true';
-            const baseUrl = btnCollection.getAttribute('data-baseurl')
-            const url = collected ? `${baseUrl}/api/collection/uncollect` : `${baseUrl}/api/collection/collect`
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            const url = collected ? `${baseUrl}/api/collection/uncollect` : `${baseUrl}/api/collection/collect`;
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             try {
                 const response = await axios.post(url, {
-                    id: bookId
+                    id: docId
                 }, {
                     headers: {
                         'X-CSRF-TOKEN': token
                     }
-                })
+                });
 
-                const data = response.data
+                const data = response.data;
 
                 if (data.message === 'collected' || data.message === 'uncollected') {
-                    collectionIcon.style.fill = collected ? 'none' : '#face15'
-                    btnCollection.setAttribute('data-collected', collected ? 'false' : 'true')
+                    collectionIcon[1].style.fill = collected ? 'none' :
+                        '#face15' // Menggunakan css() untuk mengatur fill
+                    btn.setAttribute('data-collected', collected ? 'false' :
+                        'true') // Menggunakan $(this) untuk mengakses tombol
                 }
             } catch (error) {
-                console.error('Error:', error)
+                console.error('Error:', error);
             }
-        })
+        }
     </script>
 @endpush

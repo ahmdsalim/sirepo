@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/',[LandingController::class, 'index'])->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Auth::routes();
 
@@ -55,8 +55,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
 
-        
-
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
@@ -74,5 +72,6 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
+        Route::get('koleksi', [KoleksiController::class, 'index'])->name('landing.koleksi');
     });
 });

@@ -115,7 +115,6 @@ class LandingController extends Controller
     public function detail($judul)
     {
         $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
-        $pebimbing = Dokumen::all();
         return view('landing.detail', compact('dokumen'));
     }
 }

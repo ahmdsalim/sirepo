@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dokumen;
 use App\Models\Bookmark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,8 +11,10 @@ use Illuminate\Support\Facades\Crypt;
 class KoleksiController extends Controller
 {
     public function index(){
-        $koleksi = Bookmark::with('dokumens')->where('username', auth()->user()->username)->get()->take(12);
-        return view('koleksi', ['koleksi' => $koleksi]);
+        $koleksi = Bookmark::with('dokumen')->where('username', auth()->user()->username)->get()->take(12);
+        // $dokumen = Dokumen::where('username',auth())->firstOrFail();
+        
+        return view('landing.koleksi', compact('koleksi'));
         //return view('layouts.main');
         //$koleksi = koleksi::all();
     }

@@ -127,7 +127,7 @@
                                             <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
                                                         class="icon-mid bi bi-gear me-2"></i>
                                                     Settings</a></li>
-                                            <li><a class="dropdown-item" href="#"><i
+                                            <li><a class="dropdown-item" href="{{ route('landing.koleksi') }}"><i
                                                         class="icon-mid bi bi-wallet me-2"></i>
                                                     Koleksi</a></li>
                                             <li>
