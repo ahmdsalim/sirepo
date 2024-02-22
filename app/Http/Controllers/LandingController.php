@@ -100,12 +100,16 @@ class LandingController extends Controller
         // ->orderBy('tahun')
         // ->get();
         if ($keyword) {
-            $dokumen->where('judul', 'like', "%$keyword%")
-            ->orWhere('penulis', 'like', "%$keyword%");
+            $dokumen->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('penulis', 'like', "%$keyword%");
+            });
         }
-        // $query = Dokumen::query();
+
         if ($filters) {
-            $dokumen->whereIn('jenis_id', $filters);
+            $dokumen->where(function ($query) use ($filters) {
+                $query->whereIn('jenis_id', $filters);
+            });
         }
         $dokumen = $dokumen->orderBy('tahun')->paginate(25);
 

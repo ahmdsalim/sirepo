@@ -159,33 +159,40 @@
                                 <div class="mb-2 modal-data" id="dataJudul">SIBAL Sistem Informasi Ilmu Kebal</div>
                             </div>
                             <div class="col-12">
+                                <label class="small text-muted">Abstrak</label>
+                                <p class="mb-2 modal-data" id="dataAbstrak"></p>
+                            </div>
+                            <div class="col-12">
                                 <label class="small text-muted">Penulis</label>
-                                <div class="mb-2 modal-data" id="dataPenulis">Akmal Nur Sidiq</div>
+                                <div class="mb-2 modal-data" id="dataPenulis"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">Pembimbing</label>
-                                <div class="mb-2 modal-data" id="dataPembimbing">Dr. Muh. Ibnu Choldun R.</div>
+                                <div class="mb-2 modal-data" id="dataPembimbing"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">Penguji</label>
-                                <div class="mb-2 modal-data" id="dataPenguji">Dr. Maniah, M.Kom</div>
+                                <div class="mb-2 modal-data" id="dataPenguji"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">Jenis Dok. Penelitian</label>
-                                <div class="mb-2 modal-data" id="dataJenis">Proyek 1</div>
+                                <div class="mb-2 modal-data" id="dataJenis"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">Tahun</label>
-                                <div class="mb-2 modal-data" id="dataTahun">2022</div>
+                                <div class="mb-2 modal-data" id="dataTahun"></div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Keyword</label>
+                                <div class="mb-2 modal-data" id="dataKeyword"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">Uploader</label>
-                                <div class="mb-2 modal-data" id="dataUploader">Admin</div>
+                                <div class="mb-2 modal-data" id="dataUploader"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">File</label>
                                 <ul class="modal-data p-0" style="list-style: none;" id="dataFile">
-                                    <li><a href="">Laporan.pdf</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -405,9 +412,11 @@
                     for (var i = 0; i < files.length; i++) {
                         // Meminta pengguna memberikan nama untuk setiap file yang dipilih
                         var name = prompt('Masukkan nama untuk file ' + files[i].name + ':')
-                        if (name === null) {
+
+                        if (name === '' || name === null) {
                             // Jika pengguna membatalkan input, hentikan proses
-                            $('#files').val('')
+                            $('#files').val('').removeAttr('data-filenames')
+                            alert('Nama file harus diisi')
                             return
                         }
                         filenames.push(name)
@@ -435,25 +444,26 @@
                         beforeSend: () => {
                             //Clear data
                             $('.modal-data').empty()
-                            $(this).attr('disabled', true)
-                            $(this).html(
+                            $(this).attr('disabled', true).html(
                                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
                             )
                         },
                         success: (response) => {
-                            $(this).removeAttr('disabled')
-                            $(this).text('Lihat')
+                            $(this).removeAttr('disabled').text('Lihat')
                             var myModal = new bootstrap.Modal($('#detailDokumen'), {})
                             $('#dataJudul').text(response.data.judul)
+                            $('#dataAbstrak').text(response.data.abstrak)
                             $('#dataPenulis').text(response.data.penulis)
                             $('#dataPembimbing').text(response.data.pembimbing)
                             $('#dataPenguji').text(response.data.penguji)
                             $('#dataJenis').text(response.data.jenis.nama_jenis)
                             $('#dataTahun').text(response.data.tahun)
+                            $('#dataKeyword').text(response.data.keyword)
                             $('#dataUploader').text(response.data.user.nama)
                             $.each(response.data.file, (key, val) => {
                                 var elmLi = $('<li>')
-                                let url = "{{ Storage::url('file-dokumen/:data') }}"
+                                let url =
+                                    "{{ route('file.get', ['filename' => ':data']) }}"
                                 let bindUrl = url.replace(':data', val)
                                 var elmA = $('<a>').attr('href', bindUrl).attr('target',
                                     '_blank').text(val)

@@ -74,4 +74,6 @@ Route::middleware('auth')->group(function () {
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
         Route::get('koleksi', [KoleksiController::class, 'index'])->name('landing.koleksi');
     });
+
+    Route::get('penelitian/file/{filename}', [DokumenController::class, 'getFile'])->name('file.get');
 });
