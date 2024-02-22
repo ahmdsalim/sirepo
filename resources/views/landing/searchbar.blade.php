@@ -1,7 +1,6 @@
 <form action="{{ route('landing.search') }}" method="GET" id="searchFrom">
-    @csrf
     <input class="form-control py-3 px-4 shadow-sm" type="search" id="searchInput" name="search"
-        placeholder="Judul,Author,Proyek1,Proyek2,...." value="{{ session('searchKeyword') }}">
+        placeholder="Judul,Author....." value="{{ session('searchKeyword') }}">
 </form>
 
 

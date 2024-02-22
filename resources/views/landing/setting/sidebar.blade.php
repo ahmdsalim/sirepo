@@ -29,9 +29,7 @@
             </div>
         </div>
         <div class="col-md-8">
-            <form id="setting-form">
-                @yield('setting')
-            </form>
+            @yield('setting')
         </div>
     </div>
 @endsection

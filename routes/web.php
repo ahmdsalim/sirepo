@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\cekRole;
+use App\Models\Bookmark;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -20,18 +22,19 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('landing.landing');
-})->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('search', [LandingController::class, 'search'])->name('landing.search');
+Route::post('search/filter', [LandingController::class, 'filter'])->name('landing.filter');
 Route::get('pencarian/{judul}', [LandingController::class, 'detail'])->name('landing.detail');
-// Route::get('/search',[LandingController::class, 'search'])->name('landing.search');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
+
     Route::middleware('authtype:super')->group(function () {
         Route::resource('jenis', JenisController::class)->parameter('jenis', 'id');
         Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
@@ -53,10 +56,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
 
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
-        Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
 
         Route::get('security', [UserController::class, 'security'])->name('security');
-        Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
     });
 
     Route::middleware('authtype:user')->group(function () {
@@ -64,7 +65,14 @@ Route::middleware('auth')->group(function () {
             Route::match(['get', 'post'], '/profile', [LandingController::class, 'setting'])->name('landing.setting');
             Route::match(['get', 'post'], '/keamanan', [LandingController::class, 'keamanan'])->name('landing.keamanan');
         });
+
+        Route::group(['prefix' => 'api'], function () {
+            Route::post('collection/collect', [KoleksiController::class, 'collect'])->name('api.collection.collect');
+            Route::post('collection/uncollect', [KoleksiController::class, 'uncollect'])->name('api.collection.uncollect');
+        });
+
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
+        Route::get('koleksi', [KoleksiController::class, 'index'])->name('landing.koleksi');
     });
 
     Route::get('penelitian/file/{filename}', [DokumenController::class, 'getFile'])->name('file.get');

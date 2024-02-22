@@ -53,4 +53,9 @@ class Dokumen extends Model
     {
         $query->where('username', auth()->user()->username);
     }
+
+    public function collectedBy(User $user)
+    {
+        return $this->bookmarks->contains('username', $user->username);
+    }
 }
