@@ -66,19 +66,14 @@
                             @if (auth()->check())
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                     <div class="list-group">
-                                        <a href="#" class="list-group-item list-group-item-action">
-                                            <div class="d-flex w-100 justify-content-between">
-                                                <p class="mb-1" id="dataUploader"></p>
-                                                <small>Download</small>
-                                            </div>
-
-                                        </a>
-                                        {{-- <a href="#" class="list-group-item list-group-item-action">
-                                            <div class="d-flex w-100 justify-content-between">
-                                                <p class="mb-1">{{ $dokumen->file }}</p>
-                                                <small>Download</small>
-                                            </div>
-                                        </a> --}}
+                                        @foreach ($dokumen->file as $file)
+                                            <a href="#" class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <p class="mb-1">{{ $file }}</p>
+                                                    <small>Download</small>
+                                                </div>
+                                            </a>
+                                        @endforeach
                                     </div>
                                 </div>
                             @else
@@ -97,10 +92,10 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Nama
+                            Penulis
                         </div>
                         <div class="col-md-8 col-sm-12" id="dataPenulis">
-
+                            {{ $dokumen->penulis }}
                         </div>
                     </div>
                     <div class="row">
@@ -109,7 +104,7 @@
                             Pebimbing
                         </div>
                         <div class="col-md-8 col-sm-12" id="dataPebimbing">
-                            Mubassiran St.MT
+                            {{ $dokumen->pembimbing }}
                         </div>
                     </div>
                     <div class="row">
@@ -118,7 +113,7 @@
                             Penguji
                         </div>
                         <div class="col-md-8 col-sm-12" id="dataPenguji">
-                            Ibnu Choldun. St
+                            {{ $dokumen->penguji }}
                         </div>
                     </div>
                     <div class="row">
@@ -127,7 +122,7 @@
                             Publish
                         </div>
                         <div class="col-md-8 col-sm-12" id="dataTahun">
-
+                            {{ $dokumen->tahun }}
                         </div>
                     </div>
                     <div class="row">
@@ -136,7 +131,7 @@
                             Jenis Dokumen
                         </div>
                         <div class="col-md-8 col-sm-12" id="dataJenis">
-
+                            {{ $dokumen->jenis->nama_jenis }}
                         </div>
                     </div>
                 </div>

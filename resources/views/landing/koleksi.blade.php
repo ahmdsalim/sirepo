@@ -24,8 +24,12 @@
         <div class="col-md-8 col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="mb-2">Koleksi Dokumen</h6>
-                    <hr class="mb-0">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-2">Koleksi Dokumen</h6>
+                        <h6 class="mb-2">Total: {{ count($koleksi) }}</h6>
+
+                    </div>
+                        <hr class="mb-0">
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column">

@@ -90,6 +90,10 @@
                         @endforelse
                     </div>
                 </div>
+
+            </div>
+            <div class="card">
+                {{ $dokumen->links() }}
             </div>
         </div>
     </div>

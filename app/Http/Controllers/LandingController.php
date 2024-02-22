@@ -107,7 +107,7 @@ class LandingController extends Controller
         if ($filters) {
             $dokumen->whereIn('jenis_id', $filters);
         }
-        $dokumen = $dokumen->orderBy('tahun')->get();
+        $dokumen = $dokumen->orderBy('tahun')->paginate(25);
 
         return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters'));
     }
