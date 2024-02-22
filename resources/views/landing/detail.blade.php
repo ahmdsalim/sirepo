@@ -67,7 +67,8 @@
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                     <div class="list-group">
                                         @foreach ($dokumen->file as $file)
-                                            <a href="{{ Storage::url('file-dokumen/'.$file) }}" download class="list-group-item list-group-item-action">
+                                            <a href="{{ route('file.get', $file) }}" download="{{ $file }}"
+                                                class="list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1">{{ $file }}</p>
                                                     <small>Download</small>
