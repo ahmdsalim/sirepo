@@ -63,23 +63,23 @@
                                 <h6>Kata Kunci/Keyword : {{ $dokumen->keyword }}</h6>
 
                             </div>
-                            @if (auth()->check())
-                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                    <div class="list-group">
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <div class="list-group">
+                                    @if (auth()->check())
                                         @foreach ($dokumen->file as $file)
-                                            <a href="{{ Storage::url('file-dokumen/'.$file) }}" download class="list-group-item list-group-item-action">
+                                            <a href="{{ Storage::url('file-dokumen/' . $file) }}" download
+                                                class="list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1">{{ $file }}</p>
                                                     <small>Download</small>
                                                 </div>
                                             </a>
                                         @endforeach
-                                    </div>
+                                    @else
+                                        <p>Silahkan login atau buat akun terlebih dahulu.</p>
+                                    @endif
                                 </div>
-                            @else
-                                <p>Silahkan login atau Buat akun terlebih dahulu.</p>
-                            @endif
-
+                            </div>
                         </div>
                     </div>
                 </div>
