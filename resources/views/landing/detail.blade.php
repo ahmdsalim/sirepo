@@ -67,8 +67,9 @@
                                 <div class="list-group">
                                     @if (auth()->check())
                                         @foreach ($dokumen->file as $file)
-                                            <a href="{{ route('file.get', $file) }}" download="{{ $file }}"
-                                                class="list-group-item list-group-item-action">
+                                            <a href="{{ route('file.get', $file) }}" data-file-id="{{ $file }}"
+                                                download="{{ $file }}"
+                                                class="download-link list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1">{{ $file }}</p>
                                                     <small>Download</small>
@@ -98,15 +99,34 @@
                             {{ $dokumen->penulis }}
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="dataPembimbing">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
                             Pebimbing
                         </div>
-                        <div class="col-md-8 col-sm-12" id="dataPebimbing">
+                        <div class="col-md-8 col-sm-12" >
                             {{ $dokumen->pembimbing }}
                         </div>
                     </div>
+                    <div class="row" id="dataPembimbing1">
+                        <hr class="my-2">
+                        <div class="col-md-4 col-sm-12">
+                            Pebimbing 1
+                        </div>
+                        <div class="col-md-8 col-sm-12" >
+                            {{ $pembimbing1 }}
+                        </div>
+                    </div>
+                    <div class="row "id="dataPembimbing2">
+                        <hr class="my-2">
+                        <div class="col-md-4 col-sm-12">
+                            Pebimbing 2
+                        </div>
+                        <div class="col-md-8 col-sm-12" >
+                            {{ $pembimbing2 }}
+                        </div>
+                    </div>
+
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
@@ -141,6 +161,23 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+        var jenisDokumen = "{{ $dokumen->jenis->nama_jenis }}"; // Assuming you have a variable containing the document type
+        
+        if (jenisDokumen === "Tugas Akhir") {
+            $("#dataPembimbing").hide();
+            $("#dataPembimbing1").show();
+            $("#dataPembimbing2").show();
+        } else {
+            $("#dataPembimbing").show();
+            $("#dataPembimbing1").hide();
+            $("#dataPembimbing2").hide();
+        }
+    });
+    </script>
+
     <script type="text/javascript">
         async function toggleCollect(el) {
             var btn = el
@@ -173,5 +210,47 @@
                 console.error('Error:', error);
             }
         }
+    </script>
+    <script>
+        @auth
+
+        $(document).ready(function() {
+            $('.download-link').one('click', function(e) {
+                e.preventDefault();
+                var fileId = $(this).data('file-id');
+                $.ajax({
+                    url: '{{ route('increase.downloads') }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        file_id: fileId
+                    },
+                    success: function(response) {
+                        console.log(response.message);
+                        console.log('Jumlah unduhan baru: ' + response.new_downloads);
+
+                        var downloadLinkElement = $('[data-file-id="' + fileId + '"]');
+                        var downloadStatusElement = downloadLinkElement.find('small');
+                        downloadStatusElement.text('Downloaded');
+                        downloadStatusElement.addClass('text-success');
+
+                        var url =
+                            '{{ route('file.get', $file) }}';
+                        var anchor = document.createElement('a');
+
+                        anchor.href = url;
+                        anchor.download = '{{ $file }}';
+                        document.body.appendChild(anchor);
+                        anchor.click();
+                        document.body.removeChild(anchor);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error('Error:', errorThrown);
+                    }
+                });
+            });
+        });
+        @endauth
     </script>
 @endpush

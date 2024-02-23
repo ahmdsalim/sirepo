@@ -73,7 +73,10 @@
                                 <div class="form-group mandatory">
                                     <label for="pembimbing" class="form-label">Pembimbing</label>
                                     <input type="text" id="pembimbing" class="form-control"
-                                        placeholder="Pembimbing 1, Pembimbing 2" name="pembimbing" required>
+                                        placeholder="Pembimbing" name="pembimbing" required>
+                                    <small id="small-tag" style="display: none;">Format: Pembimbing 1/Pebimbing
+                                        2</small>
+
                                 </div>
                             </div>
                             <div class="col-12">
@@ -226,6 +229,20 @@
         <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#jenis').change(function() {
+                    var selectedOption = $(this).find(':selected');
+                    var namaJenis = selectedOption.text();
+
+                    if (namaJenis === "Tugas Akhir") {
+                        $('#small-tag').show();
+                    } else {
+                        $('#small-tag').hide();
+                    }
+                });
+            });
+        </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var input = document.getElementById('tahun');

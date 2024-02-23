@@ -101,8 +101,7 @@ class LandingController extends Controller
         // ->get();
         if ($keyword) {
             $dokumen->where(function ($query) use ($keyword) {
-                $query->where('judul', 'like', "%$keyword%")
-                    ->orWhere('penulis', 'like', "%$keyword%");
+                $query->where('judul', 'like', "%$keyword%")->orWhere('penulis', 'like', "%$keyword%");
             });
         }
 
@@ -118,7 +117,15 @@ class LandingController extends Controller
 
     public function detail($judul)
     {
+        // Ambil dokumen berdasarkan judul
         $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
-        return view('landing.detail', compact('dokumen'));
+
+        $pebimbings = explode('/', $dokumen->pembimbing);
+
+        $pembimbing1 = $pebimbings[0] ?? null;
+        $pembimbing2 = $pebimbings[1] ?? null;
+
+        // Kirim data ke view
+        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2'));
     }
 }
