@@ -44,6 +44,11 @@ class Dokumen extends Model
         return $this->belongsTo(Jenis::class);
     }
 
+    public function download()
+    {
+        return $this->hasMany(Download::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'username', 'username');

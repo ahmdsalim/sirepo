@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jenis;
 use App\Models\Dokumen;
+use App\Models\Download;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\HashIdService;
@@ -28,7 +29,9 @@ class DokumenController extends Controller
     {
         $documents = Dokumen::with('jenis')->with('user');
         if (auth()->user()->role == 'admin') {
-            $documents = Dokumen::with('jenis')->with('user')->where('username', auth()->user()->username);
+            $documents = Dokumen::with('jenis')
+                ->with('user')
+                ->where('username', auth()->user()->username);
         }
 
         return DataTables::eloquent($documents)
@@ -58,7 +61,9 @@ class DokumenController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $actionBtn =
-                    '<button class="btn btn-success btn-sm" data-id="' . $row->hash_id . '" id="btnShow">Lihat</button>
+                    '<button class="btn btn-success btn-sm" data-id="' .
+                    $row->hash_id .
+                    '" id="btnShow">Lihat</button>
                     <a class="btn btn-primary btn-sm" href="' .
                     route('dokumens.edit', ['id' => $row->hash_id]) .
                     '">Edit</a>
@@ -84,7 +89,10 @@ class DokumenController extends Controller
             $indexFile = (new HashIdService())->decode($request->fileid);
             $destination = 'file-penelitian/';
             Storage::delete($destination . $dokumen->file[$indexFile]);
-            $files = collect($dokumen->file)->forget($indexFile)->values()->all();
+            $files = collect($dokumen->file)
+                ->forget($indexFile)
+                ->values()
+                ->all();
             $dokumen->file = json_encode($files);
             $dokumen->save();
 
@@ -222,7 +230,7 @@ class DokumenController extends Controller
             'penulis' => 'required|string|min:3',
             'pembimbing' => 'required|string|min:3',
             'penguji' => 'required|string|min:3',
-            'tahun' => 'required|digits:4|integer|min:2000|max:' . (date('Y')),
+            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'jenis' => 'required|string',
             'files' => 'nullable',
             'files.*' => 'mimes:pdf|max:10240',
@@ -288,5 +296,38 @@ class DokumenController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
+    }
+
+    public function increaseDownloads(Request $request)
+    {
+        $fileId = $request->file_id;
+
+        // Temukan dokumen berdasarkan file ID
+        $dokumen = Dokumen::whereJsonContains('file', $fileId)->first();
+
+        if (!$dokumen) {
+            return response()->json(['error' => 'Dokumen tidak ditemukan'], 404);
+        }
+
+        // Temukan entri unduhan terkait
+        $download = Download::where('file', $fileId)->first();
+
+        if (!$download) {
+            // Jika tidak ada entri unduhan, buat yang baru
+            $download = new Download();
+            $download->dokumen_id = $dokumen->id;
+            $download->file = $fileId;
+            $download->jumlah = 0;
+            $download->save();
+        } else {
+            // Jika ada, tingkatkan jumlah unduhan
+            $download->jumlah += 1;
+            $download->save();
+        }
+
+        return response()->json([
+            'message' => 'Jumlah unduhan berhasil ditingkatkan',
+            'new_downloads' => $download->jumlah,
+        ]);
     }
 }
