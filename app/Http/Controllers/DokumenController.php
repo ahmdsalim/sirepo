@@ -106,7 +106,7 @@ class DokumenController extends Controller
     {
         try {
             $id = (new HashIdService())->decode($request->id);
-            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])->findOrFail($id);
+            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])->withSum('downloads', 'total')->findOrFail($id);
 
             return response()->json(['success' => 'Berhasil mengambil data', 'data' => $dokumen], 200);
         } catch (\Exception $e) {

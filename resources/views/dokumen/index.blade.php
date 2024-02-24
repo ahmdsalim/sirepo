@@ -72,8 +72,8 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="pembimbing" class="form-label">Pembimbing</label>
-                                    <input type="text" id="pembimbing" class="form-control"
-                                        placeholder="Pembimbing" name="pembimbing" required>
+                                    <input type="text" id="pembimbing" class="form-control" placeholder="Pembimbing"
+                                        name="pembimbing" required>
                                     <small id="small-tag" style="display: none;">Format: Pembimbing 1/Pebimbing
                                         2</small>
 
@@ -192,6 +192,10 @@
                             <div class="col-12">
                                 <label class="small text-muted">Uploader</label>
                                 <div class="mb-2 modal-data" id="dataUploader"></div>
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-muted">Diunduh</label>
+                                <div class="mb-2 modal-data" id="dataDiunduh"></div>
                             </div>
                             <div class="col-12">
                                 <label class="small text-muted">File</label>
@@ -477,6 +481,7 @@
                             $('#dataTahun').text(response.data.tahun)
                             $('#dataKeyword').text(response.data.keyword)
                             $('#dataUploader').text(response.data.user.nama)
+                            $('#dataDiunduh').text(response.data.downloads_sum_total)
                             $.each(response.data.file, (key, val) => {
                                 var elmLi = $('<li>')
                                 let url =
