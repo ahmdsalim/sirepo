@@ -33,6 +33,24 @@
         .pt-serif {
             font-family: 'Pt Serif', serif;
         }
+
+        .main-navbar .title {
+            color: #435ebe;
+        }
+
+        @media only screen and (min-width: 1200px) {
+            #menu-right {
+                width: auto !important;
+            }
+
+            #menu-left {
+                display: flex !important;
+            }
+
+            .main-navbar .title {
+                color: #fff !important;
+            }
+        }
     </style>
 </head>
 
@@ -45,7 +63,7 @@
                 @if (!str_contains(Route::current()->getName(), 'login') || !str_contains(Route::current()->getName(), 'register'))
                     <div class="header-top py-2">
                         <div class="container flex-wrap">
-                            <div class="d-flex gap-3 ">
+                            <div class="gap-3 d-none" id="menu-left">
                                 <a href="https://ruangbaca.me" class="menu-link" target="_blank">
                                     <span>Perpustakaan </span>
                                 </a>
@@ -56,7 +74,7 @@
                                     <span>D3 MI </span>
                                 </a>
                             </div>
-                            <div class="d-flex">
+                            <div class="d-flex justify-content-between w-100" id="menu-right">
 
                                 <div class="theme-toggle d-flex gap-2  align-items-center " style="margin-right:14px">
                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -147,7 +165,7 @@
                                     @endguest
 
                                     <!-- Burger button responsive -->
-                                    <a href="#" class="burger-btn d-block d-xl-none">
+                                    <a href="#" class="burger-btn d-block d-xl-none mb-2">
                                         <i class="bi bi-justify fs-3"></i>
                                     </a>
                                 </div>
@@ -157,12 +175,9 @@
                     </div>
                     <nav class="main-navbar">
                         <div class="container">
-                            <div class="d-flex justify-content-between ">
-                                <div class="">
-                                    <h4 class="m-0"><a href="{{ route('landing') }}"
-                                            class="text-white">Repository
-                                            MI</a>
-                                    </h4>
+                            <div class="d-flex justify-content-between">
+                                <div class="my-auto">
+                                    <a href="{{ route('landing') }}" class="fs-5 fw-bold title">Repository MI</a>
                                 </div>
                                 <ul>
                                     <li
@@ -202,6 +217,7 @@
     @vite('resources/js/landing.js')
     <script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/compiled/js/app.js') }}"></script>
+    <script src="{{ asset('assets/static/js/pages/horizontal-layout.js') }}"></script>
     <script src="{{ asset('assets/static/js/components/dark.js') }}"></script>
     @stack('scripts')
 </body>
