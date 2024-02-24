@@ -22,13 +22,13 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-8 col-sm-12 ">
+    <div class="row mb-4">
+        <div class="col-md-7 col-sm-12 ">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="pt-serif">{{ $dokumen->judul }}</h4>
+                        <div class="d-flex flex-wrap justify-content-between mb-2">
+                            <h4 class="pt-serif my-auto">{{ $dokumen->judul }}</h4>
                             @if (auth()->check())
                                 <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                     data-id="{{ Crypt::encryptString($dokumen->id) }}"
@@ -67,8 +67,8 @@
                                 <div class="list-group">
                                     @if (auth()->check())
                                         @foreach ($dokumen->file as $file)
-                                            <a href="{{ route('file.get', $file) }}" data-file-id="{{ $file }}"
-                                                download="{{ $file }}"
+                                            <a href="{{ route('file.get', $file) }}?download=true"
+                                                data-file-id="{{ $file }}" download="{{ $file }}"
                                                 class="download-link list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1">{{ $file }}</p>
@@ -86,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 ">
+        <div class="col-md-5 col-sm-12 ">
             <div class="card">
                 <div class="card-body" id="dokInfo">
                     <h5>Informasi Dokumen</h5>
@@ -95,7 +95,8 @@
                         <div class="col-md-4 col-sm-12">
                             Penulis
                         </div>
-                        <div class="col-md-8 col-sm-12" id="dataPenulis">
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataPenulis">
                             {{ $dokumen->penulis }}
                         </div>
                     </div>
@@ -104,7 +105,8 @@
                         <div class="col-md-4 col-sm-12">
                             Pebimbing
                         </div>
-                        <div class="col-md-8 col-sm-12" >
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12">
                             {{ $dokumen->pembimbing }}
                         </div>
                     </div>
@@ -113,7 +115,8 @@
                         <div class="col-md-4 col-sm-12">
                             Pebimbing 1
                         </div>
-                        <div class="col-md-8 col-sm-12" >
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12">
                             {{ $pembimbing1 }}
                         </div>
                     </div>
@@ -122,7 +125,8 @@
                         <div class="col-md-4 col-sm-12">
                             Pebimbing 2
                         </div>
-                        <div class="col-md-8 col-sm-12" >
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12">
                             {{ $pembimbing2 }}
                         </div>
                     </div>
@@ -132,7 +136,8 @@
                         <div class="col-md-4 col-sm-12">
                             Penguji
                         </div>
-                        <div class="col-md-8 col-sm-12" id="dataPenguji">
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataPenguji">
                             {{ $dokumen->penguji }}
                         </div>
                     </div>
@@ -141,7 +146,8 @@
                         <div class="col-md-4 col-sm-12">
                             Publish
                         </div>
-                        <div class="col-md-8 col-sm-12" id="dataTahun">
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataTahun">
                             {{ $dokumen->tahun }}
                         </div>
                     </div>
@@ -150,8 +156,39 @@
                         <div class="col-md-4 col-sm-12">
                             Jenis Dokumen
                         </div>
-                        <div class="col-md-8 col-sm-12" id="dataJenis">
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataJenis">
                             {{ $dokumen->jenis->nama_jenis }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr class="my-2">
+                        <div class="col-md-4 col-sm-12">
+                            Diunduh
+                        </div>
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataJenis">
+                            {{ $dokumen->downloads->sum('total') }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr class="my-2">
+                        <div class="col-md-4 col-sm-12">
+                            Staf Input/Edit
+                        </div>
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataJenis">
+                            {{ $dokumen->user->nama }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr class="my-2">
+                        <div class="col-md-4 col-sm-12">
+                            Tanggal Input
+                        </div>
+                        <div class="col-md-1 d-none d-md-block">:</div>
+                        <div class="col-md-7 col-sm-12" id="dataJenis">
+                            {{ $dokumen->created_at->format('d M Y') }}
                         </div>
                     </div>
                 </div>
@@ -164,18 +201,19 @@
     <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-        var jenisDokumen = "{{ $dokumen->jenis->nama_jenis }}"; // Assuming you have a variable containing the document type
-        
-        if (jenisDokumen === "Tugas Akhir") {
-            $("#dataPembimbing").hide();
-            $("#dataPembimbing1").show();
-            $("#dataPembimbing2").show();
-        } else {
-            $("#dataPembimbing").show();
-            $("#dataPembimbing1").hide();
-            $("#dataPembimbing2").hide();
-        }
-    });
+            var jenisDokumen =
+                "{{ $dokumen->jenis->nama_jenis }}"; // Assuming you have a variable containing the document type
+
+            if (jenisDokumen === "Tugas Akhir") {
+                $("#dataPembimbing").hide();
+                $("#dataPembimbing1").show();
+                $("#dataPembimbing2").show();
+            } else {
+                $("#dataPembimbing").show();
+                $("#dataPembimbing1").hide();
+                $("#dataPembimbing2").hide();
+            }
+        });
     </script>
 
     <script type="text/javascript">
@@ -210,47 +248,5 @@
                 console.error('Error:', error);
             }
         }
-    </script>
-    <script>
-        @auth
-
-        $(document).ready(function() {
-            $('.download-link').one('click', function(e) {
-                e.preventDefault();
-                var fileId = $(this).data('file-id');
-                $.ajax({
-                    url: '{{ route('increase.downloads') }}',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        file_id: fileId
-                    },
-                    success: function(response) {
-                        console.log(response.message);
-                        console.log('Jumlah unduhan baru: ' + response.new_downloads);
-
-                        var downloadLinkElement = $('[data-file-id="' + fileId + '"]');
-                        var downloadStatusElement = downloadLinkElement.find('small');
-                        downloadStatusElement.text('Downloaded');
-                        downloadStatusElement.addClass('text-success');
-
-                        var url =
-                            '{{ route('file.get', $file) }}';
-                        var anchor = document.createElement('a');
-
-                        anchor.href = url;
-                        anchor.download = '{{ $file }}';
-                        document.body.appendChild(anchor);
-                        anchor.click();
-                        document.body.removeChild(anchor);
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.error('Error:', errorThrown);
-                    }
-                });
-            });
-        });
-        @endauth
     </script>
 @endpush

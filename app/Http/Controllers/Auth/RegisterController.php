@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -29,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -48,16 +50,15 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-{
-    return Validator::make($data, [
-        'nama' => 'required|string|min:2|max:255',
-        // 'email' => 'required|email|unique:users,email',
-        // 'username' => 'required|string|min:5|max:100|unique:users,username',
-        // 'role' => 'required|in:super,admin,user',
-        // 'verifikasi_file' => 'required|file', 
-        // 'password' => 'required|string|min:8|max:150', 
-    ]);
-}
+    {
+        return Validator::make($data, [
+            'nama' => 'required|string|min:2|max:255',
+            'email' => 'required|email|unique:users,email',
+            'username' => 'required|string|min:5|max:100|not_in:admin,super,user|unique:users,username',
+            'password' => 'required|string|min:8|max:150',
+            'ktm' => 'required|file|mimes:pdf,jpg,jpeg,png,heic|max:2048',
+        ]);
+    }
 
 
     /**
@@ -66,22 +67,41 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        $terverifikasi = false;
-
-        if (auth()->check() && auth()->user()->role !== 'user') {
-            $terverifikasi = true;
-        }
+        $file = $request->file('ktm');
+        $destination = '/public/file-verifikasi';
+        $filename = 'ktm_' . time() . '.' . $file->getClientOriginalExtension();
+        $file->storeAs($destination, $filename);
 
         return User::create([
-            'nama' => $data['nama'],
-            'username' => $data['username'],
-            'email' => $data['email'],
+            'nama' => $request->nama,
+            'username' => $request->username,
+            'email' => $request->email,
             'role' => 'user',
-            'verifikasi_file' => $data['verifikasi_file'],
-            'terverifikasi' => $terverifikasi,
-            'password' => Hash::make($data['password']),
+            'verifikasi_file' => $filename,
+            'terverifikasi' => false,
+            'password' => Hash::make($request->password),
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request)));
+
+        if ($response = $this->registered($request)) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+            ? new JsonResponse([], 201)
+            : redirect($this->redirectPath());
+    }
+
+    protected function registered(Request $request)
+    {
+        return to_route('login')->with('success', 'Berhasil mendaftar akun');
     }
 }

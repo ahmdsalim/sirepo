@@ -46,7 +46,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
         Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
         Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
-        Route::post('/send-email-approved', [UserController::class, 'sendEmailApproved'])->name('sendEmailApproved');
     });
 
     Route::middleware('authtype:super.admin')->group(function () {

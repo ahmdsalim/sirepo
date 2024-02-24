@@ -2,9 +2,11 @@
 
 namespace App\Listeners;
 
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
 use App\Events\UserModerationApproved;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendModerationApprovedNotification
 {
@@ -22,6 +24,10 @@ class SendModerationApprovedNotification
     public function handle(UserModerationApproved $event): void
     {
         $user = $event->user;
-        $user->sendModerationApprovedNotification();
+        Mail::to($user->email)->send(new ApprovedMail([
+            'nama' => $user->nama,
+            'subject' => 'Pemberitahuan Akses Pengguna Telah Disetujui'
+        ]));
+        // $user->sendModerationApprovedNotification();
     }
 }

@@ -243,7 +243,7 @@
                     for (var i = 0; i < files.length; i++) {
                         // Meminta pengguna memberikan nama untuk setiap file yang dipilih
                         var name = prompt('Masukkan nama untuk file ' + files[i].name + ':')
-                        if (name === '') {
+                        if (name === '' || name === null) {
                             // Jika pengguna membatalkan input, hentikan proses
                             $('#files').val('')
                             alert('Nama file harus diisi')

@@ -51,8 +51,12 @@ class UserController extends Controller
                 return $raw;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<button class="btn btn-success btn-sm approve-button" data-id="' . $row->username . '" id="btnApprove">Approve</button>
-                <button type="button" class="btn btn-danger text-white btn-sm reject-button" data-id="' . $row->username . '" id="btnReject">
+                $actionBtn = '<form class="d-inline-block" action="' . route('setApprovedUser') . '" method="POST">
+                <input type="hidden" name="_token" value="' . csrf_token() . '" autocomplete="off">
+                <input type="hidden" name="id" value="' . $row->hash_username . '" autocomplete="off">
+                <button type="button" class="btn btn-success btn-sm approve-button" id="btnApprove">Approve</button>
+                </form>
+                <button type="button" class="btn btn-danger text-white btn-sm reject-button" data-id="' . encryptString($row->username) . '" id="btnReject">
                     Reject
                 </button>';
                 return $actionBtn;
@@ -64,20 +68,22 @@ class UserController extends Controller
     public function setApprovedUser(Request $request)
     {
         try {
-            $user = User::findOrFail($request->username);
+            $user = User::findOrFail(decryptString($request->id));
             $destination = 'public/file-verifikasi/';
             Storage::delete($destination . $user->verifikasi_file);
             $user->verifikasi_file = '';
             $user->terverifikasi = true;
             $user->save();
-
-            return response()->json(['success' => 'Berhasil mengapprove user', 'data' => ['id' => $user->hash_username]], 200);
+            event(new UserModerationApproved($user));
+            return back()->with('success', 'Berhasil mengapprove user');
+            // return response()->json(['success' => 'Berhasil mengapprove user', 'data' => ['id' => $user->hash_username]], 200);
         } catch (\Exception $e) {
-            return response()->json(['errors' => $e->getMessage()], 500);
+            return back()->with('failed', 'Error : ' . $e->getMessage());
+            // return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
 
-    public function sendEmailApproved(Request $request)
+    private function sendEmailApproved(Request $request)
     {
         try {
             $username = decryptString($request->id);
@@ -92,7 +98,7 @@ class UserController extends Controller
     public function setRejectedUser(Request $request)
     {
         try {
-            $user = User::findOrFail($request->username);
+            $user = User::findOrFail(decryptString($request->username));
             $destination = 'public/file-verifikasi/';
             Storage::delete($destination . $user->verifikasi_file);
             $user->delete();
@@ -274,5 +280,4 @@ class UserController extends Controller
             return response()->json(['errors' => $e->getMessage()], 422);
         }
     }
-
 }

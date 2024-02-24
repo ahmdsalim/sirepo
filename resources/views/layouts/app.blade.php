@@ -42,7 +42,7 @@
     <div id="app">
         <div id="main" class="layout-horizontal position-relative">
             <header class="mb-4">
-                @if ((!str_contains(Route::current()->getName(), 'login')) || (!str_contains(Route::current()->getName(), 'register')))
+                @if (!str_contains(Route::current()->getName(), 'login') || !str_contains(Route::current()->getName(), 'register'))
                     <div class="header-top py-2">
                         <div class="container flex-wrap">
                             <div class="d-flex gap-3 ">
@@ -184,17 +184,26 @@
                 </main>
             </div>
             <footer>
-                <div class="col-12 position-absolute bottom-0 py-2 " style="background-color:#1D1D1D">
+                <div class="col-12 position-absolute bottom-0">
                     <div class="container">
-                        <p class="m-0 text-white " style="font-size:12px"> © 2024 MANAJEMEN INFORMATIKA | UNIVERSITAS
-                            LOGISTIK DAN BISNIS INTERNASIONAL. All right reserved.</p>
+                        <div class="footer clearfix mb-0 text-muted">
+                            <div class="float-start">
+                                <p>{{ date('Y') }} © Repository MI</p>
+                            </div>
+                            <div class="float-end">
+                                <p>Crafted by <a href="">Contributors</a></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
-    @include('layouts.partials.scripts')
-    @include('layouts.partials.scripts')
+    @vite('resources/js/landing.js')
+    <script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/compiled/js/app.js') }}"></script>
+    <script src="{{ asset('assets/static/js/components/dark.js') }}"></script>
+    @stack('scripts')
 </body>
 
 </html>

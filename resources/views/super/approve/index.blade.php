@@ -167,7 +167,8 @@
                     })
                 });
 
-                $('#datatable').on('click', '.approve-button', function() {
+                $('#datatable').on('click', '.approve-button', function(e) {
+                    e.preventDefault()
                     Swal.fire({
                         title: 'Yakin ingin menyetujui?',
                         text: "Data pengguna yang disetujui akan diupdate",
@@ -179,51 +180,10 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.value) {
-                            const dataId = $(this).data('id')
-                            const data = {
-                                username: dataId
-                            }
-                            $.ajax({
-                                url: "{{ route('setApprovedUser') }}",
-                                type: "POST",
-                                data: JSON.stringify(data),
-                                dataType: "JSON",
-                                proccessData: false,
-                                contentType: "application/json",
-                                success: (response) => {
-                                    refreshData(datatable)
-                                    sendEmailNotification(response.data.id)
-                                    toast(undefined, undefined, response.success)
-                                },
-                                error: function(xhr, status, error) {
-                                    const errors = `${status} : ${error}`
-                                    toast("#dc3545", "Failed", errors)
-                                }
-                            })
+                            e.target.closest('form').submit()
                         }
                     })
                 });
-
-                function sendEmailNotification(id) {
-                    const data = {
-                        id: id
-                    }
-                    $.ajax({
-                        url: "{{ route('sendEmailApproved') }}",
-                        type: "POST",
-                        data: JSON.stringify(data),
-                        dataType: "JSON",
-                        proccessData: false,
-                        contentType: "application/json",
-                        success: (response) => {
-                            toast(undefined, undefined, response.success)
-                        },
-                        error: function(xhr, status, error) {
-                            const errors = `${status} : ${error}`
-                            toast("#dc3545", "Failed", errors)
-                        }
-                    })
-                }
 
                 $('#refreshData').on('click', async () => {
                     $('#refreshData').attr('disabled', true)

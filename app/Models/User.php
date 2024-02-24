@@ -58,7 +58,7 @@ class User extends Authenticatable
 
     public function sendModerationApprovedNotification()
     {
-        $this->notify(new UserModerationApproved($this));
+        $this->notifyNow(new UserModerationApproved($this));
     }
 
     public function getHashUsernameAttribute()

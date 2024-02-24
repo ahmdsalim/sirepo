@@ -114,15 +114,37 @@ class DokumenController extends Controller
         }
     }
 
-    public function getFile(string $filename)
+    public function getFile(Request $request, string $filename)
     {
+
         $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
         if ($isFileExist) {
-            // Retrieve the file from storage
-            $file = Storage::disk('local')->get('file-penelitian/' . $filename);
+            if ($request->query('download')) {
+                // Temukan dokumen berdasarkan file name
+                $dokumen = Dokumen::whereJsonContains('file', $filename)->first();
 
-            // Return the file as response
-            return response($file, 200)->header('Content-Type', 'application/pdf');
+                $download = Download::where('dokumen_id', $dokumen->id)->whereDate('created_at', date('Y-m-d'))->first();
+
+                if (!$download) {
+                    // Jika tidak ada entri unduhan, buat yang baru
+                    $download = new Download();
+                    $download->dokumen_id = $dokumen->id;
+                    $download->total = 1;
+                    $download->save();
+                } else {
+                    // Jika ada, tingkatkan total unduhan
+                    $download->total++;
+                    $download->save();
+                }
+
+                return Storage::download('file-penelitian/' . $filename);
+            } else {
+                // Retrieve the file from storage
+                $file = Storage::disk('local')->get('file-penelitian/' . $filename);
+
+                // Return the file as response
+                return response($file, 200)->header('Content-Type', 'application/pdf');
+            }
         }
         // Throw a 404 Not Found exception
         throw new NotFoundHttpException('File not found.');
