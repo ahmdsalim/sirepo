@@ -17,7 +17,7 @@
             <div class="d-flex flex-column gap-4">
                 <form id="filterForm" action="{{ route('landing.search') }}" method="get">
                     <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
-                        placeholder="Judul, Author...." value="{{ session('searchKeyword') }}">
+                        placeholder="Judul,Penulis,Pebimbing,Penguji....." value="{{ session('searchKeyword') }}">
                     <h5 class="mx-3 mb-1"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
                         {{ $keyword }}</h5>
             </div>
@@ -27,7 +27,7 @@
         <div class="col-md-3 col-sm-12">
             <div class="card mb-2">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Cari Berdasarkan Jenis</h6>
+                    <h6 class="mb-2 text-center">Filter Berdasarkan Jenis</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($jenis as $jen)
@@ -45,7 +45,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Cari Berdasarkan Tahun</h6>
+                    <h6 class="mb-2 text-center">Filter Berdasarkan Tahun</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($tahun as $thn)
@@ -98,7 +98,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="m-0">{{ $dok->penulis }}</p>
+                                    <p class="m-0">{{ $dok->penulis .' | '. $dok->pembimbing .' | '. $dok->penguji}}</p>
                                     <p>{{ $dok->tahun . ' | ' . $dok->jenis->nama_jenis }}</p>
                                     <hr class="my-2">
                                 </div>

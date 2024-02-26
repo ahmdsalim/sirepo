@@ -7,12 +7,12 @@
         </div>
         <div class="card-body">
             <form id="formProfile">
-                <div class="form-group mandatory">
+                <div class="form-group ">
                     <label for="nama" class="form-label">Nama</label>
                     <input type="text" name="nama" id="nama" class="form-control" placeholder="Nama pengguna"
                         value="{{ $user->nama }}" required>
                 </div>
-                <div class="form-group mandatory">
+                <div class="form-group ">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-control" placeholder="Email pengguna"
                         value="{{ $user->email }}" required>

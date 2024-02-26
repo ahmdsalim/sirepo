@@ -70,8 +70,9 @@
                                 <a href="https://ulbi.siakadcloud.com" class="menu-link" target="_blank">
                                     <span>SIAKAD </span>
                                 </a>
-                                <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
-                                    <span>D3 MI </span>
+                                <a href="https://ejurnal.ulbi.ac.id/index.php/improve" class="menu-link"
+                                    target="_blank">
+                                    <span>eJurnal </span>
                                 </a>
                             </div>
                             <div class="d-flex justify-content-between w-100" id="menu-right">
@@ -138,14 +139,24 @@
                                                     <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
                                                 </li>
                                                 @if (auth()->user()->role == 'user')
-                                                    <li><a class="dropdown-item" href="{{ route('landing.profile') }}"><i
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}"
+                                                            href="{{ route('landing.profile') }}"><i
                                                                 class="icon-mid bi bi-person me-2"></i>
                                                             Profile</a></li>
-                                                    <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'setting') ? 'active' : '' }}"
+                                                            href="{{ route('landing.setting') }}"><i
                                                                 class="icon-mid bi bi-gear me-2"></i>
                                                             Settings</a></li>
-                                                    <li><a class="dropdown-item" href="{{ route('landing.koleksi') }}"><i
-                                                                class="icon-mid bi bi-wallet me-2"></i>
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'koleksi') ? 'active' : '' }}"
+                                                            href="{{ route('landing.koleksi') }}"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="18"
+                                                                height="18" fill="none" viewBox="0 0 24 24"
+                                                                class="icon" style="color: none; margin-right:6px;">
+                                                                <path stroke="currentColor" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="2"
+                                                                    d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z">
+                                                                </path>
+                                                            </svg>
                                                             Koleksi</a></li>
                                                     <li>
                                                         <hr class="dropdown-divider">

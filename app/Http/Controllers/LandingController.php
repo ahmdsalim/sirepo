@@ -92,14 +92,16 @@ class LandingController extends Controller
         $filters = $request->input('filter');
         $years = $request->input('tahun');
 
-        $tahun = Dokumen::distinct('tahun')
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun'); 
+        $tahun = Dokumen::distinct('tahun')->orderBy('tahun', 'desc')->pluck('tahun');
         $dokumen = Dokumen::query()->with('jenis');
 
         if ($keyword) {
             $dokumen->where(function ($query) use ($keyword) {
-                $query->where('judul', 'like', "%$keyword%")->orWhere('penulis', 'like', "%$keyword%");
+                $query
+                    ->where('judul', 'like', "%$keyword%")
+                    ->orWhere('penulis', 'like', "%$keyword%")
+                    ->orWhere('pembimbing', 'like', "%$keyword%")
+                    ->orWhere('penguji', 'like', "%$keyword%");
             });
         }
 
@@ -118,7 +120,7 @@ class LandingController extends Controller
 
         // dd($years);
 
-        return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters', 'years','tahun'));
+        return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters', 'years', 'tahun'));
     }
 
     public function detail($id, $slug)
