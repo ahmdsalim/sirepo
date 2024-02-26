@@ -116,7 +116,7 @@ class LandingController extends Controller
                 $query->whereIn('tahun', $years);
             });
         }
-        $dokumen = $dokumen->orderBy('tahun')->paginate(25);
+        $dokumen = $dokumen->orderBy('tahun')->paginate(5);
 
         // dd($years);
 

@@ -63,7 +63,7 @@
             </div>
 
         </div>
-        <div class="col-md-8 col-sm-12">
+        <div class="col-md-9 col-sm-12">
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-2">Hasil Pencarian</h6>
@@ -110,7 +110,7 @@
                 </div>
 
             </div>
-            <div class="card">
+            <div class="col-md-12 d-flex justify-content-center ">
                 {{ $dokumen->links() }}
             </div>
         </div>
