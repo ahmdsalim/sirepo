@@ -133,7 +133,7 @@ class DokumenController extends Controller
                     $download->save();
                 } else {
                     // Jika ada, tingkatkan total unduhan
-                    $download->total++;
+                    $download->total = $download->total + 1;
                     $download->save();
                 }
 
