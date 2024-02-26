@@ -23,20 +23,37 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4 col-sm-12">
-            <div class="card">
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-12">
+            <div class="card mb-2">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Cari berdasarkan Jenis</h6>
+                    <h6 class="mb-2 text-center">Cari Berdasarkan Jenis</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($jenis as $jen)
                             <div class="form-check">
                                 <input class="form-check-input filter-checkbox" type="checkbox" name="filter[]"
-                                    id="jenis_{{ $jen->id }}" value="{{ $jen->id }}"
+                                    id="{{ $jen->id }}" value="{{ $jen->id }}"
                                     @if (is_array($filters) && in_array($jen->id, $filters)) checked @endif>
-                                <label class="form-check-label"
-                                    for="jenis_{{ $jen->id }}">{{ $jen->nama_jenis }}</label>
+                                <label class="form-check-label" for="{{ $jen->id }}">{{ $jen->nama_jenis }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 text-center">Cari Berdasarkan Tahun</h6>
+                    <hr>
+                    <div class="d-flex flex-column gap-2">
+                        @foreach ($tahun as $thn)
+                            <div class="form-check">
+                                <input class="form-check-input filter-checkbox" type="checkbox" name="tahun[]"
+                                    id="{{ $thn }}" value="{{ $thn }}"
+                                    @if (is_array($years) && in_array($thn, $years)) checked @endif>
+                                <label class="form-check-label" for="{{ $thn }}">{{ $thn }}</label>
                             </div>
                         @endforeach
                     </div>
@@ -44,6 +61,7 @@
 
                 </div>
             </div>
+
         </div>
         <div class="col-md-8 col-sm-12">
             <div class="card">
@@ -59,11 +77,11 @@
                                     <div class="row">
                                         <div class="col-11">
                                             <h4 class="pt-serif"><a
-                                                    href="{{ route('landing.detail', $dok->judul) }}">{{ $dok->judul }}</a>
+                                                    href="{{ route('landing.detail', ['id' => $dok->hash_id, 'slug' => Str::slug($dok->judul)]) }}">{{ $dok->judul }}</a>
                                             </h4>
                                         </div>
                                         <div class="col-1">
-                                            @if (auth()->check())
+                                            @if (auth()->check() && auth()->user()->role == 'user')
                                                 <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                                     data-id="{{ Crypt::encryptString($dok->id) }}"
                                                     data-collected="{{ $dok->collectedBy(auth()->user()) ? 'true' : 'false' }}"

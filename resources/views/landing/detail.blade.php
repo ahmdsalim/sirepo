@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="d-flex flex-wrap justify-content-between mb-2">
                             <h4 class="pt-serif my-auto">{{ $dokumen->judul }}</h4>
-                            @if (auth()->check())
+                            @if (auth()->check() && auth()->user()->role == 'user')
                                 <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                     data-id="{{ Crypt::encryptString($dokumen->id) }}"
                                     data-collected="{{ $dokumen->collectedBy(auth()->user()) ? 'true' : 'false' }}"

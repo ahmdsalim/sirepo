@@ -137,19 +137,21 @@
                                                 <li>
                                                     <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
                                                 </li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.profile') }}"><i
-                                                            class="icon-mid bi bi-person me-2"></i>
-                                                        Profile</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
-                                                            class="icon-mid bi bi-gear me-2"></i>
-                                                        Settings</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.koleksi') }}"><i
-                                                            class="icon-mid bi bi-wallet me-2"></i>
-                                                        Koleksi</a></li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
+                                                @if (auth()->user()->role == 'user')
+                                                    <li><a class="dropdown-item" href="{{ route('landing.profile') }}"><i
+                                                                class="icon-mid bi bi-person me-2"></i>
+                                                            Profile</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
+                                                                class="icon-mid bi bi-gear me-2"></i>
+                                                            Settings</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('landing.koleksi') }}"><i
+                                                                class="icon-mid bi bi-wallet me-2"></i>
+                                                            Koleksi</a></li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                @endif
+
                                                 <li><a class="dropdown-item" href="{{ route('logout') }}"
                                                         onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();"><i

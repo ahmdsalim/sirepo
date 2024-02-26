@@ -29,7 +29,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('search', [LandingController::class, 'search'])->name('landing.search');
 Route::post('search/filter', [LandingController::class, 'filter'])->name('landing.filter');
-Route::get('pencarian/{judul}', [LandingController::class, 'detail'])->name('landing.detail');
+Route::get('pencarian/{id}/{slug}', [LandingController::class, 'detail'])->name('landing.detail');
 
 Route::middleware('auth')->group(function () {
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');

@@ -90,15 +90,13 @@ class LandingController extends Controller
         $request->session()->put('searchKeyword', $keyword);
         $jenis = Jenis::all();
         $filters = $request->input('filter');
+        $years = $request->input('tahun');
 
+        $tahun = Dokumen::distinct('tahun')
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun'); 
         $dokumen = Dokumen::query()->with('jenis');
-        // ->where('judul', 'like', "%$keyword%")
-        // ->orWhere('penulis', 'like', "%$keyword%")
-        // ->orWhereHas('jenis', function ($query) use ($keyword) {
-        //     $query->where('nama_jenis', 'like', "%$keyword%");
-        // });
-        // ->orderBy('tahun')
-        // ->get();
+
         if ($keyword) {
             $dokumen->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")->orWhere('penulis', 'like', "%$keyword%");
@@ -110,15 +108,23 @@ class LandingController extends Controller
                 $query->whereIn('jenis_id', $filters);
             });
         }
+
+        if ($years) {
+            $dokumen->where(function ($query) use ($years) {
+                $query->whereIn('tahun', $years);
+            });
+        }
         $dokumen = $dokumen->orderBy('tahun')->paginate(25);
 
-        return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters'));
+        // dd($years);
+
+        return view('landing.result', compact('dokumen', 'keyword', 'jenis', 'filters', 'years','tahun'));
     }
 
-    public function detail($judul)
+    public function detail($id, $slug)
     {
         // Ambil dokumen berdasarkan judul
-        $dokumen = Dokumen::where('judul', $judul)->firstOrFail();
+        $dokumen = Dokumen::findOrFail($id);
 
         $pebimbings = explode('/', $dokumen->pembimbing);
 
