@@ -36,10 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 
     Route::middleware('authtype:super')->group(function () {
-        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id');
+        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id')->except(['create','show']);
         Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
 
-        Route::resource('users', UserController::class);
+        Route::resource('users', UserController::class)->except(['create','show']);
         Route::post('/get-users', [UserController::class, 'getUsers'])->name('users.getUsers');
 
         Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
