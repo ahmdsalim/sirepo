@@ -127,6 +127,7 @@ class LandingController extends Controller
     {
         // Ambil dokumen berdasarkan judul
         $dokumen = Dokumen::findOrFail($id);
+        $desk_awal = substr($dokumen->abstrak, 0, 250);
 
         $pebimbings = explode('/', $dokumen->pembimbing);
 
@@ -134,6 +135,6 @@ class LandingController extends Controller
         $pembimbing2 = $pebimbings[1] ?? null;
 
         // Kirim data ke view
-        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2'));
+        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2','desk_awal'));
     }
 }

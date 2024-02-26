@@ -59,7 +59,18 @@
                             <div class="tab-pane fade active show" id="home" role="tabpanel"
                                 aria-labelledby="home-tab">
                                 <p class="my-2 text-justify">
-                                    {{ $dokumen->abstrak }}</p>
+                                    @if (strlen($dokumen->abstrak) > 100)
+                                        <span id="shortDescription">{{ $desk_awal }}...</span>
+                                        <span id="fullDescription" style="display: none;">{{ $dokumen->abstrak }}</span>
+                                        <a href="#" id="readMoreBtn">Tampilkan</a>
+                                    @else
+                                        {{ $dokumen->abstrak }}
+                                    @endif
+
+                                    @if (strlen($dokumen->abstrak) > 100)
+                                        <a href="#" id="readLessBtn" style="display: none;">Sembunyikan</a>
+                                    @endif
+                                </p>
                                 <h6>Kata Kunci/Keyword : {{ $dokumen->keyword }}</h6>
 
                             </div>
@@ -199,6 +210,23 @@
 
 @push('scripts')
     <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script>
+        document.getElementById("readMoreBtn").addEventListener("click", function(event) {
+            event.preventDefault();
+            document.getElementById("shortDescription").style.display = "none";
+            document.getElementById("fullDescription").style.display = "inline";
+            document.getElementById("readMoreBtn").style.display = "none";
+            document.getElementById("readLessBtn").style.display = "inline";
+        });
+
+        document.getElementById("readLessBtn").addEventListener("click", function(event) {
+            event.preventDefault();
+            document.getElementById("shortDescription").style.display = "inline";
+            document.getElementById("fullDescription").style.display = "none";
+            document.getElementById("readMoreBtn").style.display = "inline";
+            document.getElementById("readLessBtn").style.display = "none";
+        });
+    </script>
     <script>
         $(document).ready(function() {
             var jenisDokumen =
