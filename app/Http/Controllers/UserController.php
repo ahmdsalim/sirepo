@@ -31,9 +31,15 @@ class UserController extends Controller
                 <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' . $row->username . '" id="btnDelete">
                     Hapus
                 </button>';
+                if ($row->role === 'super') {
+                    $actionBtn = '<span class="small text-muted fst-italic">View only</span>';
+                }
                 return $actionBtn;
             })
-            ->rawColumns(['action'])
+            ->editColumn('created_at', function ($row) {
+                return '<span class="small text-muted">' . $row->created_at->format('d-m-Y H:i') . '</span>';
+            })
+            ->rawColumns(['action', 'created_at'])
             ->make(true);
     }
 
@@ -217,7 +223,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $loggedInUserId = auth()->user()->username;
-        if ($user->username === $loggedInUserId) {
+        if ($user->username === $loggedInUserId || $user->role === 'super') {
             return abort(404);
         }
         return view('super.users.form-user', compact('user'));
@@ -271,7 +277,7 @@ class UserController extends Controller
     {
         try {
             $loggedInUserId = auth()->user()->username;
-            if ($user->username === $loggedInUserId) {
+            if ($user->username === $loggedInUserId || $user->role == 'super') {
                 throw new \Exception('User Not Found!', 404);
             }
             $user->delete();

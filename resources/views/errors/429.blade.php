@@ -1,6 +1,7 @@
 @extends('layouts.apperror')
 
 @section('title', __('Too Many Requests'))
+@section('code', '429')
 @section('message')
     <div class="col-md-8 col-12 offset-md-2">
         <div class="text-center">

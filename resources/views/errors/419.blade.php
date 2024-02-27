@@ -1,6 +1,7 @@
 @extends('layouts.apperror')
 
 @section('title', __('Page Expired'))
+@section('code', '419')
 @section('message')
     <div class="col-md-8 col-12 offset-md-2">
         <div class="text-center">

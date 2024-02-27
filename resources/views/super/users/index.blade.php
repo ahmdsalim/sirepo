@@ -8,7 +8,8 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none" href="home">Dashboard</a></li>
+                        <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none"
+                                href="home">Dashboard</a></li>
                         <li class="breadcrumb-item  active" aria-current="page"><a href="">Pengguna</a></li>
                     </ol>
                 </nav>
@@ -30,25 +31,29 @@
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="nama" class="form-label">Nama</label>
-                                <input type="text" id="nama" class="form-control" placeholder="Nama pengguna" name="nama" required>
+                                <input type="text" id="nama" class="form-control" placeholder="Nama pengguna"
+                                    name="nama" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" placeholder="Email pengguna" name="email" required>
+                                <input type="email" id="email" class="form-control" placeholder="Email pengguna"
+                                    name="email" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" id="username" class="form-control" placeholder="Username" name="username" required>
+                                <input type="text" id="username" class="form-control" placeholder="Username"
+                                    name="username" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" class="form-control" name="password" placeholder="Password" required>
+                                <input type="password" id="password" class="form-control" name="password"
+                                    placeholder="Password" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
@@ -72,11 +77,11 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title d-flex align-items-center">
-                    Data Pengguna 
+                    Data Pengguna
                     <button class="btn p-0 ms-1 border-0" id="refreshData">
                         <i class="bi bi-arrow-clockwise" style="cursor: pointer; font-size: 15px;"></i>
                     </button>
-                </h5>                
+                </h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -87,6 +92,7 @@
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Dibuat pada</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -97,7 +103,11 @@
         <div class="toast-container position-fixed top-0 end-0 p-3">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#198754" id="toastRect"></rect></svg>
+                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice"
+                        focusable="false">
+                        <rect width="100%" height="100%" fill="#198754" id="toastRect"></rect>
+                    </svg>
                     <strong class="me-auto" id="toastType">Success</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
@@ -109,13 +119,13 @@
     </section>
 
     @push('styles')
-        @vite(['resources/assets/compiled/css/table-datatable-jquery.css','resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
+        @vite(['resources/assets/compiled/css/table-datatable-jquery.css', 'resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
     @endpush
 
     @push('scripts')
-        <script src="{{asset('assets/extensions/jquery/jquery.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-        <script src="{{asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js')}}"></script>
+        <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
         <script>
             $.ajaxSetup({
                 headers: {
@@ -133,18 +143,25 @@
                     order: ['1', 'DESC'],
                     pageLength: 10,
                     searching: true,
-                    columns: [
-                        {
-                            data: 'username', name: 'username',
+                    columns: [{
+                            data: 'username',
+                            name: 'username',
                         },
                         {
-                            data: 'nama', name: 'nama',
+                            data: 'nama',
+                            name: 'nama',
                         },
                         {
-                            data: 'email', name: 'email',
+                            data: 'email',
+                            name: 'email',
                         },
                         {
-                            data: 'role', name: 'role',
+                            data: 'role',
+                            name: 'role',
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at',
                         },
                         {
                             data: 'action',
@@ -152,6 +169,9 @@
                             width: "20%",
                             orderable: false,
                         }
+                    ],
+                    order: [
+                        [0, "asc"]
                     ]
                 });
 
@@ -191,7 +211,7 @@
                         proccessData: false,
                         contentType: "application/json",
                         success: (response) => {
-                            if(response.success){
+                            if (response.success) {
                                 //Clear input value
                                 nama.val('')
                                 email.val('')
@@ -200,7 +220,7 @@
                                 role.val('')
 
                                 refreshData(datatable)
-                                toast(undefined,undefined,response.success)
+                                toast(undefined, undefined, response.success)
                             }
                         },
                         error: function(xhr, status, error) {
@@ -208,25 +228,35 @@
 
                             if (errors.hasOwnProperty('nama')) {
                                 nama.addClass('is-invalid')
-                                nama.after(`<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`)
+                                nama.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('email')) {
                                 email.addClass('is-invalid')
-                                email.after(`<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`)
+                                email.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('username')) {
                                 username.addClass('is-invalid')
-                                username.after(`<span class="invalid-feedback" role="alert">${errors.username[0]}</span>`)
+                                username.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.username[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('password')) {
                                 password.addClass('is-invalid')
-                                password.after(`<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`)
+                                password.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`
+                                )
                             }
                             if (errors.hasOwnProperty('role')) {
                                 role.addClass('is-invalid')
-                                role.after(`<span class="invalid-feedback" role="alert">${errors.role[0]}</span>`)
+                                role.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.role[0]}</span>`
+                                )
                             }
-                            toast("#dc3545","Failed","Gagal menambahkan pengguna")
+                            toast("#dc3545", "Failed", "Gagal menambahkan pengguna")
                         }
 
                     })
@@ -244,11 +274,11 @@
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.value) {
-                            const dataId = $(this).data('id') 
+                            const dataId = $(this).data('id')
                             const data = {
                                 id: dataId
                             }
-                            const url = "{{ route('users.destroy', ['user'=>':data']) }}"
+                            const url = "{{ route('users.destroy', ['user' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             $.ajax({
                                 url: bindUrl,
@@ -258,12 +288,12 @@
                                 proccessData: false,
                                 contentType: "application/json",
                                 success: (response) => {
-                                        refreshData(datatable)
-                                        toast(undefined,undefined,response.success)
+                                    refreshData(datatable)
+                                    toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
                                     const errors = `${status} : ${error}`
-                                    toast("#dc3545","Failed",errors)
+                                    toast("#dc3545", "Failed", errors)
                                 }
                             })
                         }
@@ -290,15 +320,15 @@
                 })
 
                 $('#refreshData').on('click', async () => {
-                    $('#refreshData').attr('disabled',true)
+                    $('#refreshData').attr('disabled', true)
                     await refreshData(datatable)
-                    $('#refreshData').attr('disabled',false)
+                    $('#refreshData').attr('disabled', false)
                 })
-                
+
                 function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
-                    $("#toastRect").attr("fill",color)
+                    $("#toastRect").attr("fill", color)
                     $("#toastType").text(type)
-                    $("#toastMessage").text(message) 
+                    $("#toastMessage").text(message)
                     const toastContainer = $("#liveToast")
                     const toast = new bootstrap.Toast(toastContainer)
                     toast.show()
@@ -310,7 +340,6 @@
                     })
                 }
             });
-
         </script>
     @endpush
 </x-app-layout>
