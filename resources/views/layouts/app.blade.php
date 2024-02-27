@@ -10,7 +10,7 @@
 
     <title>Repository MI</title>
 
-    <link rel="shortcut icon" href="{{ asset('./assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('./assets/compiled/ico/favicon.ico') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
