@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8 col-sm-12">
+        <div class="col-md-12 col-sm-12 mb-4">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -39,7 +39,7 @@
                                     <div class="row">
                                         <div class="col-11">
                                             <h4 class="pt-serif"><a
-                                                    href="{{ route('landing.detail', $kol->dokumen->judul) }}">{{ $kol->dokumen->judul }}</a>
+                                                    href="{{ route('landing.detail', ['id'=>$kol->dokumen->hash_id, 'slug'=>Str::slug($kol->dokumen->judul)]) }}">{{ $kol->dokumen->judul }}</a>
                                             </h4>
                                         </div>
                                         <div class="col-1">
@@ -60,7 +60,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="m-0">{{ $kol->dokumen->penulis }}</p>
+                                    <p class="m-0">{{ $kol->dokumen->penulis .' | '. $kol->dokumen->pembimbing .' | '. $kol->dokumen->penguji}}</p>
                                     <p>{{ $kol->dokumen->tahun . ' | ' . $kol->dokumen->jenis->nama_jenis }}</p>
                                     <hr class="my-2">
                                 </div>

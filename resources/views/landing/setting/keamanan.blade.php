@@ -7,17 +7,17 @@
         </div>
         <div class="card-body">
             <form id="formSecurity">
-                <div class="form-group mandatory my-2">
+                <div class="form-group  my-2">
                     <label for="current_password" class="form-label">Current Password</label>
                     <input type="password" name="current_password" id="current_password" class="form-control"
                         autocomplete="current_password" placeholder="Password saat ini">
                 </div>
-                <div class="form-group mandatory my-2">
+                <div class="form-group  my-2">
                     <label for="password" class="form-label">New Password</label>
                     <input type="password" name="password" id="password" class="form-control" autocomplete="password"
                         placeholder="Password baru">
                 </div>
-                <div class="form-group mandatory my-2">
+                <div class="form-group  my-2">
                     <label for="password_confirmation" class="form-label">Confirm Password</label>
                     <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="password"
                         class="form-control" placeholder="Konfirmasi password">

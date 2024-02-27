@@ -70,8 +70,9 @@
                                 <a href="https://ulbi.siakadcloud.com" class="menu-link" target="_blank">
                                     <span>SIAKAD </span>
                                 </a>
-                                <a href="https://d3mi.ulbi.ac.id" class="menu-link" target="_blank">
-                                    <span>D3 MI </span>
+                                <a href="https://ejurnal.ulbi.ac.id/index.php/improve" class="menu-link"
+                                    target="_blank">
+                                    <span>eJurnal </span>
                                 </a>
                             </div>
                             <div class="d-flex justify-content-between w-100" id="menu-right">
@@ -125,9 +126,6 @@
                                             <a href="#" id="topbarUserDropdown"
                                                 class="user-dropdown d-flex align-items-center dropend dropdown-toggle "
                                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                                <div class="avatar">
-                                                    <img src="{{ asset('./assets/compiled/jpg/1.jpg') }}" alt="Avatar">
-                                                </div>
                                                 <div class="text">
                                                     <h6 class="user-dropdown-name">{{ Auth::user()->nama }}</h6>
                                                 </div>
@@ -137,19 +135,31 @@
                                                 <li>
                                                     <h6 class="dropdown-header">Halo, {{ Auth::user()->nama }}!</h6>
                                                 </li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.profile') }}"><i
-                                                            class="icon-mid bi bi-person me-2"></i>
-                                                        Profile</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.setting') }}"><i
-                                                            class="icon-mid bi bi-gear me-2"></i>
-                                                        Settings</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('landing.koleksi') }}"><i
-                                                            class="icon-mid bi bi-wallet me-2"></i>
-                                                        Koleksi</a></li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li> --}}
+                                                @if (auth()->user()->role == 'user')
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'profile') ? 'active' : '' }}"
+                                                            href="{{ route('landing.profile') }}"><i
+                                                                class="icon-mid bi bi-person me-2"></i>
+                                                            Profile</a></li>
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'setting') ? 'active' : '' }}"
+                                                            href="{{ route('landing.setting') }}"><i
+                                                                class="icon-mid bi bi-gear me-2"></i>
+                                                            Settings</a></li>
+                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'koleksi') ? 'active' : '' }}"
+                                                            href="{{ route('landing.koleksi') }}"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="18"
+                                                                height="18" fill="none" viewBox="0 0 24 24"
+                                                                class="icon" style="color: none; margin-right:6px;">
+                                                                <path stroke="currentColor" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="2"
+                                                                    d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z">
+                                                                </path>
+                                                            </svg>
+                                                            Koleksi</a></li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                @endif
+
                                                 <li><a class="dropdown-item" href="{{ route('logout') }}"
                                                         onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();"><i

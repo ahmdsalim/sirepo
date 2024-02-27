@@ -17,26 +17,43 @@
             <div class="d-flex flex-column gap-4">
                 <form id="filterForm" action="{{ route('landing.search') }}" method="get">
                     <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
-                        placeholder="Judul, Author...." value="{{ session('searchKeyword') }}">
+                        placeholder="Judul,Penulis,Pebimbing,Penguji....." value="{{ session('searchKeyword') }}">
                     <h5 class="mx-3 mb-1"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
                         {{ $keyword }}</h5>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4 col-sm-12">
-            <div class="card">
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-12">
+            <div class="card mb-2">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Cari berdasarkan Jenis</h6>
+                    <h6 class="mb-2 text-center">Filter Berdasarkan Jenis</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($jenis as $jen)
                             <div class="form-check">
                                 <input class="form-check-input filter-checkbox" type="checkbox" name="filter[]"
-                                    id="jenis_{{ $jen->id }}" value="{{ $jen->id }}"
+                                    id="{{ $jen->id }}" value="{{ $jen->id }}"
                                     @if (is_array($filters) && in_array($jen->id, $filters)) checked @endif>
-                                <label class="form-check-label"
-                                    for="jenis_{{ $jen->id }}">{{ $jen->nama_jenis }}</label>
+                                <label class="form-check-label" for="{{ $jen->id }}">{{ $jen->nama_jenis }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 text-center">Filter Berdasarkan Tahun</h6>
+                    <hr>
+                    <div class="d-flex flex-column gap-2">
+                        @foreach ($tahun as $thn)
+                            <div class="form-check">
+                                <input class="form-check-input filter-checkbox" type="checkbox" name="tahun[]"
+                                    id="{{ $thn }}" value="{{ $thn }}"
+                                    @if (is_array($years) && in_array($thn, $years)) checked @endif>
+                                <label class="form-check-label" for="{{ $thn }}">{{ $thn }}</label>
                             </div>
                         @endforeach
                     </div>
@@ -44,8 +61,9 @@
 
                 </div>
             </div>
+
         </div>
-        <div class="col-md-8 col-sm-12">
+        <div class="col-md-9 col-sm-12">
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-2">Hasil Pencarian</h6>
@@ -59,11 +77,11 @@
                                     <div class="row">
                                         <div class="col-11">
                                             <h4 class="pt-serif"><a
-                                                    href="{{ route('landing.detail', $dok->judul) }}">{{ $dok->judul }}</a>
+                                                    href="{{ route('landing.detail', ['id' => $dok->hash_id, 'slug' => Str::slug($dok->judul)]) }}">{{ $dok->judul }}</a>
                                             </h4>
                                         </div>
                                         <div class="col-1">
-                                            @if (auth()->check())
+                                            @if (auth()->check() && auth()->user()->role == 'user')
                                                 <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                                     data-id="{{ Crypt::encryptString($dok->id) }}"
                                                     data-collected="{{ $dok->collectedBy(auth()->user()) ? 'true' : 'false' }}"
@@ -80,7 +98,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="m-0">{{ $dok->penulis }}</p>
+                                    <p class="m-0">{{ $dok->penulis .' | '. $dok->pembimbing .' | '. $dok->penguji}}</p>
                                     <p>{{ $dok->tahun . ' | ' . $dok->jenis->nama_jenis }}</p>
                                     <hr class="my-2">
                                 </div>
@@ -92,7 +110,7 @@
                 </div>
 
             </div>
-            <div class="card">
+            <div class="col-md-12 d-flex justify-content-center ">
                 {{ $dokumen->links() }}
             </div>
         </div>
