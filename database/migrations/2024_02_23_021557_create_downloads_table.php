@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('dokumen_id')
                 ->constrained('dokumens')
+                ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->integer('total');
             $table->timestamps();

@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <div class="col-12 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                            <button type="submit" class="btn btn-primary me-1 mb-1" id="btnSubmit">Submit</button>
                         </div>
                     </div>
                 </form>
@@ -186,9 +186,6 @@
                 const formUser = document.getElementById('formUser')
                 formUser.addEventListener("submit", (event) => {
                     event.preventDefault()
-                    //Clear error message
-                    $('.invalid-feedback').remove()
-                    $('.is-invalid').removeClass('is-invalid')
                     //Prepare input element
                     let nama = $('#nama'),
                         email = $('#email'),
@@ -210,6 +207,14 @@
                         dataType: "JSON",
                         proccessData: false,
                         contentType: "application/json",
+                        beforeSend: () => {
+                            //Clear error message
+                            $('.invalid-feedback').remove()
+                            $('.is-invalid').removeClass('is-invalid')
+                            $('#btnSubmit').attr('disabled', true).html(
+                                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                            )
+                        },
                         success: (response) => {
                             if (response.success) {
                                 //Clear input value
@@ -218,14 +223,14 @@
                                 username.val('')
                                 password.val('')
                                 role.val('')
-
+                                $('#btnSubmit').removeAttr('disabled').text('Submit')
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)
                             }
                         },
                         error: function(xhr, status, error) {
                             var errors = xhr.responseJSON.errors;
-
+                            $('#btnSubmit').removeAttr('disabled').text('Submit')
                             if (errors.hasOwnProperty('nama')) {
                                 nama.addClass('is-invalid')
                                 nama.after(
@@ -280,6 +285,7 @@
                             }
                             const url = "{{ route('users.destroy', ['user' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
+                            var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
@@ -287,12 +293,18 @@
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
                                 success: (response) => {
                                     refreshData(datatable)
                                     toast(undefined, undefined, response.success)
                                 },
                                 error: function(xhr, status, error) {
-                                    const errors = `${status} : ${error}`
+                                    var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text('Hapus')
                                     toast("#dc3545", "Failed", errors)
                                 }
                             })

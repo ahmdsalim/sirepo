@@ -105,7 +105,8 @@
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1"
+                                    id="btnSubmit">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -338,6 +339,7 @@
                             }
                             const url = "{{ route('dokumens.destroy', ['id' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
+                            var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
@@ -345,12 +347,18 @@
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
                                 success: (response) => {
                                     refreshData(datatable)
                                     toast(undefined, undefined, response.success)
                                 },
-                                error: function(xhr, status, error) {
+                                error: function(xhr, status, errors) {
                                     var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text('Hapus')
                                     toast("#dc3545", "Failed", errors)
                                 }
                             })
@@ -400,12 +408,16 @@
                             //Clear error message
                             $('.invalid-feedback').remove()
                             $('.is-invalid').removeClass('is-invalid')
+                            $('#btnSubmit').attr('disabled', true).html(
+                                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                            )
                         },
                         success: (response) => {
                             if (response.success) {
                                 $('#files').removeAttr('data-filenames')
                                 $('#formDokumen')[0].reset()
-
+                                $('#btnSubmit').removeAttr('disabled').text('Submit')
+                                $('#small-tag').hide()
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)
                             }
@@ -420,6 +432,7 @@
                                     '<span class="invalid-feedback">' + value[0] +
                                     '</span>');
                             });
+                            $('#btnSubmit').removeAttr('disabled').text('Submit')
                             toast("#dc3545", "Failed", "Gagal menambahkan dokumen")
                         }
 
@@ -440,6 +453,14 @@
                             alert('Nama file harus diisi')
                             return
                         }
+                        // Validasi nama file
+                        var regex = /^[a-zA-Z0-9_\-]+$/;
+                        if (!regex.test(name)) {
+                            $('#files').val('').removeAttr('data-filenames')
+                            alert('Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)')
+                            return
+                        }
+
                         filenames.push(name)
                     }
 
@@ -452,7 +473,7 @@
                 })
 
                 $('#datatable').on('click', '#btnShow', function() {
-                    const dataId = $('#btnShow').data('id')
+                    const dataId = $(this).data('id')
                     formData = new FormData()
                     formData.append('id', dataId)
                     $.ajax({

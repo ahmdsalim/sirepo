@@ -24,7 +24,7 @@
                         <div class="input-group" id="jenisGroup">
                             <input class="form-control" type="text" name="nama_jenis" required="true" id="namajenis"
                                 placeholder="Jenis dokumen">
-                            <button class="btn btn-primary" type="submit">Tambah</button>
+                            <button class="btn btn-primary" type="submit" id="btnSubmit">Tambah</button>
                         </div>
                     </div>
                 </form>
@@ -139,8 +139,14 @@
                         dataType: "JSON",
                         proccessData: false,
                         contentType: "application/json",
+                        beforeSend: () => {
+                            $('#btnSubmit').attr('disabled', true).html(
+                                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                            )
+                        },
                         success: (response) => {
                             namajenis.val('')
+                            $('#btnSubmit').removeAttr('disabled').text('Submit')
                             refreshData(datatable)
                             toast()
                         },
@@ -152,6 +158,7 @@
                                     `<span class="invalid-feedback" role="alert">${errors.nama_jenis[0]}</span>`
                                 )
                             }
+                            $('#btnSubmit').removeAttr('disabled').text('Submit')
                             toast("#dc3545", "Failed", "Gagal menambahkan data")
                         }
 
@@ -176,6 +183,7 @@
                             }
                             const url = "{{ route('jenis.destroy', ['id' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
+                            var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
@@ -183,12 +191,18 @@
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
                                 success: (response) => {
                                     refreshData(datatable)
                                     toast(undefined, undefined, response.success)
                                 },
-                                error: function(xhr, status, error) {
-                                    const errors = `${status} : ${error}`
+                                error: function(xhr, status, errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text('Hapus')
                                     toast("#dc3545", "Failed", errors)
                                 }
                             })

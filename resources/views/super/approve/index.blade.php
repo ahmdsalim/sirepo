@@ -145,21 +145,26 @@
                             const data = {
                                 username: dataId
                             }
-                            const url = "{{ route('setRejectedUser', ['username' => ':data']) }}"
-                            const bindUrl = url.replace(':data', dataId)
+                            var btn = $(this)
                             $.ajax({
-                                url: bindUrl,
+                                url: "{{ route('setRejectedUser') }}",
                                 type: "DELETE",
                                 data: JSON.stringify(data),
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
                                 success: (response) => {
                                     refreshData(datatable)
                                     toast(undefined, undefined, response.success)
                                 },
-                                error: function(xhr, status, error) {
-                                    const errors = `${status} : ${error}`
+                                error: function(xhr, status, errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text('Reject')
                                     toast("#dc3545", "Failed", errors)
                                 }
                             })

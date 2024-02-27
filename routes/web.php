@@ -36,16 +36,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 
     Route::middleware('authtype:super')->group(function () {
-        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id')->except(['create','show']);
+        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id')->except(['create', 'show']);
         Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
 
-        Route::resource('users', UserController::class)->except(['create','show']);
+        Route::resource('users', UserController::class)->except(['create', 'show']);
         Route::post('/get-users', [UserController::class, 'getUsers'])->name('users.getUsers');
 
         Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
         Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
         Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
-        Route::delete('/set-rejected-user/{username}', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+        Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
     });
 
     Route::middleware('authtype:super.admin')->group(function () {
@@ -72,7 +72,6 @@ Route::middleware('auth')->group(function () {
 
         Route::match(['get'], 'user/profile', [LandingController::class, 'profile'])->name('landing.profile');
         Route::get('koleksi', [KoleksiController::class, 'index'])->name('landing.koleksi');
-        Route::post('/increase-downloads', [DokumenController::class, 'increaseDownloads'])->name('increase.downloads');
     });
 
     Route::get('penelitian/file/{filename}', [DokumenController::class, 'getFile'])->name('file.get');

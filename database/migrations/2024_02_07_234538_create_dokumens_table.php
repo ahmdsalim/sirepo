@@ -21,9 +21,12 @@ return new class extends Migration
             $table->string('username');
             $table->foreign('username')
                 ->references('username')
-                ->on('users');
+                ->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->foreignId('jenis_id')
                 ->constrained('jenis')
+                ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->json('file');
             $table->text('abstrak');

@@ -163,20 +163,26 @@ class DokumenController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'judul' => 'required|string|min:15|max:250',
-            'abstrak' => 'required|string|min:100',
-            'keyword' => 'required|string|min:3',
-            'penulis' => 'required|string|min:3',
-            'pembimbing' => 'required|string|min:3',
-            'penguji' => 'required|string|min:3',
-            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
-            'jenis' => 'required|string',
-            'files' => 'required',
-            'files.*' => 'mimes:pdf|max:10240',
-            'filenames' => 'required',
-            'filenames.*' => 'string|max:50',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'judul' => 'required|string|min:15|max:250',
+                'abstrak' => 'required|string|min:100',
+                'keyword' => 'required|string|min:3',
+                'penulis' => 'required|string|min:3',
+                'pembimbing' => 'required|string|min:3',
+                'penguji' => 'required|string|min:3',
+                'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
+                'jenis' => 'required|string',
+                'files' => 'required',
+                'files.*' => 'mimes:pdf|max:10240',
+                'filenames' => 'required',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+            ],
+            [
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -318,38 +324,5 @@ class DokumenController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
-    }
-
-    public function increaseDownloads(Request $request)
-    {
-        $fileId = $request->file_id;
-
-        // Temukan dokumen berdasarkan file ID
-        $dokumen = Dokumen::whereJsonContains('file', $fileId)->first();
-
-        if (!$dokumen) {
-            return response()->json(['error' => 'Dokumen tidak ditemukan'], 404);
-        }
-
-        // Temukan entri unduhan terkait
-        $download = Download::where('file', $fileId)->first();
-
-        if (!$download) {
-            // Jika tidak ada entri unduhan, buat yang baru
-            $download = new Download();
-            $download->dokumen_id = $dokumen->id;
-            $download->file = $fileId;
-            $download->jumlah = 0;
-            $download->save();
-        } else {
-            // Jika ada, tingkatkan jumlah unduhan
-            $download->jumlah += 1;
-            $download->save();
-        }
-
-        return response()->json([
-            'message' => 'Jumlah unduhan berhasil ditingkatkan',
-            'new_downloads' => $download->jumlah,
-        ]);
     }
 }
