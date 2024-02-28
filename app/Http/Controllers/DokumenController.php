@@ -251,20 +251,26 @@ class DokumenController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(), [
-            'judul' => 'required|string|min:15|max:250',
-            'abstrak' => 'required|string|min:100',
-            'keyword' => 'required|string|min:3',
-            'penulis' => 'required|string|min:3',
-            'pembimbing' => 'required|string|min:3',
-            'penguji' => 'required|string|min:3',
-            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
-            'jenis' => 'required|string',
-            'files' => 'nullable',
-            'files.*' => 'mimes:pdf|max:10240',
-            'filenames' => 'nullable',
-            'filenames.*' => 'string|max:50',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'judul' => 'required|string|min:15|max:250',
+                'abstrak' => 'required|string|min:100',
+                'keyword' => 'required|string|min:3',
+                'penulis' => 'required|string|min:3',
+                'pembimbing' => 'required|string|min:3',
+                'penguji' => 'required|string|min:3',
+                'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
+                'jenis' => 'required|string',
+                'files' => 'nullable',
+                'files.*' => 'mimes:pdf|max:10240',
+                'filenames' => 'nullable',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+            ],
+            [
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();

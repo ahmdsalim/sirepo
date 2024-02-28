@@ -249,6 +249,15 @@
                             alert('Nama file harus diisi')
                             return
                         }
+
+                        // Validasi nama file
+                        var regex = /^[a-zA-Z0-9_\-]+$/;
+                        if (!regex.test(name)) {
+                            $('#files').val('')
+                            alert('Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)')
+                            return
+                        }
+
                         filenames.push(name)
                     }
 
