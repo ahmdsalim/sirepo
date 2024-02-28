@@ -1,3 +1,16 @@
+@push('styles')
+    <style>
+        .field-icon {
+            float: right;
+            margin-left: -30px;
+            margin-right: 10px;
+            margin-top: -27px;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+@endpush
 <x-app-layout title="Kelola Pengguna">
     <x-slot name="header">
         <div class="row">
@@ -31,7 +44,9 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group mandatory">
                             <label for="nama" class="form-label">Nama</label>
-                            <input type="text" id="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Nama pengguna" value="{{ old('nama', $user->nama ?? '') }}" name="nama" required>
+                            <input type="text" id="nama"
+                                class="form-control @error('nama') is-invalid @enderror" placeholder="Nama pengguna"
+                                value="{{ old('nama', $user->nama ?? '') }}" name="nama" required>
                             @error('nama')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -40,7 +55,9 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group mandatory">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email pengguna" value="{{ old('email', $user->email ?? '') }}" name="email" required>
+                            <input type="email" id="email"
+                                class="form-control @error('email') is-invalid @enderror" placeholder="Email pengguna"
+                                value="{{ old('email', $user->email ?? '') }}" name="email" required>
                             @error('email')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -49,7 +66,9 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group mandatory">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" id="username" class="form-control @error('username') is-invalid @enderror" placeholder="Username" value="{{ old('username', $user->username ?? '') }}" name="username" required>
+                            <input type="text" id="username"
+                                class="form-control @error('username') is-invalid @enderror" placeholder="Username"
+                                value="{{ old('username', $user->username ?? '') }}" name="username" required>
                             @error('username')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -58,7 +77,10 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Password">
+                            <input type="password" id="password"
+                                class="form-control @error('password') is-invalid @enderror" name="password"
+                                placeholder="Password">
+                            <span toggle="#password" class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
                             @error('password')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -67,11 +89,12 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group mandatory">
                             <label for="role" class="form-label">Role</label>
-                            <select id="role" class="form-select @error('role') is-invalid @enderror" name="role" required>
+                            <select id="role" class="form-select @error('role') is-invalid @enderror"
+                                name="role" required>
                                 <option value="">Pilih</option>
-                                <option value="super" @selected(old('role', $user->role ?? '') == "super")>Super</option>
-                                <option value="admin" @selected(old('role', $user->role ?? '') == "admin")>Admin</option>
-                                <option value="user" @selected(old('role', $user->role ?? '') == "user")>User</option>
+                                <option value="super" @selected(old('role', $user->role ?? '') == 'super')>Super</option>
+                                <option value="admin" @selected(old('role', $user->role ?? '') == 'admin')>Admin</option>
+                                <option value="user" @selected(old('role', $user->role ?? '') == 'user')>User</option>
                             </select>
                             @error('role')
                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -86,3 +109,17 @@
         </div>
     </section>
 </x-app-layout>
+@push('scripts')
+    <script>
+        $(".toggle-password").click(function() {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+    </script>
+@endpush

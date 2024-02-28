@@ -1,3 +1,16 @@
+@push('styles')
+    <style>
+        .field-icon {
+            float: right;
+            margin-left: -30px;
+            margin-right: 10px;
+            margin-top: -27px;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+@endpush
 <x-app-layout title="Kelola Pengguna">
     <x-slot name="header">
         <div class="row">
@@ -54,6 +67,8 @@
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" id="password" class="form-control" name="password"
                                     placeholder="Password" required>
+                                <span toggle="#password"
+                                    class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
@@ -126,6 +141,18 @@
         <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+        <script>
+            $(".toggle-password").click(function() {
+
+                $(this).toggleClass("fa-eye fa-eye-slash");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+            });
+        </script>
         <script>
             $.ajaxSetup({
                 headers: {

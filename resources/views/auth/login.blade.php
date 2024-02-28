@@ -1,4 +1,17 @@
 @extends('layouts.app')
+@push('styles')
+    <style>
+        .field-icon {
+            float: right;
+            margin-left: -30px;
+            margin-right: 10px;
+            margin-top: -27px;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -29,6 +42,7 @@
                                 <input id="password" type="password"
                                     class="form-control input-login @error('password') is-invalid @enderror" name="password"
                                     required autocomplete="password">
+                                <span toggle="#password" class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -84,6 +98,18 @@
 @endsection
 @push('scripts')
     <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script>
+        $(".toggle-password").click(function() {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+    </script>
     <script>
         function toast(color = "#198754", type = "Success", message =
             "Berhasil membuat akun, tunggu konfirmasi dari admin") {
