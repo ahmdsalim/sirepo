@@ -1,4 +1,17 @@
 @extends('layouts.app')
+@push('styles')
+    <style>
+        .field-icon {
+            float: right;
+            margin-left: -30px;
+            margin-right: 10px;
+            margin-top: -27px;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container mb-4">
         <div class="row justify-content-center">
@@ -52,11 +65,13 @@
                             <div class="col-md-12 mb-2">
                                 <label for="password" class="form-label">Password</label>
                                 <input id="password" type="password"
-                                    class="form-control @error('password') is-invalid @enderror" name="password" required>
+                                    class="form-control input-login @error('password') is-invalid @enderror" name="password"
+                                    required autocomplete="password">
+                                <span toggle="#password" class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        {{ $message }}
                                     </span>
                                 @enderror
                             </div>
@@ -86,3 +101,18 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script>
+        $(".toggle-password").click(function() {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+    </script>
+@endpush
