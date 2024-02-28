@@ -216,7 +216,7 @@
                                 <p>{{ date('Y') }} © Repository MI</p>
                             </div>
                             <div class="float-end">
-                                <p>Crafted by <a href="">Contributors</a></p>
+                                <p>Crafted by <a href="{{ route('contributors') }}">Contributors</a></p>
                             </div>
                         </div>
                     </div>

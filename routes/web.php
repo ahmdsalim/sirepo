@@ -32,7 +32,7 @@ Route::post('search/filter', [LandingController::class, 'filter'])->name('landin
 Route::get('pencarian/{id}/{slug}', [LandingController::class, 'detail'])->name('landing.detail');
 Route::get('contributors', function () {
     return view('contributors');
-});
+})->name('contributors');
 
 Route::middleware('auth')->group(function () {
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
