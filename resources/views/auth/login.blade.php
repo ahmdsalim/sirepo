@@ -112,7 +112,7 @@
     </script>
     <script>
         function toast(color = "#198754", type = "Success", message =
-            "Berhasil membuat akun, tunggu konfirmasi dari admin") {
+            "Pesan") {
             $("#toastRect").attr("fill", color)
             $("#toastType").text(type)
             $("#toastMessage").text(message)
@@ -121,7 +121,10 @@
             toast.show()
         }
         @if (session('success'))
-            toast(undefined, undefined, undefined)
+            toast(undefined, undefined, "{{ session('success') }}")
+        @endif
+        @if (session('status'))
+            toast(undefined, undefined, "{{ session('status') }}")
         @endif
     </script>
 @endpush

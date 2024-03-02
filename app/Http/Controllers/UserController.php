@@ -78,7 +78,7 @@ class UserController extends Controller
             $destination = 'public/file-verifikasi/';
             Storage::delete($destination . $user->verifikasi_file);
             $user->verifikasi_file = '';
-            $user->terverifikasi = true;
+            $user->is_active = true;
             $user->save();
             event(new UserModerationApproved($user));
             return back()->with('success', 'Berhasil mengapprove user');
@@ -202,7 +202,7 @@ class UserController extends Controller
             'email' => $validData['email'],
             'username' => $validData['username'],
             'password' => $validData['password'],
-            'terverifikasi' => true,
+            'is_active' => true,
             'role' => $validData['role'],
         ]);
 

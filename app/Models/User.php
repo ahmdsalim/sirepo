@@ -28,11 +28,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username',
+        'npm',
         'nama',
         'email',
         'password',
-        'verifikasi_file',
-        'terverifikasi',
+        'is_active',
         'role',
     ];
 
@@ -76,14 +76,19 @@ class User extends Authenticatable
         return $this->hasMany(Dokumen::class);
     }
 
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'npm', 'npm');
+    }
+
     public function scopeToapprove(Builder $query)
     {
-        $query->where('terverifikasi', 0);
+        $query->where('is_active', 0);
     }
 
     public function scopeApproved(Builder $query)
     {
-        $query->where('terverifikasi', 1);
+        $query->where('is_active', 1);
     }
 
     public function scopeExceptlogged(Builder $query)

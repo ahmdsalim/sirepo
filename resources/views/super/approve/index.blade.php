@@ -35,7 +35,6 @@
                                 <th>Username</th>
                                 <th>Nama</th>
                                 <th>Email</th>
-                                <th>File Verifikasi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -106,11 +105,6 @@
                         {
                             data: 'email',
                             name: 'email',
-                        },
-                        {
-                            data: 'verifikasi_file',
-                            name: 'verifikasi_file',
-                            orderable: false,
                         },
                         {
                             data: 'action',

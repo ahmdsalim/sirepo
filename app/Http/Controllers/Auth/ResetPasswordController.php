@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class ResetPasswordController extends Controller
@@ -25,5 +27,34 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/login';
+
+    protected function resetPassword($user, $password)
+    {
+        $this->setUserPassword($user, $password);
+
+        $user->save();
+
+        event(new PasswordReset($user));
+
+        if ($user->is_active) {
+            $this->guard()->login($user);
+            $this->authenticated($user);
+        }
+    }
+
+    public function authenticated($user)
+    {
+        switch ($user->role) {
+            case 'super':
+                $this->redirectTo = 'home';
+                break;
+            case 'admin':
+                $this->redirectTo = 'home';
+                break;
+            case 'user':
+                $this->redirectTo = '/';
+                break;
+        }
+    }
 }
