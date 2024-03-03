@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\DokumenController;
+use App\Models\User;
+use App\Models\Bookmark;
+use App\Http\Middleware\cekRole;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\cekRole;
-use App\Models\Bookmark;
-use App\Models\User;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\MahasiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 
     Route::middleware('authtype:super')->group(function () {
-        Route::resource('jenis', JenisController::class)->parameter('jenis', 'id')->except(['create', 'show']);
+        Route::resource('jenis', JenisController::class)
+            ->parameter('jenis', 'id')
+            ->except(['create', 'show']);
         Route::post('/get-jenis', [JenisController::class, 'getJenis'])->name('jenis.getJenis');
 
         Route::resource('users', UserController::class)->except(['create', 'show']);
@@ -49,6 +52,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
         Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
         Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+    });
+
+    Route::middleware('authtype:admin')->group(function(){
+        Route::resource('mahasiswas',MahasiswaController::class);
+        Route::post('get-mahasiswa',[MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
+        Route::post('import-mahasiswa',[MahasiswaController::class, 'import'])->name('mahasiswas.import');
+        Route::get('import-mahasiswa/error',[MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
     });
 
     Route::middleware('authtype:super.admin')->group(function () {
