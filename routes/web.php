@@ -11,6 +11,7 @@ use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MahasiswaController;
+use App\Models\Dokumen;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,17 +59,17 @@ Route::middleware('auth')->group(function () {
         Route::resource('mahasiswas',MahasiswaController::class);
         Route::post('get-mahasiswa',[MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
         Route::post('import-mahasiswa',[MahasiswaController::class, 'import'])->name('mahasiswas.import');
-        Route::get('import-mahasiswa/error',[MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
+        Route::get('import-mahasiswas-error',[MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
     });
-
+    
     Route::middleware('authtype:super.admin')->group(function () {
         Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
-
+        Route::post('import-dokumen',[DokumenController::class, 'import'])->name('dokumens.import');
+        Route::match(['get'],'import-dokumen-error',[DokumenController::class, 'errorImport'])->name('dokumens.errorImport');
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
-
         Route::get('security', [UserController::class, 'security'])->name('security');
     });
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\DokumenImport;
 use App\Models\Jenis;
 use App\Models\Dokumen;
 use App\Models\Download;
@@ -44,7 +45,7 @@ class DokumenController extends Controller
                     padding-left: 0;
                     margin: auto 0;
                 ">';
-                $rowLength = count($row->file);
+                $rowLength = is_array($row->file) ? count($row->file) : 0;
                 if ($rowLength > 0) {
                     if ($rowLength > 2) {
                         $actionBtn .= '<li><span class="badge text-bg-secondary">' . $rowLength . ' File</span></li>';
@@ -106,7 +107,9 @@ class DokumenController extends Controller
     {
         try {
             $id = (new HashIdService())->decode($request->id);
-            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])->withSum('downloads', 'total')->findOrFail($id);
+            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])
+                ->withSum('downloads', 'total')
+                ->findOrFail($id);
 
             return response()->json(['success' => 'Berhasil mengambil data', 'data' => $dokumen], 200);
         } catch (\Exception $e) {
@@ -116,14 +119,15 @@ class DokumenController extends Controller
 
     public function getFile(Request $request, string $filename)
     {
-
         $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
         if ($isFileExist) {
             if ($request->query('download')) {
                 // Temukan dokumen berdasarkan file name
                 $dokumen = Dokumen::whereJsonContains('file', $filename)->first();
 
-                $download = Download::where('dokumen_id', $dokumen->id)->whereDate('created_at', date('Y-m-d'))->first();
+                $download = Download::where('dokumen_id', $dokumen->id)
+                    ->whereDate('created_at', date('Y-m-d'))
+                    ->first();
 
                 if (!$download) {
                     // Jika tidak ada entri unduhan, buat yang baru
@@ -181,7 +185,7 @@ class DokumenController extends Controller
             ],
             [
                 'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
-            ]
+            ],
         );
 
         if ($validator->fails()) {
@@ -269,7 +273,7 @@ class DokumenController extends Controller
             ],
             [
                 'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
-            ]
+            ],
         );
 
         if ($validator->fails()) {
@@ -330,5 +334,33 @@ class DokumenController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $file = $request->file('file')->storeAs('upload/excel/dokumen', 'dokumen.xlsx');
+
+        // Pass the file path to the import method
+        $import = new DokumenImport();
+        $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+
+        if ($import->failures()->isNotEmpty()) {
+            return redirect()->route('dokumens.errorImport')->withFailures($import->failures());
+        }
+
+        return to_route('dokumens.index')->with('success', 'Import Data Dokumen Berhasil');
+    }
+
+    public function errorImport()
+    {
+        return view('dokumen.error-import');
     }
 }

@@ -135,16 +135,20 @@
                                 <div class="mb-3">
                                     <div class="text-muted mt-2 fst-italic">File saat ini:</div>
                                     <ul class="ps-0" style="list-style: none;">
-                                        @foreach ($dokumen->file as $i => $value)
-                                            <li><a href="{{ route('file.get', $value) }}"
-                                                    target="_blank">{{ $value }}'</a>
-                                                <button type="button"
-                                                    class="border-0 text-danger fw-bold delete-button"
-                                                    data-id="{{ $dokumen->hash_id }}"
-                                                    data-fileid="{{ (new App\Services\HashIdService())->encode($i) }}"
-                                                    style="background: none;">x</button>
-                                            </li>
-                                        @endforeach
+                                        @if ($dokumen->file)
+                                            @foreach ($dokumen->file as $i => $value)
+                                                <li>
+                                                    <a href="{{ route('file.get', $value) }}"
+                                                        target="_blank">{{ $value }}</a>
+                                                    <button type="button"
+                                                        class="border-0 text-danger fw-bold delete-button"
+                                                        data-id="{{ $dokumen->hash_id }}"
+                                                        data-fileid="{{ (new App\Services\HashIdService())->encode($i) }}"
+                                                        style="background: none;">x</button>
+                                                </li>
+                                            @endforeach
+                                        @endif
+
                                     </ul>
                                 </div>
                             </div>

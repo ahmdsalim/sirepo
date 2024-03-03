@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -150,17 +151,16 @@ class MahasiswaController extends Controller
         // Pass the file path to the import method
         $import = new ImportMahasiswa();
         $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
-        // dd($import);
 
         if ($import->failures()->isNotEmpty()) {
             return redirect()->route('mahasiswas.errorImport')->withFailures($import->failures());
         }
 
-        return redirect()->back()->with('success', 'Import Data Mahasiswa Berhasil');
+        return to_route('mahasiswas.index')->with('success', 'Import Data Mahasiswa Berhasil');
     }
 
     public function errorImport()
     {
-        return view('admin.error-import');
+        return view('admin.mahasiswas.error-import');
     }
 }

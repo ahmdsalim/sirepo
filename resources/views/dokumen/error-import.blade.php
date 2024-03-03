@@ -25,7 +25,7 @@
             <div class="card-body">
                 <div class="card-body" id="formContainerImportCSV">
                     <h6>Import Excel</h6>
-                    <form id="importForm" action="{{ route('mahasiswas.import') }}" method="POST"
+                    <form id="importForm" action="{{ route('dokumens.import') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="mb-2">
@@ -40,31 +40,37 @@
                 </div>
 
                 @if (session()->has('failures'))
-                    <table class="table table-warning ">
-                        <tr>
-                            <th>Baris</th>
-                            <th>Attribute</th>
-                            <th>Error</th>
-                            <th>Value</th>
-                        </tr>
-                        @foreach (session()->get('failures') as $validasi)
-                            <tr>
-                                <td>{{ $validasi->row() }}</td>
-                                <td>{{ $validasi->attribute() }}</td>
-                                <td>
-                                    <ul class="text-danger">
-                                        @foreach ($validasi->errors() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </td>
-                                <td>{{ $validasi->values()[$validasi->attribute()] }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
-                @else
-                    <h5 class="text-center">Tidak ada error</h5>
-                @endif
+                            <table class="table table-warning">
+                                <tr>
+                                    <th>Baris</th>
+                                    <th>Attribute</th>
+                                    <th>Error</th>
+                                    <th>Value</th>
+                                </tr>
+                                @php
+                                    try {
+                                @endphp
+                                @foreach (session()->get('failures') as $validasi)
+                                    <tr>
+                                        <td>{{ $validasi->row() }}</td>
+                                        <td>{{ $validasi->attribute() }}</td>
+                                        <td>
+                                            <ul>
+                                                @foreach ($validasi->errors() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </td>
+                                        <td>{{ $validasi->values()[$validasi->attribute()] }}</td>
+                                    </tr>
+                                @endforeach
+                                @php
+                                    }catch(Exception $e){
+                                        echo '<script>alert("Pastikan Format File Excel Sesuai Dengan Template.")</script>';
+                                    }
+                                @endphp
+                            </table>
+                        @endif
             </div>
         </div>
 

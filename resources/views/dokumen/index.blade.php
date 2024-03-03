@@ -17,6 +17,19 @@
     </x-slot>
 
     <section class="section">
+        <div class="card mb-1 ">
+            <div class="card-header">
+                <div class="d-inline-block user-select-none" id="toggleContainerImportCSV" style="cursor: pointer;">
+                    <span id="toggleTextImportCSV">Import Excel</span>
+                    <i class="bi bi-chevron-compact-right" id="toggleIconImportCSV"></i>
+                </div>
+            </div>
+            <div class="card-body" id="formContainerImportCSV" style="display: none;">
+                @include('layouts.partials.input-file-excel',['routeImport' => route('dokumens.import')])
+            </div>
+
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <div class="d-inline-block user-select-none" id="toggleContainer" style="cursor: pointer;">
@@ -379,6 +392,25 @@
                         toggleIcon.addClass('bi bi-chevron-compact-right')
                     } else {
                         formContainer.show(200)
+                        toggleText.text('Sembunyikan')
+                        toggleIcon.removeClass('bi bi-chevron-compact-right')
+                        toggleIcon.addClass('bi bi-chevron-compact-down')
+                    }
+                })
+
+                const toggleContainerImportCSV = document.getElementById('toggleContainerImportCSV')
+                $('#toggleContainerImportCSV').click(function() {
+                    const formContainerImportCSV = $('#formContainerImportCSV')
+                    const toggleText = $('#toggleText')
+                    const toggleIcon = $('#toggleIcon')
+
+                    if (formContainerImportCSV.is(':visible')) {
+                        formContainerImportCSV.hide(200)
+                        toggleText.text('Tambah')
+                        toggleIcon.removeClass('bi bi-chevron-compact-down')
+                        toggleIcon.addClass('bi bi-chevron-compact-right')
+                    } else {
+                        formContainerImportCSV.show(200)
                         toggleText.text('Sembunyikan')
                         toggleIcon.removeClass('bi bi-chevron-compact-right')
                         toggleIcon.addClass('bi bi-chevron-compact-down')

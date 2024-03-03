@@ -113,7 +113,7 @@
                         </a>
                     </li>
                 @endif
-                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumen') ? 'active' : '' }}">
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumens') ? 'active' : '' }}">
                     <a href="{{ route('dokumens.index') }}" class='sidebar-link'>
                         <i class="bi bi-file-earmark-pdf-fill"></i>
                         <span>Dok. Penelitian</span>
