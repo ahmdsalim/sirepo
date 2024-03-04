@@ -108,11 +108,11 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="mb-3 mandtory">
-                                    <label for="file" class="form-label">File <span class="text-danger">*</span>
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">File</span>
                                     </label>
                                     <input class="form-control" type="file" name="files[]" id="files"
-                                        accept=".pdf" multiple required>
+                                        accept=".pdf" multiple>
                                     <small><span class="text-muted small">Unggah file sampai dengan 10MB dalam format
                                             PDF.</span></small>
                                 </div>
@@ -424,7 +424,7 @@
                     //Data for sending to server  
                     var formData = new FormData($('#formDokumen')[0])
                     let totalUploaded = $('#files')[0].files.length
-                    let fileName = JSON.parse($('#files').attr('data-filenames'))
+                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($('#files').attr('data-filenames'))
                     for (let i = 0; i < fileName.length; i++) {
                         formData.append(`filenames[]`, fileName[i])
                     }
@@ -486,10 +486,10 @@
                             return
                         }
                         // Validasi nama file
-                        var regex = /^[a-zA-Z0-9_\-]+$/;
+                        var regex = /^[a-zA-Z0-9_\-\s]+$/;
                         if (!regex.test(name)) {
                             $('#files').val('').removeAttr('data-filenames')
-                            alert('Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)')
+                            alert('Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)')
                             return
                         }
 

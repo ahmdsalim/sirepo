@@ -83,7 +83,7 @@ class DokumenController extends Controller
     {
         try {
             $dokumen = Dokumen::findOrFail($id);
-            if (count($dokumen->file) == 1) {
+            if (count($dokumen->file) === 0) {
                 throw new \Exception('Required at least one file document', 422);
             }
 
@@ -178,13 +178,13 @@ class DokumenController extends Controller
                 'penguji' => 'required|string|min:3',
                 'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
                 'jenis' => 'required|string',
-                'files' => 'required',
+                'files' => 'nullable',
                 'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'required',
-                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+                'filenames' => 'required_with:files|files',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [
-                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)',
             ],
         );
 
@@ -207,8 +207,8 @@ class DokumenController extends Controller
 
             $fileuploaded = [];
             $totalUploaded = $request->totalUploaded;
-            $filenamesLength = count($request->filenames);
-            if ($totalUploaded == $filenamesLength) {
+            $filenamesLength = $request->filenames === null ? 0 : count($request->filenames);
+            if ($totalUploaded == $filenamesLength && $totalUploaded != 0 && $filenamesLength != 0) {
                 $filenames = $request->filenames;
                 for ($i = 0; $i < $totalUploaded; $i++) {
                     if ($request->hasFile('files.' . $i)) {
@@ -268,11 +268,11 @@ class DokumenController extends Controller
                 'jenis' => 'required|string',
                 'files' => 'nullable',
                 'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'nullable',
-                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+                'filenames' => 'required_with:files|files',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [
-                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)',
             ],
         );
 
