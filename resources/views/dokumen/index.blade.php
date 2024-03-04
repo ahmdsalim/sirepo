@@ -17,19 +17,7 @@
     </x-slot>
 
     <section class="section">
-        <div class="card mb-1 ">
-            <div class="card-header">
-                <div class="d-inline-block user-select-none" id="toggleContainerImportCSV" style="cursor: pointer;">
-                    <span id="toggleTextImportCSV">Import Excel</span>
-                    <i class="bi bi-chevron-compact-right" id="toggleIconImportCSV"></i>
-                </div>
-            </div>
-            <div class="card-body" id="formContainerImportCSV" style="display: none;">
-                @include('layouts.partials.input-file-excel',['routeImport' => route('dokumens.import')])
-            </div>
-
-        </div>
-
+        
         <div class="card">
             <div class="card-header">
                 <div class="d-inline-block user-select-none" id="toggleContainer" style="cursor: pointer;">
@@ -38,6 +26,41 @@
                 </div>
             </div>
             <div class="card-body" id="formContainer" style="display: none;">
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                            data-bs-target="#inlineForm">
+                            Import Excel
+                        </button>
+                        <!--login form Modal -->
+                        <div class="modal fade text-left" id="inlineForm" tabindex="-1"
+                            aria-labelledby="myModalLabel33" style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel33">Import Excel</h4>
+                                        <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-x">
+                                                <line x1="18" y1="6" x2="6" y2="18">
+                                                </line>
+                                                <line x1="6" y1="6" x2="18" y2="18">
+                                                </line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    @include('layouts.partials.input-file-excel', [
+                                        'routeImport' => route('dokumens.import'),
+                                        'pathDownload' => asset('assets/static/template/template-dokumen.xlsx'),
+                                    ])
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <form class="form" id="formDokumen" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 col-12">
@@ -85,8 +108,8 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="pembimbing" class="form-label">Pembimbing</label>
-                                    <input type="text" id="pembimbing" class="form-control" placeholder="Pembimbing"
-                                        name="pembimbing" required>
+                                    <input type="text" id="pembimbing" class="form-control"
+                                        placeholder="Pembimbing" name="pembimbing" required>
                                     <small id="small-tag" style="display: none;">Format: Pembimbing 1/Pebimbing
                                         2</small>
 
@@ -424,7 +447,8 @@
                     //Data for sending to server  
                     var formData = new FormData($('#formDokumen')[0])
                     let totalUploaded = $('#files')[0].files.length
-                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($('#files').attr('data-filenames'))
+                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($(
+                        '#files').attr('data-filenames'))
                     for (let i = 0; i < fileName.length; i++) {
                         formData.append(`filenames[]`, fileName[i])
                     }
@@ -489,7 +513,9 @@
                         var regex = /^[a-zA-Z0-9_\-\s]+$/;
                         if (!regex.test(name)) {
                             $('#files').val('').removeAttr('data-filenames')
-                            alert('Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)')
+                            alert(
+                                'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
+                                )
                             return
                         }
 

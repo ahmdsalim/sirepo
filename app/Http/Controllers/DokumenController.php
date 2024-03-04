@@ -324,10 +324,15 @@ class DokumenController extends Controller
     {
         try {
             $dokumen = Dokumen::findOrFail($id);
-            $destination = 'file-penelitian/';
-            foreach ($dokumen->file as $i => $file) {
-                Storage::delete($destination . $dokumen->file[$i]);
+
+            // Check if files exist before attempting to delete
+            if ($dokumen->file) {
+                $destination = 'file-penelitian/';
+                foreach ($dokumen->file as $i => $file) {
+                    Storage::delete($destination . $dokumen->file[$i]);
+                }
             }
+
             $dokumen->delete();
 
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
