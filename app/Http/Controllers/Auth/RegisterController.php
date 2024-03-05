@@ -59,13 +59,14 @@ class RegisterController extends Controller
                 function ($attribute, $value, $fail) use ($data) {
                     $mhs = Mahasiswa::where('npm', $data['npm'])
                         ->where('email', $data['email'])
+                        ->where('is_active', true)
                         ->doesntHave('user')->count();
-                    if ($mhs <= 0) {
+                    if ($mhs === 0) {
                         $fail('This npm has not been identified.');
                     }
                 }
             ],
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
         ]);
     }
 
@@ -85,7 +86,7 @@ class RegisterController extends Controller
             'npm' => $request->npm,
             'email' => $request->email,
             'role' => 'user',
-            'is_active' => true,
+            'is_active' => $mhs->is_active,
             'password' => Hash::make($password),
         ]);
     }

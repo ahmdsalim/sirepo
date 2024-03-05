@@ -64,11 +64,12 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-12">
-                        <div class="form-group mandatory">
+                        <div class="form-group @if ($user->role !== 'user') mandatory @endif">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" id="username"
                                 class="form-control @error('username') is-invalid @enderror" placeholder="Username"
-                                value="{{ old('username', $user->username ?? '') }}" name="username" required>
+                                value="{{ old('username', $user->username ?? '') }}"
+                                @if ($user->role === 'user') disabled @else name="username" required @endif>
                             @error('username')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -87,20 +88,22 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-12">
-                        <div class="form-group mandatory">
+                        <div class="form-group">
                             <label for="role" class="form-label">Role</label>
-                            <select id="role" class="form-select @error('role') is-invalid @enderror"
-                                name="role" required>
-                                <option value="">Pilih</option>
-                                <option value="super" @selected(old('role', $user->role ?? '') == 'super')>Super</option>
-                                <option value="admin" @selected(old('role', $user->role ?? '') == 'admin')>Admin</option>
-                                <option value="user" @selected(old('role', $user->role ?? '') == 'user')>User</option>
-                            </select>
-                            @error('role')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
+                            <input type="text" id="role" class="form-control" value="{{ ucfirst($user->role) }}"
+                                placeholder="Role" disabled>
                         </div>
                     </div>
+                    @if ($user->role === 'user')
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label for="mahasiswa" class="form-label">Data Mahasiswa</label>
+                                <input type="text" id="mahasiswa" class="form-control"
+                                    value="{{ $user->npm . ' - ' . $user->mahasiswa->nama_mahasiswa }}"
+                                    placeholder="mahasiswa" disabled>
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-12 d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
                     </div>

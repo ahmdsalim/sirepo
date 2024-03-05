@@ -79,15 +79,6 @@
                         </li>
                     </ul>
                 </li>
-                @if (auth()->user()->role == 'admin')
-                    <li
-                        class="sidebar-item {{ str_contains(Route::current()->getName(), 'mahasiswa') ? 'active' : '' }}">
-                        <a href="{{ route('mahasiswas.index') }}" class='sidebar-link'>
-                            <i class="bi bi-mortarboard"></i>
-                            <span>Mahasiswa</span>
-                        </a>
-                    </li>
-                @endif
                 @if (auth()->user()->role == 'super')
                     <li
                         class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
@@ -113,6 +104,12 @@
                         </a>
                     </li>
                 @endif
+                <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'mahasiswa') ? 'active' : '' }}">
+                    <a href="{{ route('mahasiswas.index') }}" class='sidebar-link'>
+                        <i class="bi bi-mortarboard"></i>
+                        <span>Mahasiswa</span>
+                    </a>
+                </li>
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'dokumens') ? 'active' : '' }}">
                     <a href="{{ route('dokumens.index') }}" class='sidebar-link'>
                         <i class="bi bi-file-earmark-pdf-fill"></i>

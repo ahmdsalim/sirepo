@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="card-body" id="formContainerImportCSV" style="display: none;">
-                @include('layouts.partials.input-file-excel',['routeImport' => route('dokumens.import')])
+                @include('layouts.partials.input-file-excel', ['routeImport' => route('dokumens.import')])
             </div>
 
         </div>
@@ -424,7 +424,8 @@
                     //Data for sending to server  
                     var formData = new FormData($('#formDokumen')[0])
                     let totalUploaded = $('#files')[0].files.length
-                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($('#files').attr('data-filenames'))
+                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($(
+                        '#files').attr('data-filenames'))
                     for (let i = 0; i < fileName.length; i++) {
                         formData.append(`filenames[]`, fileName[i])
                     }
@@ -489,7 +490,9 @@
                         var regex = /^[a-zA-Z0-9_\-\s]+$/;
                         if (!regex.test(name)) {
                             $('#files').val('').removeAttr('data-filenames')
-                            alert('Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)')
+                            alert(
+                                'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
+                            )
                             return
                         }
 
@@ -535,6 +538,10 @@
                             $('#dataKeyword').text(response.data.keyword)
                             $('#dataUploader').text(response.data.user.nama)
                             $('#dataDiunduh').text(response.data.downloads_sum_total)
+                            if (response.data.file.length == 0) {
+                                $('#dataFile').html(
+                                    '<li class="text-muted">-- Belum ada file --</li>')
+                            }
                             $.each(response.data.file, (key, val) => {
                                 var elmLi = $('<li>')
                                 let url =
