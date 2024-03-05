@@ -240,31 +240,26 @@
                 })
 
                 $('#files').on('change', function(e) {
-                        var files = e.target.files
-                        var filenames = []
+                    var files = e.target.files
+                    var filenames = []
 
-                        for (var i = 0; i < files.length; i++) {
-                            // Meminta pengguna memberikan nama untuk setiap file yang dipilih
-                            var name = prompt('Masukkan nama untuk file ' + files[i].name + ':')
-                            if (name === '' || name === null) {
-                                // Jika pengguna membatalkan input, hentikan proses
-                                $('#files').val('')
-                                alert('Nama file harus diisi')
-                                return
-                            }
+                    for (var i = 0; i < files.length; i++) {
+                        // Meminta pengguna memberikan nama untuk setiap file yang dipilih
+                        var name = prompt('Masukkan nama untuk file ' + files[i].name + ':')
+                        if (name === '' || name === null) {
+                            // Jika pengguna membatalkan input, hentikan proses
+                            $('#files').val('')
+                            alert('Nama file harus diisi')
+                            return
+                        }
 
-                            // Validasi nama file
-                            var regex = /^[a-zA-Z0-9_\-\s]+$/;
-                            if (!regex.test(name)) {
-                                $('#files').val('').removeAttr('data-filenames')
-                                alert( <<
-                                        << << <
-                                        HEAD 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
-                                    ) ===
-                                    === =
-                                    'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
-                                ) >>>
-                            >>> > fd4161ef46cd5b745a3d5ba8847a374e8b159051
+                        // Validasi nama file
+                        var regex = /^[a-zA-Z0-9_\-\s]+$/;
+                        if (!regex.test(name)) {
+                            $('#files').val('').removeAttr('data-filenames')
+                            alert(
+                                'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
+                            )
                             return
                         }
 
@@ -285,14 +280,14 @@
                 })
 
 
-            function toast(color = "#198754", type = "Success", message = "Berhasil mengupdate data") {
-                $("#toastRect").attr("fill", color)
-                $("#toastType").text(type)
-                $("#toastMessage").text(message)
-                const toastContainer = $("#liveToast")
-                const toast = new bootstrap.Toast(toastContainer)
-                toast.show()
-            }
+                function toast(color = "#198754", type = "Success", message = "Berhasil mengupdate data") {
+                    $("#toastRect").attr("fill", color)
+                    $("#toastType").text(type)
+                    $("#toastMessage").text(message)
+                    const toastContainer = $("#liveToast")
+                    const toast = new bootstrap.Toast(toastContainer)
+                    toast.show()
+                }
             })
         </script>
     @endpush
