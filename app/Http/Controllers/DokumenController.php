@@ -21,7 +21,6 @@ class DokumenController extends Controller
      */
     public function index()
     {
-        $data['header'] = 'asasa';
         $data['jenis'] = Jenis::select('id', 'nama_jenis')->get();
         return view('dokumen.index', $data);
     }

@@ -50,36 +50,6 @@
             <div class="card-body" id="formContainer" style="display: none;">
                 <form class="form" id="formUser">
                     <div class="row">
-                        <div class="col-md-6 col-12" id="containerNama">
-                            <div class="form-group mandatory">
-                                <label for="nama" class="form-label">Nama</label>
-                                <input type="text" id="nama" class="form-control" placeholder="Nama pengguna"
-                                    name="nama" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12" id="containerEmail">
-                            <div class="form-group mandatory">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" placeholder="Email pengguna"
-                                    name="email" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12" id="containerUsername">
-                            <div class="form-group mandatory">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" id="username" class="form-control" placeholder="Username"
-                                    name="username" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <div class="form-group mandatory">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" class="form-control" name="password"
-                                    placeholder="Password" required>
-                                <span toggle="#password"
-                                    class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
-                            </div>
-                        </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="role" class="form-label">Role <span id="roleState"
@@ -96,6 +66,47 @@
                                 <label for="mahasiswa" class="form-label">Sinkronisasi Data Mahasiswa</label>
                                 <select id="mahasiswa" class="select2" name="mahasiswa">
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12" id="containerNama">
+                            <div class="form-group mandatory">
+                                <label for="nama" class="form-label">Nama</label>
+                                <input type="text" id="nama" class="form-control" placeholder="Nama pengguna"
+                                    name="nama" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12" id="containerEmail">
+                            <div class="form-group mandatory">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="Email pengguna"
+                                    name="email" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12" id="containerProdi">
+                            <div class="form-group mandatory">
+                                <label for="prodi" class="form-label">Prodi</label>
+                                <select id="prodi" class="form-select" name="prodi" required>
+                                    <option value="">Pilih</option>
+                                    @foreach ($prodis as $prodi)
+                                        <option value="{{ $prodi->kode_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12" id="containerUsername">
+                            <div class="form-group mandatory">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" id="username" class="form-control" placeholder="Username"
+                                    name="username" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group mandatory">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" class="form-control" name="password"
+                                    placeholder="Password" required>
+                                <span toggle="#password"
+                                    class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
                             </div>
                         </div>
                         <div class="col-12 d-flex justify-content-end">
@@ -122,6 +133,7 @@
                                 <th>Username</th>
                                 <th>Nama</th>
                                 <th>Email</th>
+                                <th>Prodi</th>
                                 <th>Role</th>
                                 <th>Dibuat pada</th>
                                 <th>Aksi</th>
@@ -201,8 +213,23 @@
                             name: 'email',
                         },
                         {
+                            data: 'kode_prodi',
+                            name: 'kode_prodi',
+                            render: function(data, type, row) {
+                                if (row.role == 'admin') {
+                                    return data
+                                } else if (row.role == 'user') {
+                                    return row.mahasiswa.kode_prodi
+                                }
+                                return '<span class="small text-muted">Null</span>'
+                            }
+                        },
+                        {
                             data: 'role',
                             name: 'role',
+                            render: function(data, type, row) {
+                                return `<span class="badge bg-success">${data}</span>`
+                            }
                         },
                         {
                             data: 'created_at',
@@ -211,8 +238,9 @@
                         {
                             data: 'action',
                             name: 'action',
-                            width: "20%",
+                            width: "25%",
                             orderable: false,
+                            searchable: false,
                         }
                     ],
                     order: [
@@ -258,36 +286,11 @@
                         error: function(xhr, status, error) {
                             var errors = xhr.responseJSON.errors;
                             $('#btnSubmit').removeAttr('disabled').text('Submit')
-                            if (errors.hasOwnProperty('nama')) {
-                                nama.addClass('is-invalid')
-                                nama.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('email')) {
-                                email.addClass('is-invalid')
-                                email.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('username')) {
-                                username.addClass('is-invalid')
-                                username.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.username[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('password')) {
-                                password.addClass('is-invalid')
-                                password.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`
-                                )
-                            }
-                            if (errors.hasOwnProperty('role')) {
-                                role.addClass('is-invalid')
-                                role.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.role[0]}</span>`
-                                )
-                            }
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').after(
+                                    '<span class="invalid-feedback">' + value[0] +
+                                    '</span>');
+                            });
                             toast("#dc3545", "Failed", "Gagal menambahkan pengguna")
                         }
 
@@ -307,16 +310,12 @@
                     }).then((result) => {
                         if (result.value) {
                             const dataId = $(this).data('id')
-                            const data = {
-                                id: dataId
-                            }
                             const url = "{{ route('users.destroy', ['user' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
-                                data: JSON.stringify(data),
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
@@ -371,6 +370,8 @@
                         $('#username').removeAttr('required').val('').attr('disabled', true)
                         $('#containerNama').addClass('d-none')
                         $('#nama').removeAttr('required').val('').attr('disabled', true)
+                        $('#containerProdi').addClass('d-none')
+                        $('#prodi').removeAttr('required').val('').attr('disabled', true)
                         $.ajax({
                             url: "{{ route('getUnsyncMhs') }}",
                             type: 'GET',
@@ -413,12 +414,65 @@
                         $('#containerEmail').removeClass('d-none')
                         $('#email').attr('required', true).val('').removeAttr('disabled')
                         $('#containerUsername').removeClass('d-none')
-                        $('#nama').attr('required', true).val('').removeAttr('disabled')
-                        $('#containerNama').removeClass('d-none')
                         $('#username').attr('required', true).val('').removeAttr('disabled')
+                        $('#containerNama').removeClass('d-none')
+                        $('#nama').attr('required', true).val('').removeAttr('disabled')
+                        $('#containerProdi').removeClass('d-none')
+                        $('#prodi').attr('required', true).val('').removeAttr('disabled')
                         $('#containerMhs').addClass('d-none')
                     }
                 })
+
+                $('#datatable').on('click', '.activate-button', function() {
+                    Swal.fire({
+                        title: 'Yakin ingin mengupdate status?',
+                        text: "Data pengguna yang dipilih akan diupdate",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#233446',
+                        cancelButtonColor: '#8592a3',
+                        confirmButtonText: 'Update',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.value) {
+                            const dataId = $(this).data('id')
+                            const data = {
+                                id: dataId
+                            }
+                            var btn = $(this)
+                            var prevText = btn.text()
+                            $.ajax({
+                                url: "{{ route('updateUserActiveStatus') }}",
+                                type: "PUT",
+                                data: JSON.stringify(data),
+                                dataType: "JSON",
+                                proccessData: false,
+                                contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
+                                success: (response) => {
+                                    refreshData(datatable)
+                                    if (response.updatedstatus) {
+                                        btn.removeClass('btn-success').addClass(
+                                            'btn-secondary').text('Nonaktifkan')
+                                    } else {
+                                        btn.removeClass('btn-secondary').addClass(
+                                            'btn-success').text('Aktifkan')
+                                    }
+                                    toast(undefined, undefined, response.success)
+                                },
+                                error: function(xhr, status, errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text(prevText)
+                                    toast("#dc3545", "Failed", errors)
+                                }
+                            })
+                        }
+                    })
+                });
 
                 $('#refreshData').on('click', async () => {
                     $('#refreshData').attr('disabled', true)

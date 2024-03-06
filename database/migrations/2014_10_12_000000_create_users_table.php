@@ -20,7 +20,13 @@ return new class extends Migration
                 ->on('mahasiswas')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('email')->unique();
+            $table->string('kode_prodi')->nullable();
+            $table->foreign('kode_prodi')
+                ->references('kode_prodi')
+                ->on('prodis')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_active');

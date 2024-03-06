@@ -1,17 +1,18 @@
 <?php
 
 use App\Models\User;
+use App\Models\Dokumen;
 use App\Models\Bookmark;
 use App\Http\Middleware\cekRole;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MahasiswaController;
-use App\Models\Dokumen;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
 
         Route::get('get-unsync-mahasiswa', [MahasiswaController::class, 'getUnsyncMhs'])->name('getUnsyncMhs');
+
+        Route::put('update-user-active-status', [UserController::class, 'updateActiveStatus'])->name('updateUserActiveStatus');
+
+        Route::resource('prodi', ProdiController::class)->except(['create', 'show']);
+        Route::post('/get-prodi', [ProdiController::class, 'getProdi'])->name('prodi.getProdi');
     });
 
     Route::middleware('authtype:super.admin')->group(function () {

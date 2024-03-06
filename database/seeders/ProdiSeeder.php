@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Prodi;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProdiSeeder extends Seeder
 {
@@ -14,9 +14,8 @@ class ProdiSeeder extends Seeder
     public function run(): void
     {
         Prodi::create([
-            "nama_prodi" => "D3 Manajemen Informatika",
-            "kode_prodi" => 30,
-            "singkatan_prodi" => "D3 MI"
+            'kode_prodi' => 'D3MI',
+            'nama_prodi' => 'D3 Manajemen Informatika'
         ]);
     }
 }

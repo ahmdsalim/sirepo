@@ -15,7 +15,7 @@ class MahasiswaSeeder extends Seeder
     {
         Mahasiswa::create([
             "npm" => "2213012",
-            "prodi_id" => 1,
+            "kode_prodi" => "D3MI",
             "nama_mahasiswa" => "Budi Kustanto",
             "email" => "budi@gmail.com",
             "is_active" => true

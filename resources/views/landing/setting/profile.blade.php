@@ -15,10 +15,10 @@
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-control" placeholder="Email pengguna"
-                        value="{{ $user->email }}" disabled>
+                        value="{{ $user->mahasiswa->email }}" required>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
                 </div>
             </form>
         </div>
@@ -64,6 +64,7 @@
                     nama: nama.val(),
                     email: email.val()
                 }
+                var btn = $('#btnUpdate')
                 $.ajax({
                     url: "{{ route('profile.update') }}",
                     type: "POST",
@@ -71,6 +72,11 @@
                     dataType: "JSON",
                     proccessData: false,
                     contentType: "application/json",
+                    beforeSend: () => {
+                        btn.attr('disabled', true).html(
+                            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                        )
+                    },
                     success: (response) => {
                         if (response.success) {
                             $('#profileName').text(response.data.nama)
@@ -93,12 +99,14 @@
                             )
                         }
                         toast("#dc3545", "Failed", "Gagal mengupdate profile")
+                    },
+                    complete: () => {
+                        $('#btnUpdate').removeAttr('disabled').text('Submit')
                     }
-
                 })
             })
 
-            function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
+            function toast(color = "#198754", type = "Success", message = "Berhasil mengupdate data") {
                 $("#toastRect").attr("fill", color)
                 $("#toastType").text(type)
                 $("#toastMessage").text(message)
