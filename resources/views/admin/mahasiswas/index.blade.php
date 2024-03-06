@@ -48,7 +48,10 @@
                                 </div>
                                 @include('layouts.partials.input-file-excel', [
                                     'routeImport' => route('mahasiswas.import'),
-                                    'pathDownload' => asset('assets/static/template/template-mahasiswa.xlsx'),
+                                    'pathDownload' =>
+                                        auth()->user()->role == 'super'
+                                            ? asset('assets/static/template/template-mahasiswa.xlsx')
+                                            : asset('assets/static/template/template-mahasiswa-admin.xlsx'),
                                 ])
                             </div>
                         </div>
@@ -81,17 +84,20 @@
                                     name="email" required>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12 ">
-                            <div class="form-group mandatory">
-                                <label for="prodi_id" class="form-label">Program Studi</label>
-                                <select id="prodi_id" class="form-select" name="prodi_id" required>
-                                    <option value="">Pilih</option>
-                                    @foreach ($prodi as $row)
-                                        <option value="{{ $row->id }}">{{ $row->nama_prodi }}</option>
-                                    @endforeach
-                                </select>
+                        @if (auth()->user()->role == 'super')
+                            <div class="col-md-6 col-sm-12 ">
+                                <div class="form-group mandatory">
+                                    <label for="kode_prodi" class="form-label">Program Studi</label>
+                                    <select id="kode_prodi" class="form-select" name="kode_prodi" required>
+                                        <option value="">Pilih</option>
+                                        @foreach ($prodi as $row)
+                                            <option value="{{ $row->kode_prodi }}">{{ $row->nama_prodi }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
+
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <fieldset>
@@ -142,7 +148,9 @@
                                 <th>NPM</th>
                                 <th>Nama</th>
                                 <th>Email</th>
-                                <th>Prodi</th>
+                                @if (auth()->user()->role == 'super')
+                                    <th>Prodi</th>
+                                @endif
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -209,11 +217,12 @@
                             data: 'email',
                             name: 'email',
                         },
-                        {
-                            data: 'prodi.nama_prodi',
-                            name: 'prodi.nama_prodi',
-                        },
-                        {
+                        @if (auth()->user()->role === 'super')
+                            {
+                                data: 'prodi.nama_prodi',
+                                name: 'prodi.nama_prodi',
+                            },
+                        @endif {
                             data: 'is_active',
                             name: 'is_active',
                             render: function(data, type, row) {
@@ -252,7 +261,7 @@
                     let npm = $('#npm'),
                         nama_mahasiswa = $('#nama_mahasiswa'),
                         email = $('#email'),
-                        prodi_id = $('#prodi_id'),
+                        kode_prodi = $('#kode_prodi'),
                         is_active = $("input[name='is_active']")
 
                     //Data for sending to server    
@@ -260,7 +269,7 @@
                         npm: npm.val(),
                         nama_mahasiswa: nama_mahasiswa.val(),
                         email: email.val(),
-                        prodi_id: prodi_id.val(),
+                        kode_prodi: kode_prodi.val(),
                         is_active: is_active.val(),
                     }
                     $.ajax({
@@ -284,7 +293,7 @@
                                 npm.val('')
                                 nama_mahasiswa.val('')
                                 email.val('')
-                                prodi_id.val('')
+                                kode_prodi.val('')
                                 is_active.val('')
                                 $('#btnSubmit').removeAttr('disabled').text('Submit')
                                 refreshData(datatable)
@@ -312,10 +321,10 @@
                                     `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
                                 )
                             }
-                            if (errors.hasOwnProperty('prodi_id')) {
-                                prodi_id.addClass('is-invalid')
-                                prodi_id.after(
-                                    `<span class="invalid-feedback" role="alert">${errors.prodi_id[0]}</span>`
+                            if (errors.hasOwnProperty('kode_prodi')) {
+                                kode_prodi.addClass('is-invalid')
+                                kode_prodi.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.kode_prodi[0]}</span>`
                                 )
                             }
                             if (errors.hasOwnProperty('is_active')) {

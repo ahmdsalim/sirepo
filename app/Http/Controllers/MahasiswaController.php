@@ -21,15 +21,20 @@ class MahasiswaController extends Controller
     public function index()
     {
         $prodi = Prodi::all();
-        return view('admin.mahasiswas.index',compact('prodi'));
+        return view('admin.mahasiswas.index', compact('prodi'));
     }
 
     public function getMahasiswa()
     {
-        $mhs = Mahasiswa::with('prodi')->latest()->get();
+        $user = auth()->user();
+        $mhs = Mahasiswa::with('prodi');
+
+        if ($user->role == 'admin') {
+            $mhs = Mahasiswa::with('prodi')->where('kode_prodi', $user->kode_prodi);
+        }
         // if (auth()->user()->role == 'admin') {
         //     $mhs = Mahasiswa::with('prodi')
-        //         ->where('prodi_id', auth()->user()->prodi_id);
+        //         ->where('kode_prodi', auth()->user()->kode_prodi);
         // }
         return DataTables::of($mhs)
             ->addColumn('action', function ($row) {
@@ -65,21 +70,31 @@ class MahasiswaController extends Controller
             'email' => 'required|email|unique:mahasiswas,email',
             'nama_mahasiswa' => 'required|string|min:1|max:255',
             'npm' => 'required|string|min:1|max:12|unique:mahasiswas,npm',
-            'prodi_id' => 'required',
             'is_active' => 'required',
         ]);
+
+        if (auth()->user()->role == 'super') {
+            $validator->sometimes('kode_prodi', 'required', function ($input) {
+                return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
+            });
+        }
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $validData = $validator->validated();
-        $user = Mahasiswa::create([
-            'npm' => $validData['npm'],
-            'nama_mahasiswa' => $validData['nama_mahasiswa'],
-            'email' => $validData['email'],
-            'prodi_id' => $validData['prodi_id'],
-            'is_active' => $validData['is_active'],
-        ]);
+        
+        $user = new Mahasiswa();
+        $user->npm = $validData['npm'];
+        $user->nama_mahasiswa = $validData['nama_mahasiswa'];
+        $user->email = $validData['email'];
+        if(auth()->user()->role == 'super'){
+            $user->kode_prodi = $validData['kode_prodi'];
+        }else{
+            $user->kode_prodi = auth()->user()->kode_prodi;
+        }
+        $user->is_active = $validData['is_active'];
+        $user->save();
 
         return response()->json(['success' => 'Berhasil menambahkan pengguna', 'data' => $user], 200);
     }
@@ -100,7 +115,7 @@ class MahasiswaController extends Controller
         $mhs = Mahasiswa::findOrFail($npm);
         $prodi = Prodi::all();
 
-        return view('admin.mahasiswas.form-mahasiswa', compact('mhs','prodi'));
+        return view('admin.mahasiswas.form-mahasiswa', compact('mhs', 'prodi'));
     }
 
     /**
@@ -113,9 +128,14 @@ class MahasiswaController extends Controller
             'nama_mahasiswa' => 'required|string|min:1|max:255',
             'email' => ['required', 'email', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
             'npm' => ['required', 'string', 'min:1', 'max:12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
-            'prodi_id' => 'required',
             'is_active' => 'required',
         ]);
+
+        if (auth()->user()->role == 'super') {
+            $validator->sometimes('kode_prodi', 'required', function ($input) {
+                return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
+            });
+        }
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -126,7 +146,7 @@ class MahasiswaController extends Controller
             'nama_mahasiswa' => $validData['nama_mahasiswa'],
             'email' => $validData['email'],
             'npm' => $validData['npm'],
-            'prodi_id' => $validData['prodi_id'],
+            $mhs->kode_prodi = auth()->user()->role == 'super' ? $validData['kode_prodi'] : auth()->user()->kode_prodi,
             'is_active' => $validData['is_active'],
         ];
 

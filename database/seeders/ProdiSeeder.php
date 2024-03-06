@@ -17,5 +17,9 @@ class ProdiSeeder extends Seeder
             'kode_prodi' => 'D3MI',
             'nama_prodi' => 'D3 Manajemen Informatika'
         ]);
+        Prodi::create([
+            'kode_prodi' => 'D3MB',
+            'nama_prodi' => 'D3 Manajemen Bisnis'
+        ]);
     }
 }

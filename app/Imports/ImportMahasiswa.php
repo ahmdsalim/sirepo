@@ -21,38 +21,28 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    protected $prodiCache = [];
 
     public function model(array $row)
     {
-        $prodiId = $this->getProdiId($row['prodi_id']);
-
         if (isset($row['status'])) {
             $isActive = $row['status'] != 'Aktif' ? 0 : 1;
         }
 
-        return new Mahasiswa([
+        $data = [
             'npm' => $row['npm'],
             'nama_mahasiswa' => $row['nama_mahasiswa'],
             'email' => $row['email'],
-            'prodi_id' => $prodiId,
             'is_active' => $isActive,
-        ]);
-    }
+        ];
 
-    protected function getProdiId($prodiName)
-    {
-        if (!isset($this->prodiCache[$prodiName])) {
-            $prodi = Prodi::where('nama_prodi', $prodiName)->first();
-
-            if ($prodi) {
-                $this->prodiCache[$prodiName] = $prodi->id;
-            } else {
-                throw new \Exception("Prodi dengan nama '$prodiName' tidak ditemukan.");
-            }
+        // Tambahkan 'kode_prodi' hanya jika peran pengguna adalah 'super'
+        if (auth()->user()->role == 'super') {
+            $data['kode_prodi'] = $row['kode_prodi'];
+        }else{
+            $data['kode_prodi'] = auth()->user()->kode_prodi;
         }
 
-        return $this->prodiCache[$prodiName];
+        return new Mahasiswa($data);
     }
 
     public function rules(): array
@@ -60,7 +50,6 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
         return [
             'npm' => 'required|unique:mahasiswas,npm',
             'nama_mahasiswa' => 'required',
-            'prodi_id' => 'required',
             'email' => 'required|unique:mahasiswas,email',
         ];
     }

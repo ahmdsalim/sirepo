@@ -64,40 +64,41 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 ">
-                        <div class="form-group mandatory">
-                            <label for="prodi_id" class="form-label">Program Studi</label>
-                            <select id="prodi_id" class="form-select @error('tahun') is-invalid @enderror"
-                                name="prodi_id" required>
-                                <option value="">Pilih</option>
-                                @foreach ($prodi as $row)
-                                    <option value="{{ $row->id }}" @selected(old('prodi', $mhs->prodi_id ?? '') == $row->id)>
-                                        {{ $row->nama_prodi }}</option>
-                                @endforeach
-                            </select>
-                            @error('prodi')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
+                    @if (auth()->user()->role == 'super')
+
+                        <div class="col-md-6 col-sm-12 ">
+                            <div class="form-group mandatory">
+                                <label for="kode_prodi" class="form-label">Program Studi</label>
+                                <select id="kode_prodi" class="form-select @error('tahun') is-invalid @enderror"
+                                    name="kode_prodi" required>
+                                    <option value="">Pilih</option>
+                                    @foreach ($prodi as $row)
+                                        <option value="{{ $row->kode_prodi }}" @selected(old('prodi', $mhs->kode_prodi ?? '') == $row->kode_prodi)>
+                                            {{ $row->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                                @error('prodi')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="col-md-6 col-12">
                         <div class="form-group mandatory">
                             <fieldset>
                                 <label class="form-label">Status</label>
                                 <div class="d-flex gap-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="is_active"
-                                            value="1" id="flexRadioDefault1"
-                                            data-parsley-multiple="flexRadioDefault"
+                                        <input class="form-check-input" type="radio" name="is_active" value="1"
+                                            id="flexRadioDefault1" data-parsley-multiple="flexRadioDefault"
                                             {{ $mhs->is_active ? 'checked' : '' }}>
                                         <label class="form-check-label form-label" for="flexRadioDefault1">
                                             Aktif
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="is_active"
-                                            value="0" id="flexRadioDefault2"
-                                            data-parsley-multiple="flexRadioDefault"
+                                        <input class="form-check-input" type="radio" name="is_active" value="0"
+                                            id="flexRadioDefault2" data-parsley-multiple="flexRadioDefault"
                                             {{ !$mhs->is_active ? 'checked' : '' }}>
                                         <label class="form-check-label form-label" for="flexRadioDefault2">
                                             Non Aktif
