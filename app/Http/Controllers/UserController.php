@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function getUsers(Request $request)
     {
-        $users = User::exceptlogged()->latest()->get();
+        $users = User::with('mahasiswa:npm,email,kode_prodi')->exceptlogged()->latest()->get();
         return DataTables::of($users)
             ->editColumn('email', function ($row) {
                 $data = null;
@@ -37,10 +37,6 @@ class UserController extends Controller
                     $data = $row->email;
                 }
                 return $data;
-            })
-            ->editColumn('role', function ($row) {
-                $html = '<span class="badge bg-success">' . $row->role . '</span>';
-                return $html;
             })
             ->addColumn('action', function ($row) {
                 $color = $row->is_active ? 'secondary' : 'success';
@@ -168,7 +164,11 @@ class UserController extends Controller
         }
         $data = $validator->validated();
         $user->nama = $data['nama'];
-        $user->email = $data['email'];
+        if ($user->role === 'user') {
+            $user->mahasiswa()->update(['email' => $data['email']]);
+        } else {
+            $user->email = $data['email'];
+        }
         $user->save();
 
         return response()->json(['success' => 'Berhasil mengupdate profile', 'data' => ['nama' => $data['nama']]]);

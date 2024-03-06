@@ -79,15 +79,6 @@
                         </li>
                     </ul>
                 </li>
-                @if (auth()->user()->role == 'super')
-                    <li
-                        class="sidebar-item {{ str_contains(Route::current()->getName(), 'approve') ? 'active' : '' }}">
-                        <a href="{{ route('approve.index') }}" class='sidebar-link'>
-                            <i class="bi bi-person-check-fill"></i>
-                            <span>Approve Pengguna</span>
-                        </a>
-                    </li>
-                @endif
 
                 <li class="sidebar-title">Kelola Data</li>
                 @if (auth()->user()->role == 'super')
@@ -103,10 +94,16 @@
                             <span>Jenis</span>
                         </a>
                     </li>
+                    <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'prodi') ? 'active' : '' }}">
+                        <a href="{{ route('prodi.index') }}" class='sidebar-link'>
+                            <i class="bi bi-buildings-fill"></i>
+                            <span>Prodi</span>
+                        </a>
+                    </li>
                 @endif
                 <li class="sidebar-item {{ str_contains(Route::current()->getName(), 'mahasiswa') ? 'active' : '' }}">
                     <a href="{{ route('mahasiswas.index') }}" class='sidebar-link'>
-                        <i class="bi bi-mortarboard"></i>
+                        <i class="bi bi-mortarboard-fill"></i>
                         <span>Mahasiswa</span>
                     </a>
                 </li>

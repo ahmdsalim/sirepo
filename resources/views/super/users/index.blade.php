@@ -133,6 +133,7 @@
                                 <th>Username</th>
                                 <th>Nama</th>
                                 <th>Email</th>
+                                <th>Prodi</th>
                                 <th>Role</th>
                                 <th>Dibuat pada</th>
                                 <th>Aksi</th>
@@ -212,8 +213,23 @@
                             name: 'email',
                         },
                         {
+                            data: 'kode_prodi',
+                            name: 'kode_prodi',
+                            render: function(data, type, row) {
+                                if (row.role == 'admin') {
+                                    return data
+                                } else if (row.role == 'user') {
+                                    return row.mahasiswa.kode_prodi
+                                }
+                                return '<span class="small text-muted">Null</span>'
+                            }
+                        },
+                        {
                             data: 'role',
                             name: 'role',
+                            render: function(data, type, row) {
+                                return `<span class="badge bg-success">${data}</span>`
+                            }
                         },
                         {
                             data: 'created_at',
@@ -224,6 +240,7 @@
                             name: 'action',
                             width: "25%",
                             orderable: false,
+                            searchable: false,
                         }
                     ],
                     order: [
@@ -293,16 +310,12 @@
                     }).then((result) => {
                         if (result.value) {
                             const dataId = $(this).data('id')
-                            const data = {
-                                id: dataId
-                            }
                             const url = "{{ route('users.destroy', ['user' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
-                                data: JSON.stringify(data),
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
