@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,10 @@ class UserController extends Controller
     {
         $users = User::approved()->exceptlogged()->latest()->get();
         return DataTables::of($users)
+            ->editColumn('role', function ($row) {
+                $html = '<span class="badge bg-success">' . $row->role . '</span>';
+                return $html;
+            })
             ->addColumn('action', function ($row) {
                 $actionBtn = '<a class="btn btn-primary btn-sm" href="' . route("users.edit", ["user" => $row->username]) . '">Edit</a>
                 <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' . $row->username . '" id="btnDelete">
@@ -39,7 +44,7 @@ class UserController extends Controller
             ->editColumn('created_at', function ($row) {
                 return '<span class="small text-muted">' . $row->created_at->format('d-m-Y H:i') . '</span>';
             })
-            ->rawColumns(['action', 'created_at'])
+            ->rawColumns(['role', 'action', 'created_at'])
             ->make(true);
     }
 
@@ -126,17 +131,23 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|min:2|max:150',
             'email' => [
-                'required', 'email',
-                Rule::unique('users')->ignore($user->username, 'username')
+                Rule::excludeIf($user->role === 'user'),
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->username, 'username'),
+                Rule::unique('mahasiswas', 'email'),
             ]
         ]);
+
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $user->nama = $data['nama'];
-        $user->email = $data['email'];
+        if (in_array($user->role, ['admin', 'super'])) {
+            $user->email = $data['email'];
+        }
         $user->save();
 
         return response()->json(['success' => 'Berhasil mengupdate profile', 'data' => ['nama' => $data['nama']]]);
@@ -186,25 +197,47 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|min:2|max:150',
-            'email' => 'required|email|unique:users,email',
-            'username' => 'required|string|min:5|max:100|unique:users,username',
+            'nama' => 'required_if:role,admin|string|min:2|max:150',
+            'email' => [
+                'required_if:role,admin', 'email',
+                Rule::unique('users', 'email'),
+                Rule::unique('mahasiswas', 'email')
+            ],
+            'username' => [
+                'required_if:role,admin', 'string', 'min:5', 'max:100',
+                Rule::unique('users', 'username'),
+                Rule::unique('mahasiswas', 'npm')
+            ],
             'password' => 'required|string|min:8|max:150',
-            'role' => 'required|in:super,admin,user'
+            'role' => 'required|in:admin,user',
+            'mahasiswa' => 'required_if:role,user'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
         $validData = $validator->validated();
-        $user = User::create([
-            'nama' => $validData['nama'],
-            'email' => $validData['email'],
-            'username' => $validData['username'],
+        $data = [
             'password' => $validData['password'],
             'is_active' => true,
-            'role' => $validData['role'],
-        ]);
+            'role' => $validData['role']
+        ];
+
+        if (!empty($validData['mahasiswa'])) {
+            $mahasiswa = Mahasiswa::findOrFail($request->mahasiswa);
+            $data['nama'] = $mahasiswa->nama_mahasiswa;
+            $data['email'] = $mahasiswa->email;
+            $data['username'] = $mahasiswa->npm;
+            $data['npm'] = $validData['mahasiswa'];
+            $data['is_active'] = $mahasiswa->is_active;
+        } else {
+            $data['nama'] = $validData['nama'];
+            $data['email'] = $validData['email'];
+            $data['username'] = $validData['username'];
+        }
+
+        $user = User::create($data);
 
         return response()->json(['success' => 'Berhasil menambahkan pengguna', 'data' => $user], 200);
     }
@@ -238,17 +271,19 @@ class UserController extends Controller
             'nama' => 'required|string|min:2|max:150',
             'email' => [
                 'required', 'email',
-                Rule::unique('users')->ignore($user->username, 'username')
+                Rule::unique('users')->ignore($user->username, 'username'),
+                Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
             ],
             'username' => [
+                Rule::excludeIf($user->role === 'user'),
                 'required',
                 'string',
                 'min:5',
                 'max:100',
-                Rule::unique('users')->ignore($user->username, 'username')
+                Rule::unique('users')->ignore($user->username, 'username'),
+                Rule::unique('mahasiswas', 'npm')->ignore($user->npm, 'npm')
             ],
-            'password' => 'nullable|string|min:8|max:150',
-            'role' => 'required|in:super,admin,user'
+            'password' => 'nullable|string|min:8|max:150'
         ]);
 
         if ($validator->fails()) {
@@ -259,9 +294,13 @@ class UserController extends Controller
         $data = [
             'nama' => $validData['nama'],
             'email' => $validData['email'],
-            'username' => $validData['username'],
-            'role' => $validData['role'],
         ];
+
+        if ($user->role === 'user') {
+            $user->mahasiswa()->update(['email' => $validData['email']]);
+        } else {
+            $data['username'] = $validData['username'];
+        }
 
         !empty($validData['password']) ?? ($data['password'] = $validData['password']);
 

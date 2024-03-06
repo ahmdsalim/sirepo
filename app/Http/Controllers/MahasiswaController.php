@@ -178,4 +178,14 @@ class MahasiswaController extends Controller
     {
         return view('admin.mahasiswas.error-import');
     }
+
+    public function getUnsyncMhs()
+    {
+        try {
+            $mahasiswa = Mahasiswa::select('npm', 'nama_mahasiswa')->doesntHave('user')->get();
+            return response()->json(['success' => true, 'data' => $mahasiswa]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'errors' => $e->getMessage()]);
+        }
+    }
 }

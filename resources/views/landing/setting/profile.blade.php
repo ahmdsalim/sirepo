@@ -12,10 +12,10 @@
                     <input type="text" name="nama" id="nama" class="form-control" placeholder="Nama pengguna"
                         value="{{ $user->nama }}" required>
                 </div>
-                <div class="form-group ">
+                <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-control" placeholder="Email pengguna"
-                        value="{{ $user->email }}" required>
+                        value="{{ $user->email }}" disabled>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -84,13 +84,13 @@
                             nama.addClass('is-invalid')
                             nama.after(
                                 `<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('email')) {
                             email.addClass('is-invalid')
                             email.after(
                                 `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
-                                )
+                            )
                         }
                         toast("#dc3545", "Failed", "Gagal mengupdate profile")
                     }

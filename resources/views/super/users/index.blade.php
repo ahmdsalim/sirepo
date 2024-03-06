@@ -9,6 +9,15 @@
             position: relative;
             z-index: 2;
         }
+
+        html[data-bs-theme=dark] .select2-results__options {
+            padding-left: 0 !important;
+        }
+
+        html[data-bs-theme=dark] .select2-search__field {
+            background: white;
+            color: #000;
+        }
     </style>
 @endpush
 <x-app-layout title="Kelola Pengguna">
@@ -41,21 +50,21 @@
             <div class="card-body" id="formContainer" style="display: none;">
                 <form class="form" id="formUser">
                     <div class="row">
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-6 col-12" id="containerNama">
                             <div class="form-group mandatory">
                                 <label for="nama" class="form-label">Nama</label>
                                 <input type="text" id="nama" class="form-control" placeholder="Nama pengguna"
                                     name="nama" required>
                             </div>
                         </div>
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-6 col-12" id="containerEmail">
                             <div class="form-group mandatory">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" id="email" class="form-control" placeholder="Email pengguna"
                                     name="email" required>
                             </div>
                         </div>
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-6 col-12" id="containerUsername">
                             <div class="form-group mandatory">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" id="username" class="form-control" placeholder="Username"
@@ -73,12 +82,19 @@
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
-                                <label for="role" class="form-label">Role</label>
-                                <select id="role" class="form-select" name="role" required>
+                                <label for="role" class="form-label">Role <span id="roleState"
+                                        class="mt-1"></span></label>
+                                <select id="role" class="select2" name="role" required>
                                     <option value="">Pilih</option>
-                                    <option value="super">Super</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12 d-none" id="containerMhs">
+                            <div class="form-group mandatory">
+                                <label for="mahasiswa" class="form-label">Sinkronisasi Data Mahasiswa</label>
+                                <select id="mahasiswa" class="select2" name="mahasiswa">
                                 </select>
                             </div>
                         </div>
@@ -135,10 +151,12 @@
 
     @push('styles')
         @vite(['resources/assets/compiled/css/table-datatable-jquery.css', 'resources/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css'])
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @endpush
 
     @push('scripts')
         <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script src="{{ asset('assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
         <script>
@@ -213,27 +231,13 @@
                 const formUser = document.getElementById('formUser')
                 formUser.addEventListener("submit", (event) => {
                     event.preventDefault()
-                    //Prepare input element
-                    let nama = $('#nama'),
-                        email = $('#email'),
-                        username = $('#username'),
-                        password = $('#password'),
-                        role = $('#role')
-                    //Data for sending to server    
-                    let data = {
-                        nama: nama.val(),
-                        email: email.val(),
-                        username: username.val(),
-                        password: password.val(),
-                        role: role.val()
-                    }
                     $.ajax({
                         url: "{{ route('users.store') }}",
                         type: "POST",
-                        data: JSON.stringify(data),
+                        data: new FormData($('#formUser')[0]),
                         dataType: "JSON",
-                        proccessData: false,
-                        contentType: "application/json",
+                        processData: false,
+                        contentType: false,
                         beforeSend: () => {
                             //Clear error message
                             $('.invalid-feedback').remove()
@@ -245,11 +249,7 @@
                         success: (response) => {
                             if (response.success) {
                                 //Clear input value
-                                nama.val('')
-                                email.val('')
-                                username.val('')
-                                password.val('')
-                                role.val('')
+                                $('#formUser')[0].reset()
                                 $('#btnSubmit').removeAttr('disabled').text('Submit')
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)
@@ -355,6 +355,68 @@
                         toggleText.text('Sembunyikan')
                         toggleIcon.removeClass('bi bi-chevron-compact-right')
                         toggleIcon.addClass('bi bi-chevron-compact-down')
+                    }
+                })
+
+                $('.select2').select2({
+                    width: '100%'
+                });
+
+                $('#role').on('change', (event) => {
+                    let role = event.target.value
+                    if (role === 'user') {
+                        $('#containerEmail').addClass('d-none')
+                        $('#email').removeAttr('required').val('').attr('disabled', true)
+                        $('#containerUsername').addClass('d-none')
+                        $('#username').removeAttr('required').val('').attr('disabled', true)
+                        $('#containerNama').addClass('d-none')
+                        $('#nama').removeAttr('required').val('').attr('disabled', true)
+                        $.ajax({
+                            url: "{{ route('getUnsyncMhs') }}",
+                            type: 'GET',
+                            dataType: 'json',
+                            beforeSend: () => {
+                                $('#roleState').html(
+                                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                )
+                            },
+                            success: function(response) {
+                                var data = response.data
+                                var firstOpt = $('<option>')
+                                firstOpt.val('')
+                                firstOptText = data.length > 0 ? 'Pilih' : 'Data tidak ditemukan'
+                                firstOpt.text(firstOptText)
+                                $('#mahasiswa').append(firstOpt)
+                                if (data.length > 0) {
+                                    data.forEach(function(item) {
+                                        var elmOption = $('<option>')
+                                        elmOption.val(item.npm).text(
+                                            `${item.npm} - ${item.nama_mahasiswa}`)
+                                        $('#mahasiswa').append(elmOption)
+                                    })
+                                }
+                                $('#mahasiswa').attr('required', true)
+                                $('#containerMhs').removeClass('d-none')
+                            },
+                            error: function(xhr, status, error) {
+                                var errors = xhr.responseJSON.errors;
+                                toast("#dc3545", "Failed", errors)
+                                $('#role').val('')
+                            },
+                            complete: () => {
+                                $('#roleState').empty()
+                            }
+                        })
+
+                    } else {
+                        $('#mahasiswa').removeAttr('required').empty()
+                        $('#containerEmail').removeClass('d-none')
+                        $('#email').attr('required', true).val('').removeAttr('disabled')
+                        $('#containerUsername').removeClass('d-none')
+                        $('#nama').attr('required', true).val('').removeAttr('disabled')
+                        $('#containerNama').removeClass('d-none')
+                        $('#username').attr('required', true).val('').removeAttr('disabled')
+                        $('#containerMhs').addClass('d-none')
                     }
                 })
 

@@ -45,7 +45,7 @@ class DokumenController extends Controller
                     padding-left: 0;
                     margin: auto 0;
                 ">';
-                $rowLength = is_array($row->file) ? count($row->file) : 0;
+                $rowLength = count($row->file);
                 if ($rowLength > 0) {
                     if ($rowLength > 2) {
                         $actionBtn .= '<li><span class="badge text-bg-secondary">' . $rowLength . ' File</span></li>';
@@ -55,7 +55,7 @@ class DokumenController extends Controller
                         }
                     }
                 } else {
-                    $actionBtn .= '<li>Tidak ada file</li>';
+                    $actionBtn .= '<li><span class="badge text-bg-secondary">0 File</span></li>';
                 }
                 $actionBtn .= '</ul>';
                 return $actionBtn;
@@ -179,8 +179,8 @@ class DokumenController extends Controller
                 'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
                 'jenis' => 'required|string',
                 'files' => 'nullable',
-                'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'required_with:files|files',
+                'files.*' => 'file|mimes:pdf|max:10240',
+                'filenames' => 'required_with:files',
                 'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [
@@ -267,8 +267,8 @@ class DokumenController extends Controller
                 'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
                 'jenis' => 'required|string',
                 'files' => 'nullable',
-                'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'required_with:files|files',
+                'files.*' => 'file|mimes:pdf|max:10240',
+                'filenames' => 'required_with:files',
                 'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [

@@ -53,24 +53,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
         Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
         Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
+
+        Route::get('get-unsync-mahasiswa', [MahasiswaController::class, 'getUnsyncMhs'])->name('getUnsyncMhs');
     });
 
-    Route::middleware('authtype:admin')->group(function(){
-        Route::resource('mahasiswas',MahasiswaController::class);
-        Route::post('get-mahasiswa',[MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
-        Route::post('import-mahasiswa',[MahasiswaController::class, 'import'])->name('mahasiswas.import');
-        Route::get('import-mahasiswas-error',[MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
-    });
-    
     Route::middleware('authtype:super.admin')->group(function () {
         Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
-        Route::post('import-dokumen',[DokumenController::class, 'import'])->name('dokumens.import');
-        Route::match(['get'],'import-dokumen-error',[DokumenController::class, 'errorImport'])->name('dokumens.errorImport');
+        Route::post('import-dokumen', [DokumenController::class, 'import'])->name('dokumens.import');
+        Route::match(['get'], 'import-dokumen-error', [DokumenController::class, 'errorImport'])->name('dokumens.errorImport');
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
         Route::get('security', [UserController::class, 'security'])->name('security');
+        Route::resource('mahasiswas', MahasiswaController::class);
+        Route::post('get-mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
+        Route::post('import-mahasiswa', [MahasiswaController::class, 'import'])->name('mahasiswas.import');
+        Route::get('import-mahasiswas-error', [MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
     });
 
     Route::middleware('authtype:user')->group(function () {

@@ -29,11 +29,10 @@ class Dokumen extends Model
     protected function file(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => json_decode($value),
+            get: fn (?string $value) => $value !== null ? json_decode($value) : [],
             set: fn (?string $value) => $value,
         );
     }
-    
 
     public function bookmarks()
     {

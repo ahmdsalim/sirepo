@@ -17,7 +17,7 @@
     </x-slot>
 
     <section class="section">
-        
+
         <div class="card">
             <div class="card-header">
                 <div class="d-inline-block user-select-none" id="toggleContainer" style="cursor: pointer;">
@@ -515,7 +515,7 @@
                             $('#files').val('').removeAttr('data-filenames')
                             alert(
                                 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
-                                )
+                            )
                             return
                         }
 
@@ -561,6 +561,10 @@
                             $('#dataKeyword').text(response.data.keyword)
                             $('#dataUploader').text(response.data.user.nama)
                             $('#dataDiunduh').text(response.data.downloads_sum_total)
+                            if (response.data.file.length == 0) {
+                                $('#dataFile').html(
+                                    '<li class="text-muted">-- Belum ada file --</li>')
+                            }
                             $.each(response.data.file, (key, val) => {
                                 var elmLi = $('<li>')
                                 let url =
