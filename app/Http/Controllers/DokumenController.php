@@ -351,7 +351,7 @@ class DokumenController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $file = $request->file('file')->storeAs('upload/excel/dokumen', 'dokumen.xlsx');
+        $file = $request->file('file');
 
         // Pass the file path to the import method
         $import = new DokumenImport();

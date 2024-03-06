@@ -39,6 +39,7 @@
 
                     </form>
                 </div>
+                <div class="card-body">
 
                 @if (session()->has('failures'))
                             <table class="table table-warning">
@@ -58,7 +59,7 @@
                                         <td>
                                             <ul>
                                                 @foreach ($validasi->errors() as $error)
-                                                    <li>{{ $error }}</li>
+                                                    <li class="text-danger">{{ $error }}</li>
                                                 @endforeach
                                             </ul>
                                         </td>
@@ -72,6 +73,7 @@
                                 @endphp
                             </table>
                         @endif
+            </div>
             </div>
         </div>
 

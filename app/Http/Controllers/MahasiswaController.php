@@ -160,7 +160,7 @@ class MahasiswaController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $file = $request->file('file')->storeAs('upload/excel/mahasiswa', 'mahasiswa.xlsx');
+        $file = $request->file('file');
 
         // Pass the file path to the import method
         $import = new ImportMahasiswa();
