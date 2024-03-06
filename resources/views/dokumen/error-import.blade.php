@@ -1,9 +1,9 @@
-<x-app-layout title="Kelola Mahasiswa">
+<x-app-layout title="Kelola Dokumens">
     <x-slot name="header">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Error Import Data Mahasiswa</h3>
-                <p class="text-subtitle text-muted">Mahasiswa</p>
+                <h3>Error Import Data Dokumens</h3>
+                <p class="text-subtitle text-muted">Dokumens</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -11,7 +11,7 @@
                         <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none"
                                 href="home">Dashboard</a></li>
                         <li class="breadcrumb-item text-decoration-none"><a class="text-decoration-none"
-                                href="{{ route('mahasiswas.index') }}">Import</a></li>
+                                href="{{ route('dokumens.index') }}">Import</a></li>
                         <li class="breadcrumb-item" aria-current="page">Error</li>
                     </ol>
                 </nav>
@@ -32,8 +32,9 @@
                             <input class="form-control mb-2" type="file" id="fileInput" required name="file"
                                 accept=".xlsx">
                         </div>
-                        <div class="col-12 d-flex justify-content-end ">
-                            <button type="sumbit" class="btn btn-primary">Import</button>
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <a href="{{ route('dokumens.index') }}" class="btn btn-primary" >Kembali</a>
+                            <button type="sumbit" class="btn btn-success">Import</button>
                         </div>
 
                     </form>
