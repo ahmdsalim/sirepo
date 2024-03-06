@@ -19,6 +19,7 @@ class Mahasiswa extends Model
         'npm',
         'nama_mahasiswa',
         'email',
+        'prodi_id',
         'is_active',
     ];
 
@@ -26,4 +27,11 @@ class Mahasiswa extends Model
     {
         return $this->hasOne(User::class, 'npm', 'npm');
     }
+
+    public function prodi()
+    {
+        return $this->hasOne(Prodi::class, 'id', 'prodi_id');
+    }
+
+
 }

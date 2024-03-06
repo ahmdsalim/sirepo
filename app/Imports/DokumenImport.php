@@ -6,10 +6,13 @@ use App\Models\Jenis;
 use App\Models\Dokumen;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
 {
@@ -19,9 +22,12 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
+
+    protected $jenisCache = [];
+
     public function model(array $row)
     {
-        $jenis = Jenis::where('nama_jenis', $row['jenis_id'])->first();
+        $jenisId = $this->getJenisId($row['jenis_id']);
 
         return new Dokumen([
             'judul' => $row['judul'],
@@ -30,10 +36,23 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
             'penguji' => $row['penguji'],
             'tahun' => $row['tahun'],
             'username' => auth()->user()->username,
-            'jenis_id' => $row['jenis_id'] ?? null,
+            'jenis_id' => $jenisId,
             'abstrak' => $row['abstrak'],
             'keyword' => $row['keyword'],
         ]);
+    }
+
+    protected function getJenisId($jenisName)
+    {
+        if (!isset($this->jenisCache[$jenisName])) {
+            $jenis = Jenis::where('nama_jenis', $jenisName)->first();
+
+            if ($jenis) {
+                $this->jenisCache[$jenisName] = $jenis->id;
+            }
+        }
+
+        return $this->jenisCache[$jenisName];
     }
 
     public function rules(): array

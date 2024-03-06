@@ -356,6 +356,7 @@ class DokumenController extends Controller
         // Pass the file path to the import method
         $import = new DokumenImport();
         $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+        // dd($import);
 
         if ($import->failures()->isNotEmpty()) {
             return redirect()->route('dokumens.errorImport')->withFailures($import->failures());

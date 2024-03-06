@@ -32,8 +32,9 @@
                             <input class="form-control mb-2" type="file" id="fileInput" required name="file"
                                 accept=".xlsx">
                         </div>
-                        <div class="col-12 d-flex justify-content-end ">
-                            <button type="sumbit" class="btn btn-primary">Import</button>
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <a href="{{ route('mahasiswas.index') }}" class="btn btn-primary" >Kembali</a>
+                            <button type="sumbit" class="btn btn-success">Import</button>
                         </div>
 
                     </form>

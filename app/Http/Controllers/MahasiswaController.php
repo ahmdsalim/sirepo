@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Imports\ImportMahasiswa;
+use App\Models\Prodi;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -19,12 +20,17 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        return view('admin.mahasiswas.index');
+        $prodi = Prodi::all();
+        return view('admin.mahasiswas.index',compact('prodi'));
     }
 
     public function getMahasiswa()
     {
-        $mhs = Mahasiswa::latest()->get();
+        $mhs = Mahasiswa::with('prodi')->latest()->get();
+        // if (auth()->user()->role == 'admin') {
+        //     $mhs = Mahasiswa::with('prodi')
+        //         ->where('prodi_id', auth()->user()->prodi_id);
+        // }
         return DataTables::of($mhs)
             ->addColumn('action', function ($row) {
                 $actionBtn =
@@ -59,6 +65,8 @@ class MahasiswaController extends Controller
             'email' => 'required|email|unique:mahasiswas,email',
             'nama_mahasiswa' => 'required|string|min:1|max:255',
             'npm' => 'required|string|min:1|max:12|unique:mahasiswas,npm',
+            'prodi_id' => 'required',
+            'is_active' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -69,7 +77,8 @@ class MahasiswaController extends Controller
             'npm' => $validData['npm'],
             'nama_mahasiswa' => $validData['nama_mahasiswa'],
             'email' => $validData['email'],
-            'is_active' => false,
+            'prodi_id' => $validData['prodi_id'],
+            'is_active' => $validData['is_active'],
         ]);
 
         return response()->json(['success' => 'Berhasil menambahkan pengguna', 'data' => $user], 200);
@@ -89,8 +98,9 @@ class MahasiswaController extends Controller
     public function edit(string $npm)
     {
         $mhs = Mahasiswa::findOrFail($npm);
+        $prodi = Prodi::all();
 
-        return view('admin.mahasiswas.form-mahasiswa', compact('mhs'));
+        return view('admin.mahasiswas.form-mahasiswa', compact('mhs','prodi'));
     }
 
     /**
@@ -103,6 +113,8 @@ class MahasiswaController extends Controller
             'nama_mahasiswa' => 'required|string|min:1|max:255',
             'email' => ['required', 'email', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
             'npm' => ['required', 'string', 'min:1', 'max:12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
+            'prodi_id' => 'required',
+            'is_active' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -114,6 +126,8 @@ class MahasiswaController extends Controller
             'nama_mahasiswa' => $validData['nama_mahasiswa'],
             'email' => $validData['email'],
             'npm' => $validData['npm'],
+            'prodi_id' => $validData['prodi_id'],
+            'is_active' => $validData['is_active'],
         ];
 
         $mhs->update($data);
@@ -151,6 +165,7 @@ class MahasiswaController extends Controller
         // Pass the file path to the import method
         $import = new ImportMahasiswa();
         $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+        // dd($import);
 
         if ($import->failures()->isNotEmpty()) {
             return redirect()->route('mahasiswas.errorImport')->withFailures($import->failures());
