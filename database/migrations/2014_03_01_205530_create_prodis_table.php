@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_prodi');
             $table->integer('kode_prodi');
-            $table->enum('jenjang',['D3','D4','S1','S2']);
+            $table->string('singkatan_prodi');
             $table->timestamps();
         });
     }
