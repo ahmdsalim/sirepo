@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <form class="form" id="formUser">
-                    <div class="row">
+                    <div class="row mb-3 ">
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="npm" class="form-label">NPM</label>
@@ -77,19 +77,58 @@
                                     placeholder="Nama mahasiswa" name="nama_mahasiswa" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group mandatory">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control"
-                                    placeholder="Email pengguna" name="email" required>
+                                <input type="email" id="email" class="form-control" placeholder="Email pengguna"
+                                    name="email" required>
                             </div>
                         </div>
-                        <div class="col-12 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary me-1 mb-1" id="btnSubmit">Submit</button>
+                        <div class="col-md-6 col-sm-12 ">
+                            <div class="form-group mandatory">
+                                <label for="prodi_id" class="form-label">Program Studi</label>
+                                <select id="prodi_id" class="form-select" name="prodi_id" required>
+                                    <option value="">Pilih</option>
+                                    @foreach ($prodi as $row)
+                                        <option value="{{ $row->id }}">{{ $row->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group mandatory">
+                                <fieldset>
+                                    <label class="form-label">Status</label>
+                                    <div class="d-flex gap-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="is_active"
+                                                id="flexRadioDefault1" data-parsley-required="true" value="1"
+                                                data-parsley-multiple="flexRadioDefault">
+                                            <label class="form-check-label form-label" for="flexRadioDefault1">
+                                                Aktif
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="is_active"
+                                                id="flexRadioDefault2" data-parsley-multiple="flexRadioDefault"
+                                                value="0">
+                                            <label class="form-check-label form-label" for="flexRadioDefault2">
+                                                Non Aktif
+                                            </label>
+                                        </div>
+                                </fieldset>
+                            </div>
+                        </div>
+
                     </div>
-                </form>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary me-1 mb-1" id="btnSubmit">Submit</button>
+                    </div>
             </div>
+            </form>
+        </div>
         </div>
         <div class="card">
             <div class="card-header">
@@ -108,6 +147,7 @@
                                 <th>NPM</th>
                                 <th>Nama</th>
                                 <th>Email</th>
+                                <th>Prodi</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -175,6 +215,10 @@
                             name: 'email',
                         },
                         {
+                            data: 'prodi.nama_prodi',
+                            name: 'prodi.nama_prodi',
+                        },
+                        {
                             data: 'is_active',
                             name: 'is_active',
                             render: function(data, type, row) {
@@ -211,13 +255,17 @@
                     //Prepare input element
                     let npm = $('#npm'),
                         nama_mahasiswa = $('#nama_mahasiswa'),
-                        email = $('#email')
+                        email = $('#email'),
+                        prodi_id = $('#prodi_id'),
+                        is_active = $("input[name='is_active']")
 
                     //Data for sending to server    
                     let data = {
                         npm: npm.val(),
                         nama_mahasiswa: nama_mahasiswa.val(),
                         email: email.val(),
+                        prodi_id: prodi_id.val(),
+                        is_active: is_active.val(),
                     }
                     $.ajax({
                         url: "{{ route('mahasiswas.store') }}",
@@ -240,6 +288,8 @@
                                 npm.val('')
                                 nama_mahasiswa.val('')
                                 email.val('')
+                                prodi_id.val('')
+                                is_active.val('')
                                 $('#btnSubmit').removeAttr('disabled').text('Submit')
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)
@@ -266,6 +316,19 @@
                                     `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
                                 )
                             }
+                            if (errors.hasOwnProperty('prodi_id')) {
+                                prodi_id.addClass('is-invalid')
+                                prodi_id.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.prodi_id[0]}</span>`
+                                )
+                            }
+                            if (errors.hasOwnProperty('is_active')) {
+                                is_active.addClass('is-invalid')
+                                is_active.after(
+                                    `<span class="invalid-feedback" role="alert">${errors.is_active[0]}</span>`
+                                )
+                            }
+                            
 
                             toast("#dc3545", "Failed", "Gagal menambahkan pengguna")
                         }
