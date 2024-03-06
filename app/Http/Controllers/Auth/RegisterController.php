@@ -84,7 +84,6 @@ class RegisterController extends Controller
             'nama' => $mhs->nama_mahasiswa,
             'username' => $request->npm,
             'npm' => $request->npm,
-            'email' => $request->email,
             'role' => 'user',
             'is_active' => $mhs->is_active,
             'password' => Hash::make($password),
@@ -97,7 +96,7 @@ class RegisterController extends Controller
         $rawpassword = strtolower(Str::random(8));
         $user = $this->create($request, $rawpassword);
         $data = [
-            'email' => $user->email,
+            'email' => $user->mahasiswa->email,
             'nama' => $user->nama,
             'username' => $user->username,
             'password' => $rawpassword
@@ -116,6 +115,6 @@ class RegisterController extends Controller
 
     protected function registered(Request $request)
     {
-        return to_route('login')->with('success', 'Pendaftaran akun berhasil! Silahkan cek pesan email yang telah dikirimkan');
+        return to_route('login')->with('success', 'Pendaftaran akun berhasil. Silahkan cek pesan email yang telah dikirimkan');
     }
 }

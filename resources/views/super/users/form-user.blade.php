@@ -63,6 +63,24 @@
                             @enderror
                         </div>
                     </div>
+                    @if ($user->role === 'admin')
+                        <div class="col-md-6 col-12">
+                            <div class="form-group mandatory">
+                                <label for="prodi" class="form-label">Prodi</label>
+                                <select id="prodi" class="form-select @error('prodi') is-invalid @enderror"
+                                    name="prodi" required>
+                                    <option value="">Pilih</option>
+                                    @foreach ($prodis as $prodi)
+                                        <option value="{{ $prodi->kode_prodi }}" @selected(old('prodi', $user->kode_prodi ?? '') == $prodi->kode_prodi)>
+                                            {{ $prodi->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                                @error('prodi')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-md-6 col-12">
                         <div class="form-group @if ($user->role !== 'user') mandatory @endif">
                             <label for="username" class="form-label">Username</label>
@@ -90,8 +108,8 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group">
                             <label for="role" class="form-label">Role</label>
-                            <input type="text" id="role" class="form-control" value="{{ ucfirst($user->role) }}"
-                                placeholder="Role" disabled>
+                            <input type="text" id="role" class="form-control"
+                                value="{{ ucfirst($user->role) }}" placeholder="Role" disabled>
                         </div>
                     </div>
                     @if ($user->role === 'user')

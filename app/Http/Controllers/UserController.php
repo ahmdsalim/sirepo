@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Prodi;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -20,19 +21,34 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('super.users.index');
+        $prodis = Prodi::select('kode_prodi', 'nama_prodi')->get();
+        return view('super.users.index', compact('prodis'));
     }
 
     public function getUsers(Request $request)
     {
-        $users = User::approved()->exceptlogged()->latest()->get();
+        $users = User::exceptlogged()->latest()->get();
         return DataTables::of($users)
+            ->editColumn('email', function ($row) {
+                $data = null;
+                if ($row->role === 'user') {
+                    $data = $row->mahasiswa->email;
+                } else {
+                    $data = $row->email;
+                }
+                return $data;
+            })
             ->editColumn('role', function ($row) {
                 $html = '<span class="badge bg-success">' . $row->role . '</span>';
                 return $html;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<a class="btn btn-primary btn-sm" href="' . route("users.edit", ["user" => $row->username]) . '">Edit</a>
+                $color = $row->is_active ? 'secondary' : 'success';
+                $text = $row->is_active ? 'Nonaktifkan' : 'Aktifkan';
+                $actionBtn = '<button type="button" class="btn btn-' . $color . ' text-white btn-sm activate-button" data-id="' . encryptString($row->username) . '" id="btnActivate">
+                ' . $text . '
+            </button>
+            <a class="btn btn-primary btn-sm" href="' . route("users.edit", ["user" => $row->username]) . '">Edit</a>
                 <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' . $row->username . '" id="btnDelete">
                     Hapus
                 </button>';
@@ -128,16 +144,23 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|min:2|max:150',
-            'email' => [
-                Rule::excludeIf($user->role === 'user'),
+        $rules = [
+            'nama' => 'required|string|min:2|max:150'
+        ];
+        if ($user->role === 'user') {
+            $rules['email'] = [
                 'required',
                 'email',
-                Rule::unique('users')->ignore($user->username, 'username'),
-                Rule::unique('mahasiswas', 'email'),
-            ]
-        ]);
+                Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
+            ];
+        } else {
+            $rules['email'] = [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->username, 'username')
+            ];
+        }
+        $validator = Validator::make($request->all(), $rules);
 
 
         if ($validator->fails()) {
@@ -145,9 +168,7 @@ class UserController extends Controller
         }
         $data = $validator->validated();
         $user->nama = $data['nama'];
-        if (in_array($user->role, ['admin', 'super'])) {
-            $user->email = $data['email'];
-        }
+        $user->email = $data['email'];
         $user->save();
 
         return response()->json(['success' => 'Berhasil mengupdate profile', 'data' => ['nama' => $data['nama']]]);
@@ -200,14 +221,14 @@ class UserController extends Controller
             'nama' => 'required_if:role,admin|string|min:2|max:150',
             'email' => [
                 'required_if:role,admin', 'email',
-                Rule::unique('users', 'email'),
-                Rule::unique('mahasiswas', 'email')
+                Rule::unique('users', 'email')
             ],
             'username' => [
                 'required_if:role,admin', 'string', 'min:5', 'max:100',
                 Rule::unique('users', 'username'),
                 Rule::unique('mahasiswas', 'npm')
             ],
+            'prodi' => 'required_if:role,admin|string',
             'password' => 'required|string|min:8|max:150',
             'role' => 'required|in:admin,user',
             'mahasiswa' => 'required_if:role,user'
@@ -227,7 +248,6 @@ class UserController extends Controller
         if (!empty($validData['mahasiswa'])) {
             $mahasiswa = Mahasiswa::findOrFail($request->mahasiswa);
             $data['nama'] = $mahasiswa->nama_mahasiswa;
-            $data['email'] = $mahasiswa->email;
             $data['username'] = $mahasiswa->npm;
             $data['npm'] = $validData['mahasiswa'];
             $data['is_active'] = $mahasiswa->is_active;
@@ -235,6 +255,7 @@ class UserController extends Controller
             $data['nama'] = $validData['nama'];
             $data['email'] = $validData['email'];
             $data['username'] = $validData['username'];
+            $data['kode_prodi'] = $validData['prodi'];
         }
 
         $user = User::create($data);
@@ -259,7 +280,9 @@ class UserController extends Controller
         if ($user->username === $loggedInUserId || $user->role === 'super') {
             return abort(404);
         }
-        return view('super.users.form-user', compact('user'));
+        $data['user'] = $user;
+        if ($user->role === 'admin') $data['prodis'] = Prodi::select('kode_prodi', 'nama_prodi')->get();
+        return view('super.users.form-user', $data);
     }
 
     /**
@@ -267,13 +290,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'nama' => 'required|string|min:2|max:150',
-            'email' => [
-                'required', 'email',
-                Rule::unique('users')->ignore($user->username, 'username'),
-                Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
-            ],
             'username' => [
                 Rule::excludeIf($user->role === 'user'),
                 'required',
@@ -284,7 +302,22 @@ class UserController extends Controller
                 Rule::unique('mahasiswas', 'npm')->ignore($user->npm, 'npm')
             ],
             'password' => 'nullable|string|min:8|max:150'
-        ]);
+        ];
+
+        if ($user->role === 'user') {
+            $rules['email'] = [
+                'required', 'email',
+                Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
+            ];
+        } else {
+            $rules['email'] = [
+                'required', 'email',
+                Rule::unique('users')->ignore($user->username, 'username')
+            ];
+            $rules['prodi'] = 'required|string';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -292,14 +325,15 @@ class UserController extends Controller
 
         $validData = $validator->validated();
         $data = [
-            'nama' => $validData['nama'],
-            'email' => $validData['email'],
+            'nama' => $validData['nama']
         ];
 
         if ($user->role === 'user') {
             $user->mahasiswa()->update(['email' => $validData['email']]);
         } else {
             $data['username'] = $validData['username'];
+            $data['email'] = $validData['email'];
+            $data['kode_prodi'] = $validData['prodi'];
         }
 
         !empty($validData['password']) ?? ($data['password'] = $validData['password']);
@@ -323,6 +357,21 @@ class UserController extends Controller
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 422);
+        }
+    }
+
+    public function updateActiveStatus(Request $request)
+    {
+        try {
+            $user = User::findOrFail(decryptString($request->id));
+            $user->is_active = !$user->is_active;
+            if ($user->role === 'user') {
+                $user->mahasiswa()->update(['is_active' => !$user->mahasiswa->is_active]);
+            }
+            $user->save();
+            return response()->json(['success' => 'Berhasil mengupdate data pengguna', 'updatedstatus' => $user->is_active], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
 }

@@ -55,6 +55,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
 
         Route::get('get-unsync-mahasiswa', [MahasiswaController::class, 'getUnsyncMhs'])->name('getUnsyncMhs');
+
+        Route::put('update-user-active-status', [UserController::class, 'updateActiveStatus'])->name('updateUserActiveStatus');
     });
 
     Route::middleware('authtype:super.admin')->group(function () {

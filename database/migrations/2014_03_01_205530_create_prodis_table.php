@@ -12,10 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('prodis', function (Blueprint $table) {
-            $table->id();
+            $table->string('kode_prodi', 50)->primary();
             $table->string('nama_prodi');
-            $table->integer('kode_prodi');
-            $table->enum('jenjang',['D3','D4','S1','S2']);
             $table->timestamps();
         });
     }
