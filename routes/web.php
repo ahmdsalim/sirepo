@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
         Route::post('get-mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
         Route::post('import-mahasiswa', [MahasiswaController::class, 'import'])->name('mahasiswas.import');
         Route::get('import-mahasiswas-error', [MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
+
+        Route::put('update-mahasiswa-active-status', [MahasiswaController::class, 'updateActiveStatus'])->name('updateMahasiswaActiveStatus');
     });
 
     Route::middleware('authtype:user')->group(function () {

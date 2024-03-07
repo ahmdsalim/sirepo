@@ -29,35 +29,17 @@ class DokumenController extends Controller
     {
         $documents = Dokumen::with('jenis')->with('user');
         if (auth()->user()->role == 'admin') {
+            $user = auth()->user();
             $documents = Dokumen::with('jenis')
                 ->with('user')
-                ->where('username', auth()->user()->username);
+                ->whereHas('user', function ($query) use ($user) {
+                    $query->where('kode_prodi', $user->kode_prodi);
+                });
         }
 
         return DataTables::eloquent($documents)
             ->editColumn('penulis', function ($row) {
                 return Str::limit($row->penulis, 50, '...');
-            })
-            ->addColumn('file', function ($row) {
-                $actionBtn = '<ul style="
-                    list-style: none;
-                    padding-left: 0;
-                    margin: auto 0;
-                ">';
-                $rowLength = count($row->file);
-                if ($rowLength > 0) {
-                    if ($rowLength > 2) {
-                        $actionBtn .= '<li><span class="badge text-bg-secondary">' . $rowLength . ' File</span></li>';
-                    } else {
-                        foreach ($row->file as $val) {
-                            $actionBtn .= '<li><a href="' . route('file.get', $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
-                        }
-                    }
-                } else {
-                    $actionBtn .= '<li><span class="badge text-bg-secondary">0 File</span></li>';
-                }
-                $actionBtn .= '</ul>';
-                return $actionBtn;
             })
             ->addColumn('action', function ($row) {
                 $actionBtn =
@@ -361,6 +343,9 @@ class DokumenController extends Controller
             return redirect()->route('dokumens.errorImport')->withFailures($import->failures());
         }
 
+        if ($import->getRowCount() == 0) {
+            return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+        }
         return to_route('dokumens.index')->with('success', 'Import Data Dokumen Berhasil');
     }
 

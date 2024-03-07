@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Prodi;
 use App\Models\Dokumen;
 use App\Models\Bookmark;
 use Laravel\Sanctum\HasApiTokens;
@@ -80,6 +81,11 @@ class User extends Authenticatable
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'npm', 'npm');
+    }
+
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'kode_prodi', 'kode_prodi');
     }
 
     public function scopeToapprove(Builder $query)

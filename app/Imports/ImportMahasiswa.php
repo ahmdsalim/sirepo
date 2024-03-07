@@ -22,10 +22,14 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
      * @return \Illuminate\Database\Eloquent\Model|null
      */
 
+    private $rows = 0;
+
     public function model(array $row)
     {
+        ++$this->rows;
+
         if (isset($row['status'])) {
-            $isActive = $row['status'] != 'Aktif' ? 0 : 1;
+            $isActive = in_array($row['status'], ['Aktif', 'aktif']) ? 1 : 0;
         }
 
         $data = [
@@ -37,8 +41,8 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
 
         // Tambahkan 'kode_prodi' hanya jika peran pengguna adalah 'super'
         if (auth()->user()->role == 'super') {
-            $data['kode_prodi'] = $row['kode_prodi'];
-        }else{
+            $data['kode_prodi'] = strtoupper($row['kode_prodi']);
+        } else {
             $data['kode_prodi'] = auth()->user()->kode_prodi;
         }
 
@@ -49,13 +53,19 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
     {
         return [
             'npm' => 'required|unique:mahasiswas,npm',
-            'nama_mahasiswa' => 'required',
+            'nama_mahasiswa' => 'required|unique:mahasiswas,npm',
             'email' => 'required|unique:mahasiswas,email',
+            'status' => 'required',
         ];
     }
 
     public function headingRow(): int
     {
         return 1;
+    }
+
+    public function getRowCount(): int
+    {
+        return $this->rows;
     }
 }

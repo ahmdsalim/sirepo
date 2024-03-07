@@ -7,10 +7,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         @if (session('success'))
-            showSuccessToast("{{ session('success') }}", "{{ asset('assets/static/icon/success.svg') }}")
+            showSuccessToast("{{ session('success') }}",
+                `${window.location.origin}/assets/static/icon/success.svg`)
         @endif
         @if (session('failed'))
-            showErrorToast("{{ session('failed') }}", "{{ asset('assets/static/icon/danger.svg') }}")
+            showErrorToast("{{ session('failed') }}", `${window.location.origin}/assets/static/icon/danger.svg`)
         @endif
     })
 </script>

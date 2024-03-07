@@ -38,8 +38,13 @@ class MahasiswaController extends Controller
         // }
         return DataTables::of($mhs)
             ->addColumn('action', function ($row) {
+                $color = $row->is_active ? 'secondary' : 'success';
+                $text = $row->is_active ? 'Nonaktifkan' : 'Aktifkan';
                 $actionBtn =
-                    '<a class="btn btn-primary btn-sm" href="' .
+                    '<button type="button" class="btn btn-' . $color . ' text-white btn-sm activate-button" data-id="' . encryptString($row->npm) . '" id="btnActivate">
+                    ' . $text . '
+                </button>
+                    <a class="btn btn-primary btn-sm" href="' .
                     route('mahasiswas.edit', ['mahasiswa' => $row->npm]) .
                     '">Edit</a>
                 <button type="button" class="btn btn-danger text-white btn-sm delete-button" data-id="' .
@@ -83,14 +88,14 @@ class MahasiswaController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $validData = $validator->validated();
-        
+
         $user = new Mahasiswa();
         $user->npm = $validData['npm'];
         $user->nama_mahasiswa = $validData['nama_mahasiswa'];
         $user->email = $validData['email'];
-        if(auth()->user()->role == 'super'){
+        if (auth()->user()->role == 'super') {
             $user->kode_prodi = $validData['kode_prodi'];
-        }else{
+        } else {
             $user->kode_prodi = auth()->user()->kode_prodi;
         }
         $user->is_active = $validData['is_active'];
@@ -150,6 +155,12 @@ class MahasiswaController extends Controller
             'is_active' => $validData['is_active'],
         ];
 
+        if ($validData['is_active'] != $mhs->is_active && !empty($mhs->user)) {
+            $mhs->user()->update([
+                'is_active' => $validData['is_active']
+            ]);
+        }
+
         $mhs->update($data);
 
         return to_route('mahasiswas.index')->with('success', 'Berhasil mengupdate data');
@@ -191,6 +202,9 @@ class MahasiswaController extends Controller
             return redirect()->route('mahasiswas.errorImport')->withFailures($import->failures());
         }
 
+        if ($import->getRowCount() == 0) {
+            return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+        }
         return to_route('mahasiswas.index')->with('success', 'Import Data Mahasiswa Berhasil');
     }
 
@@ -206,6 +220,21 @@ class MahasiswaController extends Controller
             return response()->json(['success' => true, 'data' => $mahasiswa]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'errors' => $e->getMessage()]);
+        }
+    }
+
+    public function updateActiveStatus(Request $request)
+    {
+        try {
+            $mahasiswa = Mahasiswa::findOrFail(decryptString($request->id));
+            $mahasiswa->is_active = !$mahasiswa->is_active;
+            if (!empty($mahasiswa->user)) {
+                $mahasiswa->user()->update(['is_active' => !$mahasiswa->user->is_active]);
+            }
+            $mahasiswa->save();
+            return response()->json(['success' => 'Berhasil mengupdate data mahasiswa', 'updatedstatus' => $mahasiswa->is_active], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
 }

@@ -216,12 +216,13 @@
                             data: 'kode_prodi',
                             name: 'kode_prodi',
                             render: function(data, type, row) {
-                                if (row.role == 'admin') {
-                                    return data
+                                var show = '<span class="small text-muted">Null</span>'
+                                if (row.role == 'admin' || row.role == 'super' && data) {
+                                    show = data
                                 } else if (row.role == 'user') {
-                                    return row.mahasiswa.kode_prodi
+                                    show = row.mahasiswa.kode_prodi
                                 }
-                                return '<span class="small text-muted">Null</span>'
+                                return show
                             }
                         },
                         {
@@ -278,6 +279,7 @@
                             if (response.success) {
                                 //Clear input value
                                 $('#formUser')[0].reset()
+                                $('#role').val('').trigger('change')
                                 $('#btnSubmit').removeAttr('disabled').text('Submit')
                                 refreshData(datatable)
                                 toast(undefined, undefined, response.success)

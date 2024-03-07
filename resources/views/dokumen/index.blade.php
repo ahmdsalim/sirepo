@@ -333,6 +333,14 @@
                             name: 'file',
                             orderable: false,
                             searchable: false,
+                            render: function(data, type, row) {
+                                var list =
+                                    `<ul style="list-style: none;padding-left: 0;margin: auto 0;">`
+                                list +=
+                                    `<li><span class="badge text-bg-secondary">${data.length} File</span></li>`
+                                list += '</ul>'
+                                return list
+                            }
                         },
                         {
                             data: 'action',

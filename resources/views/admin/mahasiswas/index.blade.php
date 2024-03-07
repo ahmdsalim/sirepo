@@ -236,7 +236,7 @@
                         {
                             data: 'action',
                             name: 'action',
-                            width: "20%",
+                            width: "25%",
                             orderable: false,
                             searchable: false,
                         }
@@ -379,6 +379,57 @@
                                 error: function(xhr, status, error) {
                                     var errors = xhr.responseJSON.errors;
                                     btn.removeAttr('disabled').text('Hapus')
+                                    toast("#dc3545", "Failed", errors)
+                                }
+                            })
+                        }
+                    })
+                });
+
+                $('#datatable').on('click', '.activate-button', function() {
+                    Swal.fire({
+                        title: 'Yakin ingin mengupdate status?',
+                        text: "Data mahasiswa yang dipilih akan diupdate",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#233446',
+                        cancelButtonColor: '#8592a3',
+                        confirmButtonText: 'Update',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.value) {
+                            const dataId = $(this).data('id')
+                            const data = {
+                                id: dataId
+                            }
+                            var btn = $(this)
+                            var prevText = btn.text()
+                            $.ajax({
+                                url: "{{ route('updateMahasiswaActiveStatus') }}",
+                                type: "PUT",
+                                data: JSON.stringify(data),
+                                dataType: "JSON",
+                                proccessData: false,
+                                contentType: "application/json",
+                                beforeSend: () => {
+                                    btn.attr('disabled', true).html(
+                                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                                    )
+                                },
+                                success: (response) => {
+                                    refreshData(datatable)
+                                    if (response.updatedstatus) {
+                                        btn.removeClass('btn-success').addClass(
+                                            'btn-secondary').text('Nonaktifkan')
+                                    } else {
+                                        btn.removeClass('btn-secondary').addClass(
+                                            'btn-success').text('Aktifkan')
+                                    }
+                                    toast(undefined, undefined, response.success)
+                                },
+                                error: function(xhr, status, errors) {
+                                    var errors = xhr.responseJSON.errors;
+                                    btn.removeAttr('disabled').text(prevText)
                                     toast("#dc3545", "Failed", errors)
                                 }
                             })

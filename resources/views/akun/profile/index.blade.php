@@ -23,7 +23,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-center align-items-center flex-column">
                             <h4 class="mt-3" id="profileName">{{ $user->nama }}</h4>
-                            <p class="text-small">{{ ucfirst($user->role) }}</p>
+                            <p class="text-small">{{ ucfirst($user->role) }}
+                                @if ($user->kode_prodi)
+                                    {{ ' - ' . $user->kode_prodi }}
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>

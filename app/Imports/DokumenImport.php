@@ -24,9 +24,12 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
      */
 
     protected $jenisCache = [];
+    protected $rows = 0;
 
     public function model(array $row)
     {
+        ++$this->rows;
+
         $jenisId = $this->getJenisId($row['jenis_id']);
 
         return new Dokumen([
@@ -59,18 +62,23 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
     {
         return [
             'judul' => 'required|string|min:15|max:250',
-            'abstrak' => 'required|string|min:100',
-            'keyword' => 'required|string|min:3',
+            'abstrak' => 'required|string',
             'penulis' => 'required|string|min:3',
             'pembimbing' => 'required|string|min:3',
             'penguji' => 'required|string|min:3',
-            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'jenis_id' => 'required',
+            'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
+            'keyword' => 'required|string|min:3',
         ];
     }
 
     public function headingRow(): int
     {
         return 1;
+    }
+
+    public function getRowCount(): int
+    {
+        return $this->rows;
     }
 }
