@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p>Data Tidak Ditemukan</p>
+                            <p class="text-center">Data tidak ditemukan</p>
                         @endforelse
                     </div>
                 </div>

@@ -72,9 +72,9 @@ class DokumenController extends Controller
             $destination = 'file-penelitian/';
             Storage::delete($destination . $dokumen->file[$indexFile]);
             $files = collect($dokumen->file)
-            ->forget($indexFile)
-            ->values()
-            ->all();
+                ->forget($indexFile)
+                ->values()
+                ->all();
             $dokumen->file = json_encode($files);
             DB::beginTransaction();
             $dokumen->save();
@@ -294,7 +294,7 @@ class DokumenController extends Controller
             }
             DB::beginTransaction();
             $dokumen->save();
-            DB::commit());
+            DB::commit();
             return to_route('dokumens.index')->with('success', 'Berhasil mengubah data');
         } catch (\Exception $e) {
             DB::rollback();
