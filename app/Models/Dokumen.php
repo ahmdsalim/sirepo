@@ -59,6 +59,14 @@ class Dokumen extends Model
         $query->where('username', auth()->user()->username);
     }
 
+    public function scopeOnlySameProdi(Builder $query)
+    {
+        $user = auth()->user();
+        $query->whereHas('user', function ($subquery) use ($user) {
+            $subquery->where('kode_prodi', $user->kode_prodi);
+        });
+    }
+
     public function collectedBy(User $user)
     {
         return $this->bookmarks->contains('username', $user->username);

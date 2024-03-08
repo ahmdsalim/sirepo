@@ -50,11 +50,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class)->except(['create', 'show']);
         Route::post('/get-users', [UserController::class, 'getUsers'])->name('users.getUsers');
 
-        Route::get('approve-users', [UserController::class, 'indexApprove'])->name('approve.index');
-        Route::post('/get-approve-users', [UserController::class, 'getApproveUsers'])->name('getApproveUsers');
-        Route::post('/set-approved-user', [UserController::class, 'setApprovedUser'])->name('setApprovedUser');
-        Route::delete('/set-rejected-user', [UserController::class, 'setRejectedUser'])->name('setRejectedUser');
-
         Route::get('get-unsync-mahasiswa', [MahasiswaController::class, 'getUnsyncMhs'])->name('getUnsyncMhs');
 
         Route::put('update-user-active-status', [UserController::class, 'updateActiveStatus'])->name('updateUserActiveStatus');
@@ -64,7 +59,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('authtype:super.admin')->group(function () {
-        Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id');
+        Route::resource('dokumens', DokumenController::class)->parameter('dokumens', 'id')->except(['create', 'show']);
         Route::post('/get-documents', [DokumenController::class, 'getDocuments'])->name('dokumens.getDocuments');
         Route::post('/get-document-by-id', [DokumenController::class, 'getDocumentById'])->name('dokumens.getDocumentById');
         Route::delete('/destroy-file/{id}', [DokumenController::class, 'destroyFile'])->name('dokumens.destroyFile');
@@ -72,7 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::match(['get'], 'import-dokumen-error', [DokumenController::class, 'errorImport'])->name('dokumens.errorImport');
         Route::match(['get'], 'profile', [UserController::class, 'profile'])->name('profile');
         Route::get('security', [UserController::class, 'security'])->name('security');
-        Route::resource('mahasiswas', MahasiswaController::class);
+        Route::resource('mahasiswas', MahasiswaController::class)->except(['create', 'show']);
         Route::post('get-mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswas.getMahasiswa');
         Route::post('import-mahasiswa', [MahasiswaController::class, 'import'])->name('mahasiswas.import');
         Route::get('import-mahasiswas-error', [MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');

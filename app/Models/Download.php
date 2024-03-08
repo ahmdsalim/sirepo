@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Download extends Model
 {
@@ -15,5 +16,15 @@ class Download extends Model
     public function dokumen()
     {
         return $this->belongsTo(Dokumen::class);
+    }
+
+    public function scopeOnlySameProdi(Builder $query)
+    {
+        $user = auth()->user();
+        $query->whereHas('dokumen', function ($subquery) use ($user) {
+            $subquery->whereHas('user', function ($subsubquery) use ($user) {
+                $subsubquery->where('kode_prodi', $user->kode_prodi);
+            });
+        });
     }
 }

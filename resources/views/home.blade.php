@@ -33,8 +33,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Users</h6>
-                                        <h6 class="font-extrabold mb-0">{{ $totalUser }}</h6>
+                                        <h6 class="text-muted font-semibold">User Mhs/Mhs</h6>
+                                        <h6 class="font-extrabold mb-0">{{ $totalUser }}/{{ $totalMahasiswa }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -50,60 +50,88 @@
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Approved</h6>
-                                        <h6 class="font-extrabold mb-0">{{ $totalApproved }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-4 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon green mb-2">
-                                            <i class="bi-person-fill-up"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Moderation</h6>
-                                        <h6 class="font-extrabold mb-0">{{ $totalModeration }}</h6>
+                                        <h6 class="text-muted font-semibold">Staff/Dosen</h6>
+                                        <h6 class="font-extrabold mb-0">{{ $totalAdmin }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @endif
-                @if (auth()->user()->role == 'super')
+                @if (auth()->user()->role === 'admin')
                     <div class="col-6 col-lg-3 col-md-6">
                         <div class="card">
                             <div class="card-body px-4 py-4-5">
                                 <div class="row">
                                     <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon red mb-2">
-                                            <i class="bi-file-pdf-fill"></i>
+                                        <div class="stats-icon purple mb-2">
+                                            <i class="bi-mortarboard-fill"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Dok. Penelitian</h6>
-                                        <h6 class="font-extrabold mb-0">{{ $totalDocument }}</h6>
+                                        <h6 class="text-muted font-semibold">Mahasiswa</h6>
+                                        <h6 class="font-extrabold mb-0">{{ $totalMahasiswa }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @endif
+                <div class="col-6 col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="stats-icon green mb-2">
+                                        <i class="bi-file-earmark-arrow-down-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Diunduh</h6>
+                                    <h6 class="font-extrabold mb-0">{{ $totalUnduhan }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="stats-icon red mb-2">
+                                        <i class="bi-file-pdf-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Dok. Penelitian</h6>
+                                    <h6 class="font-extrabold mb-0">{{ $totalDocument }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Total unduhan 7 hari terakhir</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chart-unduhan">
+                            </canvas>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h4>Stats Dok. Penelitian {{ date('Y') }}</h4>
                         </div>
                         <div class="card-body">
-                            <div id="chart-document" style="min-height: 315px;">
-                            </div>
+                            <canvas id="chart-document">
+                            </canvas>
                         </div>
                     </div>
                 </div>
@@ -112,31 +140,10 @@
         <div class="col-12 col-lg-3">
             <div class="card">
                 <div class="card-body py-4 px-4">
-                    <div class="d-flex align-items-center">
-                        <div class="ms-3 name">
-                            <h5 class="fw-bold">{{ Auth::user()->nama }}</h5>
-                            <small class="text-muted mb-0">{{ Auth::user()->email }}</small>
-                        </div>
-                    </div>
+                    <h6 class="fw-bold">{{ Auth::user()->nama }}</h6>
+                    <p class="small text-muted mb-0">{{ Auth::user()->email }}</p>
                 </div>
             </div>
-            @if (auth()->user()->role == 'admin')
-                <div class="card">
-                    <div class="card-body px-4 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                <div class="stats-icon red mb-2">
-                                    <i class="bi-file-pdf-fill"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                <h6 class="text-muted font-semibold">Dok. Penelitian</h6>
-                                <h6 class="font-extrabold mb-0">{{ $totalDocument }}</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
             <div class="card">
                 <div class="card-header">
                     <h4>Jenis Dokumen</h4>
@@ -149,37 +156,84 @@
     </section>
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
         <script>
-            var options = {
-                series: [{
-                    name: "Dok. Penelitian",
-                    data: @json($dataTotalDoc)
-                }],
-                chart: {
-                    height: 350,
-                    type: 'line',
-                    zoom: {
-                        enabled: true
-                    }
+            const ctx = document.getElementById('chart-document');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($dataBulan),
+                    datasets: [{
+                        label: 'Total Doc. Penelitian',
+                        data: @json($dataTotalDoc),
+                        borderWidth: 1
+                    }]
                 },
-                dataLabels: {
-                    enabled: false
-                },
-                xaxis: {
-                    categories: @json($dataBulan),
-                },
-                yaxis: {
-                    labels: {
-                        formatter: (value) => {
-                            return value;
+                options: {
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    if (Number.isInteger(value)) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            beginAtZero: true
                         }
                     }
                 }
-            };
-
-            var chart = new ApexCharts(document.querySelector("#chart-document"), options);
-            chart.render();
+            });
         </script>
+
+        <script>
+            const cty = document.getElementById('chart-unduhan');
+
+            new Chart(cty, {
+                type: 'line',
+                data: {
+                    labels: @json($dataTanggal),
+                    datasets: [{
+                        label: 'Total Unduhan',
+                        data: @json($dataTotalDownload),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return moment(context.parsed).format('DD/MM/YY');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return moment(this.getLabelForValue(value)).format('D MMM');
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    if (Number.isInteger(value)) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+
         <script>
             var dataJenis = {!! json_encode($dataJenis) !!}
             var seriesJenis

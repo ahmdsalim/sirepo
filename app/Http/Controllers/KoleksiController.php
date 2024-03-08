@@ -10,40 +10,46 @@ use Illuminate\Support\Facades\Crypt;
 
 class KoleksiController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $koleksi = Bookmark::with('dokumen')->where('username', auth()->user()->username)->get()->take(12);
         // $dokumen = Dokumen::where('username',auth())->firstOrFail();
-        
+
         return view('landing.koleksi', compact('koleksi'));
         //return view('layouts.main');
         //$koleksi = koleksi::all();
     }
-    public function collect(Request $request){
-        $username = Auth::user()->username;
-        $dokumen_id = Crypt::decryptString($request->id);
+    public function collect(Request $request)
+    {
+        try {
+            $username = Auth::user()->username;
+            $dokumen_id = Crypt::decryptString($request->id);
 
-        $collection = Bookmark::firstOrNew(['username' => $username, 'dokumen_id' => $dokumen_id]);
+            $collection = Bookmark::firstOrNew(['username' => $username, 'dokumen_id' => $dokumen_id]);
 
-        $collection->save();
+            $collection->save();
 
-        if($collection){
-            return response()->json(['' ,'message' => 'collected']);
+            if ($collection) {
+                return response()->json(['', 'message' => 'collected']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Dokumen gagal dimasukan kedalam koleksi']);
         }
-
-        return response()->json(['message' => 'Dokumen gagal dimasukan kedalam koleksi']);
     }
 
     public function uncollect(Request $request)
     {
-        $username = Auth::user()->username;
-        $dokumen_id = Crypt::decryptString($request->id);
+        try {
+            $username = Auth::user()->username;
+            $dokumen_id = Crypt::decryptString($request->id);
 
-        $collection = Bookmark::where('username',$username)->where('dokumen_id',$dokumen_id)->delete();
+            $collection = Bookmark::where('username', $username)->where('dokumen_id', $dokumen_id)->delete();
 
-        if($collection){
-            return response()->json(['message' => 'collected']);
+            if ($collection) {
+                return response()->json(['message' => 'collected']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Dokumen gagal dimasukan kedalam koleksi']);
         }
-
-        return response()->json(['message' => 'Dokumen gagal dimasukan kedalam koleksi']);
     }
 }

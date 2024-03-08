@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Prodi;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Imports\ImportMahasiswa;
-use App\Models\Prodi;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -71,37 +72,43 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:mahasiswas,email',
-            'nama_mahasiswa' => 'required|string|min:1|max:255',
-            'npm' => 'required|string|min:1|max:12|unique:mahasiswas,npm',
-            'is_active' => 'required',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:mahasiswas,email',
+                'nama_mahasiswa' => 'required|string|min:1|max:255',
+                'npm' => 'required|string|min:1|max:12|unique:mahasiswas,npm',
+                'is_active' => 'required',
+            ]);
 
-        if (auth()->user()->role == 'super') {
-            $validator->sometimes('kode_prodi', 'required', function ($input) {
-                return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
-            });
+            if (auth()->user()->role == 'super') {
+                $validator->sometimes('kode_prodi', 'required', function ($input) {
+                    return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
+                });
+            }
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            $validData = $validator->validated();
+
+            $user = new Mahasiswa();
+            $user->npm = $validData['npm'];
+            $user->nama_mahasiswa = $validData['nama_mahasiswa'];
+            $user->email = $validData['email'];
+            if (auth()->user()->role == 'super') {
+                $user->kode_prodi = $validData['kode_prodi'];
+            } else {
+                $user->kode_prodi = auth()->user()->kode_prodi;
+            }
+            $user->is_active = $validData['is_active'];
+            DB::beginTransaction();
+            $user->save();
+            DB::commit();
+            return response()->json(['success' => 'Berhasil menambahkan data mahasiswa', 'data' => $user], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['errors' => 'Gagal menambahkan data mahasiswa : ' . $e->getMessage()], 500);
         }
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $validData = $validator->validated();
-
-        $user = new Mahasiswa();
-        $user->npm = $validData['npm'];
-        $user->nama_mahasiswa = $validData['nama_mahasiswa'];
-        $user->email = $validData['email'];
-        if (auth()->user()->role == 'super') {
-            $user->kode_prodi = $validData['kode_prodi'];
-        } else {
-            $user->kode_prodi = auth()->user()->kode_prodi;
-        }
-        $user->is_active = $validData['is_active'];
-        $user->save();
-
-        return response()->json(['success' => 'Berhasil menambahkan pengguna', 'data' => $user], 200);
     }
 
     /**
@@ -128,42 +135,47 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, string $npm)
     {
-        $mhs = Mahasiswa::findOrFail($npm);
-        $validator = Validator::make($request->all(), [
-            'nama_mahasiswa' => 'required|string|min:1|max:255',
-            'email' => ['required', 'email', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
-            'npm' => ['required', 'string', 'min:1', 'max:12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
-            'is_active' => 'required',
-        ]);
-
-        if (auth()->user()->role == 'super') {
-            $validator->sometimes('kode_prodi', 'required', function ($input) {
-                return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
-            });
-        }
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $validData = $validator->validated();
-        $data = [
-            'nama_mahasiswa' => $validData['nama_mahasiswa'],
-            'email' => $validData['email'],
-            'npm' => $validData['npm'],
-            $mhs->kode_prodi = auth()->user()->role == 'super' ? $validData['kode_prodi'] : auth()->user()->kode_prodi,
-            'is_active' => $validData['is_active'],
-        ];
-
-        if ($validData['is_active'] != $mhs->is_active && !empty($mhs->user)) {
-            $mhs->user()->update([
-                'is_active' => $validData['is_active']
+        try {
+            $mhs = Mahasiswa::findOrFail($npm);
+            $validator = Validator::make($request->all(), [
+                'nama_mahasiswa' => 'required|string|min:1|max:255',
+                'email' => ['required', 'email', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
+                'npm' => ['required', 'string', 'min:1', 'max:12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
+                'is_active' => 'required',
             ]);
+
+            if (auth()->user()->role == 'super') {
+                $validator->sometimes('kode_prodi', 'required', function ($input) {
+                    return true; // Selalu validasi 'kode_prodi' jika peran pengguna adalah 'super'
+                });
+            }
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $validData = $validator->validated();
+            $data = [
+                'nama_mahasiswa' => $validData['nama_mahasiswa'],
+                'email' => $validData['email'],
+                'npm' => $validData['npm'],
+                $mhs->kode_prodi = auth()->user()->role == 'super' ? $validData['kode_prodi'] : auth()->user()->kode_prodi,
+                'is_active' => $validData['is_active'],
+            ];
+            DB::beginTransaction();
+            if ($validData['is_active'] != $mhs->is_active && !empty($mhs->user)) {
+                $mhs->user()->update([
+                    'is_active' => $validData['is_active']
+                ]);
+            }
+
+            $mhs->update($data);
+            DB::commit();
+            return to_route('mahasiswas.index')->with('success', 'Berhasil mengupdate data');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('failed', 'Gagal mengupdate data : ' . $e->getMessage());
         }
-
-        $mhs->update($data);
-
-        return to_route('mahasiswas.index')->with('success', 'Berhasil mengupdate data');
     }
 
     /**
@@ -192,20 +204,33 @@ class MahasiswaController extends Controller
         }
 
         $file = $request->file('file');
+        try {
+            DB::beginTransaction();
+            // Pass the file path to the import method
+            $import = new ImportMahasiswa();
+            $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+            // dd($import);
 
-        // Pass the file path to the import method
-        $import = new ImportMahasiswa();
-        $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
-        // dd($import);
+            if ($import->failures()->isNotEmpty()) {
+                DB::rollback();
+                return redirect()->route('mahasiswas.errorImport')->withFailures($import->failures());
+            }
 
-        if ($import->failures()->isNotEmpty()) {
-            return redirect()->route('mahasiswas.errorImport')->withFailures($import->failures());
+            if ($import->getRowCount() == 0) {
+                DB::rollback();
+                return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+            }
+
+            DB::commit();
+            return to_route('mahasiswas.index')->with('success', 'Import Data Mahasiswa Berhasil');
+        } catch (\Exception $e) {
+            DB::rollback();
+            $message = $e->getMessage();
+            if (str_contains($e->getMessage(), 'Integrity constraint violation')) {
+                $message = ': Kode prodi yang Anda import tidak sesuai';
+            }
+            return back()->with('failed', 'Import Gagal ' . $message);
         }
-
-        if ($import->getRowCount() == 0) {
-            return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
-        }
-        return to_route('mahasiswas.index')->with('success', 'Import Data Mahasiswa Berhasil');
     }
 
     public function errorImport()
@@ -228,12 +253,15 @@ class MahasiswaController extends Controller
         try {
             $mahasiswa = Mahasiswa::findOrFail(decryptString($request->id));
             $mahasiswa->is_active = !$mahasiswa->is_active;
+            DB::beginTransaction();
             if (!empty($mahasiswa->user)) {
                 $mahasiswa->user()->update(['is_active' => !$mahasiswa->user->is_active]);
             }
             $mahasiswa->save();
+            DB::commit();
             return response()->json(['success' => 'Berhasil mengupdate data mahasiswa', 'updatedstatus' => $mahasiswa->is_active], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }

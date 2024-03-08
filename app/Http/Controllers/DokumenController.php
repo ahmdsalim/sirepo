@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\DokumenImport;
 use App\Models\Jenis;
 use App\Models\Dokumen;
 use App\Models\Download;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Imports\DokumenImport;
 use App\Services\HashIdService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -37,7 +38,7 @@ class DokumenController extends Controller
                 });
         }
 
-        return DataTables::eloquent($documents)
+        return DataTables::eloquent($documents->latest())
             ->editColumn('penulis', function ($row) {
                 return Str::limit($row->penulis, 50, '...');
             })
@@ -67,19 +68,20 @@ class DokumenController extends Controller
             if (count($dokumen->file) === 0) {
                 throw new \Exception('Required at least one file document', 422);
             }
-
             $indexFile = (new HashIdService())->decode($request->fileid);
             $destination = 'file-penelitian/';
             Storage::delete($destination . $dokumen->file[$indexFile]);
             $files = collect($dokumen->file)
-                ->forget($indexFile)
-                ->values()
-                ->all();
+            ->forget($indexFile)
+            ->values()
+            ->all();
             $dokumen->file = json_encode($files);
+            DB::beginTransaction();
             $dokumen->save();
-
+            DB::commit();
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
@@ -140,7 +142,7 @@ class DokumenController extends Controller
      */
     public function create()
     {
-        return view('dokumen.tambah-dokumen');
+        //
     }
 
     /**
@@ -202,12 +204,13 @@ class DokumenController extends Controller
                 }
                 $dokumen->file = json_encode($fileuploaded);
             }
-
+            DB::beginTransaction();
             $dokumen->save();
-
+            DB::commit();
             // return response()->json(['success' => 'Berhasil menambah data', 'data' => $dokumen], 200);
             return response()->json(['success' => 'Berhasil menambah data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
@@ -217,8 +220,7 @@ class DokumenController extends Controller
      */
     public function show($id)
     {
-        $data['dok'] = Dokumen::findOrFail($id);
-        return view('dokumen.detail', $data);
+        //
     }
 
     /**
@@ -290,10 +292,12 @@ class DokumenController extends Controller
                     $dokumen->file = json_encode($fileuploaded);
                 }
             }
-
+            DB::beginTransaction();
             $dokumen->save();
+            DB::commit());
             return to_route('dokumens.index')->with('success', 'Berhasil mengubah data');
         } catch (\Exception $e) {
+            DB::rollback();
             return back()->with('failed', 'Error: ' . $e->getMessage());
         }
     }
@@ -313,11 +317,12 @@ class DokumenController extends Controller
                     Storage::delete($destination . $dokumen->file[$i]);
                 }
             }
-
+            DB::beginTransaction();
             $dokumen->delete();
-
+            DB::commit();
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
@@ -334,19 +339,33 @@ class DokumenController extends Controller
 
         $file = $request->file('file');
 
-        // Pass the file path to the import method
-        $import = new DokumenImport();
-        $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
-        // dd($import);
+        try {
+            DB::beginTransaction();
+            // Pass the file path to the import method
+            $import = new DokumenImport();
+            $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+            // dd($import);
 
-        if ($import->failures()->isNotEmpty()) {
-            return redirect()->route('dokumens.errorImport')->withFailures($import->failures());
-        }
+            if ($import->failures()->isNotEmpty()) {
+                DB::rollback();
+                return redirect()->route('dokumens.errorImport')->withFailures($import->failures());
+            }
 
-        if ($import->getRowCount() == 0) {
-            return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+            if ($import->getRowCount() == 0) {
+                DB::rollback();
+                return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+            }
+
+            DB::commit();
+            return to_route('dokumens.index')->with('success', 'Import Data Dokumen Berhasil');
+        } catch (\Exception $e) {
+            DB::rollback();
+            $message = $e->getMessage();
+            if (str_contains($e->getMessage(), 'Undefined array key')) {
+                $message = ': Jenis yang Anda import tidak sesuai';
+            }
+            return back()->with('failed', 'Import Gagal ' . $message);
         }
-        return to_route('dokumens.index')->with('success', 'Import Data Dokumen Berhasil');
     }
 
     public function errorImport()

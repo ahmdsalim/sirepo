@@ -107,4 +107,9 @@ class User extends Authenticatable
     {
         $query->where('role', 'user');
     }
+
+    public function scopeOnlyadmin(Builder $query)
+    {
+        $query->where('role', 'admin');
+    }
 }

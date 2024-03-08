@@ -9,83 +9,88 @@
                 </svg> Kembali</button>
         </div>
     </div>
-    <div class="row">
-        
-        <div class="col-12 col-lg-12">
+    <div class="row mb-4">
+        <div class="col-md-6 col-12">
             <div class="card">
+                <div class="card-header">
+                    <h6>Detail Pengguna</h6>
+                </div>
                 <div class="card-body">
                     <div class="contaier">
                         <div class="d-flex flex-column gap-3">
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h5 class="mb-1">Nama</h5>
+                                        <h6 class="mb-1">Nama Pengguna</h6>
                                         {{ $user->nama }}
                                     </address>
                                 </div>
-                                <div class="col-md-6 right">
-                                    <address class="mb-4 mb-md-0">
-
-                                    </address>
-                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h5 class="mb-1">Username</h5>
+                                        <h6 class="mb-1">Username</h6>
                                         {{ $user->username }}
                                     </address>
                                 </div>
-                                <div class="col-md-6 right">
-                                    <address class="mb-4 mb-md-0">
-
-                                    </address>
-                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h5 class="mb-1">Email</h5>
-                                        {{ $user->email }}
+                                        <h6 class="mb-1">Email</h6>
+                                        {{ $user->mahasiswa->email }}
                                     </address>
                                 </div>
-                                <div class="col-md-6 right">
-                                    <address class="mb-4 mb-md-0">
-
-                                    </address>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <address class="mb-4 mb-md-0">
-                                        <h5 class="mb-1">Dibuat Pada</h5>
-                                        {{ $user->created_at->format('d M Y') }}<br>
-                                    </address>
-                                </div>
-                                <div class="col-md-6 right">
-                                    <address class="mb-4 mb-md-0">
-
-                                    </address>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <address class="mb-4 mb-md-0">
-
-                                    </address>
-                                </div>
-                                <div class="col-md-6">
-                                    <address class="mb-4 mb-md-0">
-
-                                </div>
-                                </address>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Data Mahasiswa</h6>
+                </div>
+                <div class="card-body">
+                    <div class="contaier">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <address class="mb-4 mb-md-0">
+                                        <h6 class="mb-1">NPM</h6>
+                                        {{ $user->mahasiswa->npm }}
+                                    </address>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <address class="mb-4 mb-md-0">
+                                        <h6 class="mb-1">Nama Mahasiswa</h6>
+                                        {{ $user->mahasiswa->nama_mahasiswa }}
+                                    </address>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <address class="mb-4 mb-md-0">
+                                        <h6 class="mb-1">Program Studi</h6>
+                                        {{ $user->mahasiswa->prodi->nama_prodi }}
+                                    </address>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <address class="mb-4 mb-md-0">
+                                        <h6 class="mb-1">Status</h6>
+                                        {{ $user->mahasiswa->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

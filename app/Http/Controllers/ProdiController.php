@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -63,14 +64,15 @@ class ProdiController extends Controller
             }
 
             $validData = $validator->validated();
-
+            DB::beginTransaction();
             Prodi::create([
                 'kode_prodi' => $validData['kode_prodi'],
                 'nama_prodi' => $validData['nama_prodi']
             ]);
-
+            DB::commit();
             return response()->json(['success' => 'Berhasil menambah data prodi']);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
@@ -116,14 +118,15 @@ class ProdiController extends Controller
             }
 
             $validData = $validator->validated();
-
+            DB::beginTransaction();
             $prodi->update([
                 'kode_prodi' => $validData['kode_prodi'],
                 'nama_prodi' => $validData['nama_prodi']
             ]);
-
+            DB::commit();
             return to_route('prodi.index')->with('success', 'Berhasil mengupdate data prodi');
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
