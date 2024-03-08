@@ -60,7 +60,7 @@
     <div id="app">
         <div id="main" class="layout-horizontal position-relative">
             <header class="mb-4">
-                @if (!str_contains(Route::current()->getName(), 'login') || !str_contains(Route::current()->getName(), 'register'))
+                @if (!str_contains(Route::current()->getName(), 'contributors'))
                     <div class="header-top py-2">
                         <div class="container flex-wrap">
                             <div class="gap-3 d-none" id="menu-left">
@@ -140,7 +140,7 @@
                                                             href="{{ route('landing.profile') }}"><i
                                                                 class="icon-mid bi bi-person me-2"></i>
                                                             Profile</a></li>
-                                                    <li><a class="dropdown-item {{ str_contains(Route::current()->getName(), 'setting') ? 'active' : '' }}"
+                                                    <li><a class="dropdown-item {{ Request::is('setting*') ? 'active' : '' }}"
                                                             href="{{ route('landing.setting') }}"><i
                                                                 class="icon-mid bi bi-gear me-2"></i>
                                                             Settings</a></li>
@@ -208,8 +208,23 @@
                     @yield('content')
                 </main>
             </div>
-            <footer>
-                <div class="col-12 position-absolute bottom-0">
+            @if (!str_contains(Route::current()->getName(), 'profile'))
+                <footer>
+                    <div class="col-12 position-absolute bottom-0">
+                        <div class="container">
+                            <div class="footer clearfix mb-0 text-muted">
+                                <div class="float-start">
+                                    <p>{{ date('Y') }} © Repository MI</p>
+                                </div>
+                                <div class="float-end">
+                                    <p>Crafted by <a href="{{ route('contributors') }}">Contributors</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            @else
+                <footer>
                     <div class="container">
                         <div class="footer clearfix mb-0 text-muted">
                             <div class="float-start">
@@ -220,8 +235,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </footer>
+                </footer>
+            @endif
+
         </div>
     </div>
     @vite('resources/js/landing.js')

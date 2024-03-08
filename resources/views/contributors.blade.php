@@ -11,10 +11,10 @@
                     </div>
                     <div class="card-footer pt-0 border-0">
                         <div class="d-flex gap-3">
-                            <a href="https://github.com/ahmdsalim" rel="no-follow"><i class="bi bi-github"></i></a>
-                            <a href="https://instagram.com/ahmadsalim_as" rel="no-follow"><i
+                            <a href="https://github.com/ahmdsalim" target="_blank" rel="no-follow"><i class="bi bi-github"></i></a>
+                            <a href="https://instagram.com/ahmadsalim_as" target="_blank" rel="no-follow"><i
                                     class="bi bi-instagram"></i></a>
-                            <a href="https://linkedin.com/in/ahmdsalim" rel="no-follow"><i class="bi bi-linkedin"></i></a>
+                            <a href="https://linkedin.com/in/ahmdsalim" target="_blank" rel="no-follow"><i class="bi bi-linkedin"></i></a>
                         </div>
                     </div>
                 </div>
@@ -27,9 +27,9 @@
                     </div>
                     <div class="card-footer pt-0 border-0">
                         <div class="d-flex gap-3">
-                            <a href="https://github.com/akmalns28" rel="no-follow"><i class="bi bi-github"></i></a>
-                            <a href="https://instagram.com/akmalns28" rel="no-follow"><i class="bi bi-instagram"></i></a>
-                            <a href="https://linkedin.com/in/akmal-ns" rel="no-follow"><i class="bi bi-linkedin"></i></a>
+                            <a href="https://github.com/akmalns28" target="_blank" rel="no-follow"><i class="bi bi-github"></i></a>
+                            <a href="https://instagram.com/akmalns28" target="_blank" rel="no-follow"><i class="bi bi-instagram"></i></a>
+                            <a href="https://linkedin.com/in/akmal-ns" target="_blank" rel="no-follow"><i class="bi bi-linkedin"></i></a>
                         </div>
                     </div>
                 </div>
