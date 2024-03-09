@@ -10,7 +10,10 @@
 
     <title>Repository MI</title>
 
-    <link rel="shortcut icon" href="{{ asset('./assets/compiled/ico/favicon.ico') }}" type="image/x-icon">
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='apple-touch-icon' sizes='120x120' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='apple-touch-icon' sizes='152x152' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='icon' type='image/x-icon' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='shortcut icon' type='image/x-icon' />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,6 +54,13 @@
                 color: #fff !important;
             }
         }
+
+        @media only screen and (max-width: 1199px) {
+            .layout-horizontal .main-navbar ul {
+                flex-direction: row !important;
+                gap: 1.5rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -65,14 +75,11 @@
                         <div class="container flex-wrap">
                             <div class="gap-3 d-none" id="menu-left">
                                 <a href="https://ruangbaca.me" class="menu-link" target="_blank">
-                                    <span>Perpustakaan </span>
-                                </a>
-                                <a href="https://ulbi.siakadcloud.com" class="menu-link" target="_blank">
-                                    <span>SIAKAD </span>
+                                    <span>Digital Library</span>
                                 </a>
                                 <a href="https://ejurnal.ulbi.ac.id/index.php/improve" class="menu-link"
                                     target="_blank">
-                                    <span>eJurnal </span>
+                                    <span>E-Jurnal</span>
                                 </a>
                             </div>
                             <div class="d-flex justify-content-between w-100" id="menu-right">
@@ -190,12 +197,25 @@
                                     <a href="{{ route('landing') }}" class="fs-5 fw-bold title">Repository MI</a>
                                 </div>
                                 <ul>
-                                    <li
-                                        class="menu-item {{ str_contains(Route::current()->getName(), '') ? 'active' : '' }}">
+                                    <li class="menu-item">
                                         <a href="{{ route('landing') }}" class="menu-link">
-                                            <span>Home</span>
+                                            <span>Beranda</span>
                                         </a>
                                     </li>
+                                    @if (str_contains(Route::current()->getName(), 'login'))
+                                        <li class="menu-item">
+                                            <a href="{{ route('register') }}" class="menu-link">
+                                                <span>Daftar</span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if (str_contains(Route::current()->getName(), 'register'))
+                                        <li class="menu-item">
+                                            <a href="{{ route('login') }}" class="menu-link">
+                                                <span>Masuk</span>
+                                            </a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>

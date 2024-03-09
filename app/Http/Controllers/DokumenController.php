@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jenis;
 use App\Models\Dokumen;
+use setasign\Fpdi\Fpdi;
 use App\Models\Download;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -105,6 +106,24 @@ class DokumenController extends Controller
         $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
         if ($isFileExist) {
             if ($request->query('download')) {
+                return Storage::download('file-penelitian/' . $filename);
+            } else {
+                // Retrieve the file from storage
+                $file = Storage::disk('local')->get('file-penelitian/' . $filename);
+
+                // Return the file as response
+                return response($file, 200)->header('Content-Type', 'application/pdf');
+            }
+        }
+        // Throw a 404 Not Found exception
+        throw new NotFoundHttpException('File not found.');
+    }
+
+    public function downloadFile($filename)
+    {
+        $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
+        if ($isFileExist) {
+            try {
                 // Temukan dokumen berdasarkan file name
                 $dokumen = Dokumen::whereJsonContains('file', $filename)->first();
 
@@ -112,6 +131,7 @@ class DokumenController extends Controller
                     ->whereDate('created_at', date('Y-m-d'))
                     ->first();
 
+                DB::beginTransaction();
                 if (!$download) {
                     // Jika tidak ada entri unduhan, buat yang baru
                     $download = new Download();
@@ -124,13 +144,28 @@ class DokumenController extends Controller
                     $download->save();
                 }
 
-                return Storage::download('file-penelitian/' . $filename);
-            } else {
-                // Retrieve the file from storage
-                $file = Storage::disk('local')->get('file-penelitian/' . $filename);
+                $filePath = storage_path('app/file-penelitian/' . $filename);
 
-                // Return the file as response
-                return response($file, 200)->header('Content-Type', 'application/pdf');
+                $pdf = new Fpdi();
+                $pageCount = $pdf->setSourceFile($filePath);
+
+                if (str_contains($filename, 'DPL')) {
+                    if ($pageCount > 25) $pageCount = 25;
+                } else {
+                    if ($pageCount > 15) $pageCount = 15;
+                }
+
+                for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                    $templateId = $pdf->importPage($pageNumber);
+                    $pdf->addPage();
+                    $pdf->useTemplate($templateId);
+                }
+
+                DB::commit();
+                return $pdf->Output($filename, "D");
+            } catch (\Exception $e) {
+                DB::rollback();
+                abort(500);
             }
         }
         // Throw a 404 Not Found exception
@@ -197,7 +232,9 @@ class DokumenController extends Controller
                     if ($request->hasFile('files.' . $i)) {
                         $destination = 'file-penelitian';
                         $file = $request->file('files.' . $i);
-                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $judul = str_replace(' ', '_', rtrim($validData['judul']));
+                        $format_file = $judul . '-' . date('Ymd') . '-' . rand();
+                        $filename = $filenames[$i] . '-' . $format_file . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
                         array_push($fileuploaded, $filename);
                     }
@@ -284,7 +321,9 @@ class DokumenController extends Controller
                     $filenames = $request->filenames;
                     foreach ($request->file('files') as $i => $file) {
                         $destination = 'file-penelitian';
-                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $judul = str_replace(' ', '_', rtrim($validData['judul']));
+                        $format_file = $judul . '-' . date('Ymd') . rand();
+                        $filename = $filenames[$i] . '-' . $format_file . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
                         array_push($fileuploaded, $filename);
                     }

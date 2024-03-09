@@ -78,8 +78,7 @@
                                 <div class="list-group">
                                     @if (auth()->check())
                                         @foreach ($dokumen->file as $file)
-                                            <a href="{{ route('file.get', $file) }}?download=true"
-                                                data-file-id="{{ $file }}" download="{{ $file }}"
+                                            <a href="{{ route('file.public.download', $file) }}"
                                                 class="download-link list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1">{{ $file }}</p>

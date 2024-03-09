@@ -16,6 +16,7 @@
         "laravel/ui": "^4.4",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.29",
+        "setasign/fpdi-fpdf": "^2.3",
         "vinkla/hashids": "^11.0",
         "yajra/laravel-datatables-oracle": "^10.11"
     },

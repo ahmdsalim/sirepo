@@ -1,6 +1,6 @@
-<form action="{{ route('landing.search') }}"  method="GET" id="searchFrom">
+<form action="{{ route('landing.search') }}" method="GET" id="searchFrom">
     <input class="form-control py-3 px-4 shadow-sm mt-3 " type="search" id="searchInput" name="search"
-        placeholder="Judul,Penulis,Pebimbing,Penguji....." value="{{ session('searchKeyword') }}">
+        placeholder="Cari judul, penulis, pembimbing, penguji">
 </form>
 
 
@@ -8,8 +8,8 @@
     <script>
         document.getElementById("searchInput").addEventListener("keydown", function(event) {
             if (event.keyCode === 'Enter') {
-                event.preventDefault(); 
-                document.getElementById("searchForm").submit(); 
+                event.preventDefault();
+                document.getElementById("searchForm").submit();
             }
         });
     </script>

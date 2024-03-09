@@ -8,17 +8,17 @@
         <div class="card-body">
             <form id="formSecurity">
                 <div class="form-group  my-2">
-                    <label for="current_password" class="form-label">Current Password</label>
+                    <label for="current_password" class="form-label">Password Saat Ini</label>
                     <input type="password" name="current_password" id="current_password" class="form-control"
-                        autocomplete="current_password" placeholder="Password saat ini">
+                        autocomplete="current_password" placeholder="Masukkan password saat ini">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password" class="form-label">New Password</label>
+                    <label for="password" class="form-label">Password Baru</label>
                     <input type="password" name="password" id="password" class="form-control" autocomplete="password"
-                        placeholder="Password baru">
+                        placeholder="Masukkan minimal 8 karakter">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                    <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                     <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="password"
                         class="form-control" placeholder="Konfirmasi password">
                 </div>
@@ -94,19 +94,19 @@
                             current_password.addClass('is-invalid')
                             current_password.after(
                                 `<span class="invalid-feedback" role="alert">${errors.current_password[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('password')) {
                             password.addClass('is-invalid')
                             password.after(
                                 `<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('password_confirmation')) {
                             password_confirmation.addClass('is-invalid')
                             password_confirmation.after(
                                 `<span class="invalid-feedback" role="alert">${errors.password_confirmation[0]}</span>`
-                                )
+                            )
                         }
                         toast("#dc3545", "Failed", "Gagal mengupdate password")
                     }

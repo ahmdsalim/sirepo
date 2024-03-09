@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
         Route::get('import-mahasiswas-error', [MahasiswaController::class, 'errorImport'])->name('mahasiswas.errorImport');
 
         Route::put('update-mahasiswa-active-status', [MahasiswaController::class, 'updateActiveStatus'])->name('updateMahasiswaActiveStatus');
+
+        Route::get('penelitian/file/{filename}', [DokumenController::class, 'getFile'])->name('file.get');
     });
 
     Route::middleware('authtype:user')->group(function () {
@@ -90,5 +92,5 @@ Route::middleware('auth')->group(function () {
         Route::get('koleksi', [KoleksiController::class, 'index'])->name('landing.koleksi');
     });
 
-    Route::get('penelitian/file/{filename}', [DokumenController::class, 'getFile'])->name('file.get');
+    Route::get('penelitian/file/download/{filename}', [DokumenController::class, 'downloadFile'])->name('file.public.download');
 });

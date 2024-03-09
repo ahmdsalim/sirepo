@@ -87,7 +87,6 @@ class LandingController extends Controller
     public function search(Request $request)
     {
         $keyword = $request->input('search');
-        $request->session()->put('searchKeyword', $keyword);
         $jenis = Jenis::all();
         $filters = $request->input('filter');
         $years = $request->input('tahun');
@@ -135,6 +134,6 @@ class LandingController extends Controller
         $pembimbing2 = $pebimbings[1] ?? null;
 
         // Kirim data ke view
-        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2','desk_awal'));
+        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2', 'desk_awal'));
     }
 }

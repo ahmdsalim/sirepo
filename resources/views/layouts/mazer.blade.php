@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} | SIREPO</title>
-    <link rel="shortcut icon" href="{{ asset('./assets/compiled/ico/favicon.ico') }}" type="image/x-icon">
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='apple-touch-icon' sizes='120x120' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='apple-touch-icon' sizes='152x152' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='icon' type='image/x-icon' />
+    <link href='{{ asset('./assets/compiled/ico/favicon.ico') }}' rel='shortcut icon' type='image/x-icon' />
 
     @include('layouts.partials.styles')
 </head>
