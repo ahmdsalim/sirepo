@@ -2,8 +2,9 @@
 
 namespace App\Imports;
 
-use App\Models\Mahasiswa;
 use App\Models\Prodi;
+use App\Models\Mahasiswa;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -52,9 +53,9 @@ class ImportMahasiswa implements ToModel, WithHeadingRow, WithValidation, SkipsO
     public function rules(): array
     {
         return [
-            'npm' => 'required|unique:mahasiswas,npm',
-            'nama_mahasiswa' => 'required|unique:mahasiswas,npm',
-            'email' => 'required|unique:mahasiswas,email',
+            'npm' => ['required', 'numeric', 'digits_between:1,12', Rule::unique('mahasiswas'), Rule::unique('users', 'username')],
+            'nama_mahasiswa' => 'required|string|max:255',
+            'email' => ['required', 'email', Rule::unique('mahasiswas'), Rule::unique('users')],
             'status' => 'required',
         ];
     }

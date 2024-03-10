@@ -15,7 +15,7 @@
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-control" placeholder="Email pengguna"
-                        value="{{ $user->mahasiswa->email }}" required>
+                        value="{{ $user->email }}" required>
                 </div>
                 <div class="form-group my-2 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">Update</button>

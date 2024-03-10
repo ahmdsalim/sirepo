@@ -58,11 +58,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function sendModerationApprovedNotification()
-    {
-        $this->notifyNow(new UserModerationApproved($this));
-    }
-
     public function getHashUsernameAttribute()
     {
         return encryptString($this->username);

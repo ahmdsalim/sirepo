@@ -28,15 +28,6 @@ class UserController extends Controller
     {
         $users = User::with('mahasiswa:npm,email,kode_prodi')->exceptlogged()->latest()->get();
         return DataTables::of($users)
-            ->editColumn('email', function ($row) {
-                $data = null;
-                if ($row->role === 'user') {
-                    $data = $row->mahasiswa->email;
-                } else {
-                    $data = $row->email;
-                }
-                return $data;
-            })
             ->addColumn('action', function ($row) {
                 $color = $row->is_active ? 'secondary' : 'success';
                 $text = $row->is_active ? 'Nonaktifkan' : 'Aktifkan';
@@ -76,13 +67,15 @@ class UserController extends Controller
                 $rules['email'] = [
                     'required',
                     'email',
-                    Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
+                    Rule::unique('mahasiswas')->ignore($user->npm, 'npm'),
+                    Rule::unique('users')->ignore($user->username, 'username')
                 ];
             } else {
                 $rules['email'] = [
                     'required',
                     'email',
-                    Rule::unique('users')->ignore($user->username, 'username')
+                    Rule::unique('users')->ignore($user->username, 'username'),
+                    Rule::unique('mahasiswas')
                 ];
             }
             $validator = Validator::make($request->all(), $rules);
@@ -93,6 +86,7 @@ class UserController extends Controller
             }
             $data = $validator->validated();
             $user->nama = $data['nama'];
+            $user->email = $data['email'];
             DB::beginTransaction();
             if ($user->role === 'user') {
                 $user->mahasiswa()->update(['email' => $data['email']]);
@@ -160,7 +154,8 @@ class UserController extends Controller
                 'nama' => 'required_if:role,admin|string|min:2|max:150',
                 'email' => [
                     'required_if:role,admin', 'email',
-                    Rule::unique('users', 'email')
+                    Rule::unique('users', 'email'),
+                    Rule::unique('mahasiswas', 'email')
                 ],
                 'username' => [
                     'required_if:role,admin', 'string', 'min:5', 'max:100',
@@ -187,6 +182,7 @@ class UserController extends Controller
             if (!empty($validData['mahasiswa'])) {
                 $mahasiswa = Mahasiswa::findOrFail($request->mahasiswa);
                 $data['nama'] = $mahasiswa->nama_mahasiswa;
+                $data['email'] = $mahasiswa->email;
                 $data['username'] = $mahasiswa->npm;
                 $data['npm'] = $validData['mahasiswa'];
                 $data['is_active'] = $mahasiswa->is_active;
@@ -243,7 +239,7 @@ class UserController extends Controller
                     'min:5',
                     'max:100',
                     Rule::unique('users')->ignore($user->username, 'username'),
-                    Rule::unique('mahasiswas', 'npm')->ignore($user->npm, 'npm')
+                    Rule::unique('mahasiswas', 'npm')
                 ],
                 'password' => 'nullable|string|min:8|max:150'
             ];
@@ -251,12 +247,14 @@ class UserController extends Controller
             if ($user->role === 'user') {
                 $rules['email'] = [
                     'required', 'email',
-                    Rule::unique('mahasiswas')->ignore($user->npm, 'npm')
+                    Rule::unique('mahasiswas')->ignore($user->npm, 'npm'),
+                    Rule::unique('users', 'email')->ignore($user->username, 'username')
                 ];
             } else {
                 $rules['email'] = [
                     'required', 'email',
-                    Rule::unique('users')->ignore($user->username, 'username')
+                    Rule::unique('users')->ignore($user->username, 'username'),
+                    Rule::unique('mahasiswas', 'email')
                 ];
                 $rules['prodi'] = 'required|string';
             }
@@ -269,14 +267,14 @@ class UserController extends Controller
 
             $validData = $validator->validated();
             $data = [
-                'nama' => $validData['nama']
+                'nama' => $validData['nama'],
+                'email' => $validData['email']
             ];
             DB::beginTransaction();
             if ($user->role === 'user') {
                 $user->mahasiswa()->update(['email' => $validData['email']]);
             } else {
                 $data['username'] = $validData['username'];
-                $data['email'] = $validData['email'];
                 $data['kode_prodi'] = $validData['prodi'];
             }
 

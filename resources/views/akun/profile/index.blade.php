@@ -36,6 +36,11 @@
                 <div class="card">
                     <div class="card-body">
                         <form id="formProfile">
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" value="{{ $user->username }}"
+                                    readonly="true">
+                            </div>
                             <div class="form-group mandatory">
                                 <label for="nama" class="form-label">Nama</label>
                                 <input type="text" name="nama" id="nama" class="form-control"
@@ -132,7 +137,7 @@
                             toast("#dc3545", "Failed", "Gagal mengupdate profile")
                         },
                         complete: () => {
-                            $('#btnUpdate').removeAttr('disabled').text('Submit')
+                            $('#btnUpdate').removeAttr('disabled').text('Update')
                         }
 
                     })

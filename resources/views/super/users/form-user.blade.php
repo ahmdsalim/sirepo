@@ -57,7 +57,8 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="email" id="email"
                                 class="form-control @error('email') is-invalid @enderror" placeholder="Email pengguna"
-                                value="{{ old('email', $user->email ?? '') }}" name="email" required>
+                                value="{{ old('email', ($user->role == 'user' ? $user->mahasiswa->email : $user->email) ?? '') }}"
+                                name="email" required>
                             @error('email')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -117,7 +118,7 @@
                             <div class="form-group">
                                 <label for="mahasiswa" class="form-label">Data Mahasiswa</label>
                                 <input type="text" id="mahasiswa" class="form-control"
-                                    value="{{ $user->npm . ' - ' . $user->mahasiswa->nama_mahasiswa }}"
+                                    value="{{ $user->npm . ' - ' . $user->mahasiswa->nama_mahasiswa . ' - ' . $user->mahasiswa->prodi->nama_prodi }}"
                                     placeholder="mahasiswa" disabled>
                             </div>
                         </div>

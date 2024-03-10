@@ -74,7 +74,7 @@ class MahasiswaController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email|unique:mahasiswas,email',
+                'email' => ['required', 'email', Rule::unique('mahasiswas'), Rule::unique('users')],
                 'nama_mahasiswa' => 'required|string|min:1|max:255',
                 'npm' => 'required|string|min:1|max:12|unique:mahasiswas,npm',
                 'is_active' => 'required',
@@ -137,12 +137,32 @@ class MahasiswaController extends Controller
     {
         try {
             $mhs = Mahasiswa::findOrFail($npm);
-            $validator = Validator::make($request->all(), [
+            $rules = [
                 'nama_mahasiswa' => 'required|string|min:1|max:255',
-                'email' => ['required', 'email', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
-                'npm' => ['required', 'string', 'min:1', 'max:12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
+                'npm' => ['required', 'numeric', 'digits_between:1,12', Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm')],
                 'is_active' => 'required',
-            ]);
+            ];
+
+            if (!empty($mhs->user)) {
+                $rules['npm'] = [
+                    'required', 'numeric', 'digits_between:1,12',
+                    Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm'),
+                    Rule::unique('users', 'username')->ignore($mhs->user->username, 'username')
+                ];
+                $rules['email'] = [
+                    'required', 'email',
+                    Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm'),
+                    Rule::unique('users')->ignore($mhs->user->username, 'username')
+                ];
+            } else {
+                $rules['email'] = [
+                    'required', 'email',
+                    Rule::unique('mahasiswas')->ignore($mhs->npm, 'npm'),
+                    Rule::unique('users')
+                ];
+            }
+
+            $validator = Validator::make($request->all(), $rules);
 
             if (auth()->user()->role == 'super') {
                 $validator->sometimes('kode_prodi', 'required', function ($input) {
@@ -163,8 +183,10 @@ class MahasiswaController extends Controller
                 'is_active' => $validData['is_active'],
             ];
             DB::beginTransaction();
-            if ($validData['is_active'] != $mhs->is_active && !empty($mhs->user)) {
+            if (!empty($mhs->user)) {
                 $mhs->user()->update([
+                    'username' => $validData['npm'],
+                    'email' => $validData['email'],
                     'is_active' => $validData['is_active']
                 ]);
             }

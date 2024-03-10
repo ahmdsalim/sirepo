@@ -8,6 +8,7 @@ use App\Events\Registered;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -62,7 +63,7 @@ class RegisterController extends Controller
                         ->where('is_active', true)
                         ->doesntHave('user')->count();
                     if ($mhs === 0) {
-                        $fail('This npm has not been identified.');
+                        $fail('NPM tidak terdaftar.');
                     }
                 }
             ],
@@ -82,6 +83,7 @@ class RegisterController extends Controller
         $mhs = Mahasiswa::findOrFail($request->npm);
         return User::create([
             'nama' => $mhs->nama_mahasiswa,
+            'email' => $mhs->email,
             'username' => $request->npm,
             'npm' => $request->npm,
             'role' => 'user',
@@ -93,24 +95,31 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
-        $rawpassword = strtolower(Str::random(8));
-        $user = $this->create($request, $rawpassword);
-        $data = [
-            'email' => $user->mahasiswa->email,
-            'nama' => $user->nama,
-            'username' => $user->username,
-            'password' => $rawpassword
-        ];
+        try {
+            $rawpassword = strtolower(Str::random(8));
+            DB::beginTransaction();
+            $user = $this->create($request, $rawpassword);
+            $data = [
+                'email' => $user->email,
+                'nama' => $user->nama,
+                'username' => $user->username,
+                'password' => $rawpassword
+            ];
 
-        event(new Registered($data));
+            event(new Registered($data));
 
-        if ($response = $this->registered($request)) {
-            return $response;
+            if ($response = $this->registered($request)) {
+                DB::commit();
+                return $response;
+            }
+
+            return $request->wantsJson()
+                ? new JsonResponse([], 201)
+                : redirect($this->redirectPath());
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('failed', 'Gagal mendaftar : Terjadi kesalahan pada server');
         }
-
-        return $request->wantsJson()
-            ? new JsonResponse([], 201)
-            : redirect($this->redirectPath());
     }
 
     protected function registered(Request $request)

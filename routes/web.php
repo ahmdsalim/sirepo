@@ -31,8 +31,6 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('search', [LandingController::class, 'search'])->name('landing.search');
-Route::get('search-all', [LandingController::class, 'docAll'])->name('landing.dokumen');
-Route::post('search/filter', [LandingController::class, 'filter'])->name('landing.filter');
 Route::get('pencarian/{id}/{slug}', [LandingController::class, 'detail'])->name('landing.detail');
 Route::get('contributors', function () {
     return view('contributors');

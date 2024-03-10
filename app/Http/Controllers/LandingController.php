@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Dokumen;
 use App\Models\Jenis;
-use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,54 +16,6 @@ class LandingController extends Controller
     {
         $jenis = Jenis::withCount('dokumens')->get();
         return view('landing.landing', compact('jenis'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function profile()
@@ -83,18 +34,6 @@ class LandingController extends Controller
     {
         $user = Auth::user();
         return view('landing.setting.keamanan', compact('user'));
-    }
-
-    public function docAll(Request $request){
-        $keyword = '';
-        $jenis = Jenis::all();
-        $filters = '';
-        $years = '';
-        $tahun = Dokumen::distinct('tahun')->orderBy('tahun', 'desc')->pluck('tahun');
-
-        $dokumen = Dokumen::with('jenis')->orderBy('tahun')->paginate(25);
-
-        return view('landing.result',compact('dokumen','keyword','jenis','tahun','filters','years'));
     }
 
     public function search(Request $request)

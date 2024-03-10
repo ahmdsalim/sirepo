@@ -4,10 +4,10 @@
     <div class="container-fluid position-fixed bottom-25" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <div class="row justify-content-center gap-4">
             <div class="col-md-8">
-                <h1 class="text-center pt-serif d-block d-lg-none">Repository MI</h1>
+                <h3 class="text-center pt-serif">Electronic Theses & Project Documents</h3>
                 @include('landing.searchbar')
                 <div class="d-flex justify-content-center mt-3">
-                    <a href="{{ route('landing.dokumen') }}"><u>Cari selengkapnya</u></a>
+                    <a href="{{ route('landing.search') }}"><u>Cari selengkapnya</u></a>
                 </div>
             </div>
             <div class="d-flex justify-content-center gap-4">

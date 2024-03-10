@@ -38,7 +38,7 @@
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
                                         <h6 class="mb-1">Email</h6>
-                                        {{ $user->mahasiswa->email }}
+                                        {{ $user->email }}
                                     </address>
                                 </div>
                             </div>
