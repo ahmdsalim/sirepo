@@ -17,9 +17,18 @@
             <div class="d-flex flex-column gap-4">
                 <form id="filterForm" action="{{ route('landing.search') }}" method="get">
                     <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
-                        placeholder="Judul,Penulis,Pebimbing,Penguji....." value="{{ $keyword }}">
-                    <h5 class="mx-3 mb-1"><a href="">{{ count($dokumen) }}</a> Hasil Pencarian dengan kata kunci
-                        {{ $keyword }}</h5>
+                        placeholder="Cari Judul, Penulis, Pembimbing, Penguji" value="{{ $keyword }}">
+                    @if (Request::is('search-all') || $keyword == '')
+                        <div class="d-flex align-items-center mx-4">
+                            <h5 class="text-primary">{{ count($dokumen) }}</h5>
+                            <h5 class="mx-1">Hasil pencarian</h5>
+                        </div>
+                    @else
+                        <div class="d-flex align-items-center mx-4">
+                            <h5 class="text-primary">{{ count($dokumen) }}</h5>
+                            <h5 class="mx-1">Hasil pencarian dengan kata kunci {{ $keyword }}</h5>
+                        </div>
+                    @endif
             </div>
         </div>
     </div>
@@ -98,7 +107,8 @@
                                         </div>
                                     </div>
 
-                                    <p class="m-0">{{ $dok->penulis . ' | ' . $dok->pembimbing . ' | ' . $dok->penguji }}
+                                    <p class="m-0">
+                                        {{ $dok->penulis . ' | ' . $dok->pembimbing . ' | ' . $dok->penguji }}
                                     </p>
                                     <p>{{ $dok->tahun . ' | ' . $dok->jenis->nama_jenis }}</p>
                                     <hr class="my-2">

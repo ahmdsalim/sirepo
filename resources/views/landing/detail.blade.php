@@ -16,7 +16,7 @@
                     <li class="breadcrumb-item active"><a class="text-decoration-none" href="{{ url('/') }}">Home</a></li>
                     <li class="breadcrumb-item active"><a class="text-decoration-none" href="#"
                             onclick="history.back()">Hasil Pencarian</a></li>
-                    <li class="breadcrumb-item" aria-current="page">{{ $dokumen->judul }}</li>
+                    <li class="breadcrumb-item text-break " aria-current="page">{{ $dokumen->judul }}</li>
                 </ol>
             </nav>
         </div>
@@ -27,8 +27,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="d-flex flex-wrap justify-content-between mb-2">
+                        <div class="col-11">
                             <h4 class="pt-serif my-auto">{{ $dokumen->judul }}</h4>
+                        </div>
+                        <div class="col-1 p-0">
                             @if (auth()->check() && auth()->user()->role == 'user')
                                 <button onclick="toggleCollect(this)" type="button" class="btn btn-lg"
                                     data-id="{{ Crypt::encryptString($dokumen->id) }}"
@@ -59,7 +61,7 @@
                             <div class="tab-pane fade active show" id="home" role="tabpanel"
                                 aria-labelledby="home-tab">
                                 <p class="my-2 text-justify">
-                                    @if (strlen($dokumen->abstrak) > 100)
+                                    @if (strlen($dokumen->abstrak) > 150)
                                         <span id="shortDescription">{{ $desk_awal }}...</span>
                                         <span id="fullDescription" style="display: none;">{{ $dokumen->abstrak }}</span>
                                         <a href="#" id="readMoreBtn">Tampilkan</a>
@@ -67,7 +69,7 @@
                                         {{ $dokumen->abstrak }}
                                     @endif
 
-                                    @if (strlen($dokumen->abstrak) > 100)
+                                    @if (strlen($dokumen->abstrak) > 150)
                                         <a href="#" id="readLessBtn" style="display: none;">Sembunyikan</a>
                                     @endif
                                 </p>
@@ -81,8 +83,8 @@
                                             <a href="{{ route('file.public.download', $file) }}"
                                                 class="download-link list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
-                                                    <p class="mb-1">{{ $file }}</p>
-                                                    <small>Download</small>
+                                                    <p class="mb-1  text-break">{{ $file }}</p>
+                                                    <small class="align-self-center">Download</small>
                                                 </div>
                                             </a>
                                         @endforeach

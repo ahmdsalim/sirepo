@@ -32,14 +32,6 @@ class UserSeeder extends Seeder
             "role" => "super"
         ]);
         User::create([
-            "username" => "2213012",
-            "nama" => "Budi Kustanto",
-            "npm" => "2213012",
-            "password" => Hash::make("test"),
-            "is_active" => true,
-            "role" => "user"
-        ]);
-        User::create([
             "username" => "guest",
             "kode_prodi" => "D3MI",
             "nama" => "Guest Account",
