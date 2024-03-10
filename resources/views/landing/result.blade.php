@@ -19,15 +19,10 @@
                     <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
                         placeholder="Cari Judul, Penulis, Pembimbing, Penguji" value="{{ $keyword }}">
                     @if (Request::is('search-all') || $keyword == '')
-                        <div class="d-flex align-items-center mx-4">
-                            <h5 class="text-primary">{{ count($dokumen) }}</h5>
-                            <h5 class="mx-1">Hasil pencarian</h5>
-                        </div>
+                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span> Hasil pencarian</h5>
                     @else
-                        <div class="d-flex align-items-center mx-4">
-                            <h5 class="text-primary">{{ count($dokumen) }}</h5>
-                            <h5 class="mx-1">Hasil pencarian dengan kata kunci {{ $keyword }}</h5>
-                        </div>
+                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span> Hasil pencarian
+                            dengan kata kunci {{ $keyword }}</h5>
                     @endif
             </div>
         </div>
