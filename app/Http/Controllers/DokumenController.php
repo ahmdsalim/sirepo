@@ -232,7 +232,7 @@ class DokumenController extends Controller
                     if ($request->hasFile('files.' . $i)) {
                         $destination = 'file-penelitian';
                         $file = $request->file('files.' . $i);
-                        $judul = str_replace(' ', '_', rtrim($validData['judul']));
+                        $judul = str_replace(' ', '_', $validData['judul']);
                         $format_file = $judul . '-' . date('Ymd') . '-' . rand();
                         $filename = $filenames[$i] . '-' . $format_file . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
