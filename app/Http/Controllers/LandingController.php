@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dokumen;
 use App\Models\Jenis;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -84,6 +85,18 @@ class LandingController extends Controller
         return view('landing.setting.keamanan', compact('user'));
     }
 
+    public function docAll(Request $request){
+        $keyword = '';
+        $jenis = Jenis::all();
+        $filters = '';
+        $years = '';
+        $tahun = Dokumen::distinct('tahun')->orderBy('tahun', 'desc')->pluck('tahun');
+
+        $dokumen = Dokumen::with('jenis')->orderBy('tahun')->paginate(25);
+
+        return view('landing.result',compact('dokumen','keyword','jenis','tahun','filters','years'));
+    }
+
     public function search(Request $request)
     {
         $keyword = $request->input('search');
@@ -115,7 +128,7 @@ class LandingController extends Controller
                 $query->whereIn('tahun', $years);
             });
         }
-        $dokumen = $dokumen->orderBy('tahun')->paginate(5);
+        $dokumen = $dokumen->orderBy('tahun')->paginate(25);
 
         // dd($years);
 
@@ -126,7 +139,7 @@ class LandingController extends Controller
     {
         // Ambil dokumen berdasarkan judul
         $dokumen = Dokumen::findOrFail($id);
-        $desk_awal = substr($dokumen->abstrak, 0, 250);
+        $desk_awal = substr($dokumen->abstrak, 0, 150);
 
         $pebimbings = explode('/', $dokumen->pembimbing);
 
