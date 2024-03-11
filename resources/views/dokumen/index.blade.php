@@ -325,7 +325,13 @@
                             name: 'jenis.nama_jenis',
                         },
                         {
-                            data: 'user.nama',
+                            @if (auth()->user()->role == 'super')
+                                data: function(row) {
+                                    return row.user.nama + '-' + row.user.kode_prodi;
+                                },
+                            @else
+                                data: 'user.nama',
+                            @endif
                             name: 'user.nama',
                         },
                         {
@@ -558,7 +564,12 @@
                             $('#dataJenis').text(response.data.jenis.nama_jenis)
                             $('#dataTahun').text(response.data.tahun)
                             $('#dataKeyword').text(response.data.keyword)
-                            $('#dataUploader').text(response.data.user.nama)
+                            @if (auth()->user()->role == 'super')
+                                $('#dataUploader').text(response.data.user.nama + '-' + response
+                                    .data.user.kode_prodi);
+                            @else
+                                $('#dataUploader').text(response.data.user.nama);
+                            @endif
                             $('#dataDiunduh').text(response.data.downloads_sum_total)
                             if (response.data.file.length == 0) {
                                 $('#dataFile').html(

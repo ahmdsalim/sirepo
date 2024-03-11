@@ -91,7 +91,7 @@ class DokumenController extends Controller
     {
         try {
             $id = (new HashIdService())->decode($request->id);
-            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])
+            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama,kode_prodi'])
                 ->withSum('downloads', 'total')
                 ->findOrFail($id);
 
