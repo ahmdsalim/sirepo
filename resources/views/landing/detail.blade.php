@@ -13,9 +13,10 @@
         <div class="col-12 col-md-12">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-sm-start">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a class="text-decoration-none" href="{{ url('/') }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a class="text-decoration-none"
+                            href="{{ url('/') }}">{{ __('landing.home') }}</a></li>
                     <li class="breadcrumb-item active"><a class="text-decoration-none" href="#"
-                            onclick="history.back()">Hasil Pencarian</a></li>
+                            onclick="history.back()">{{ __('landing.search-result') }}</a></li>
                     <li class="breadcrumb-item text-break " aria-current="page">{{ $dokumen->judul }}</li>
                 </ol>
             </nav>
@@ -49,34 +50,36 @@
                     <div class="row">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab"
-                                    aria-controls="home" aria-selected="true">Abstrak</a>
+                                <a class="nav-link active" id="abstract-tab" data-bs-toggle="tab" href="#abstract"
+                                    role="tab" aria-controls="abstract"
+                                    aria-selected="true">{{ __('landing.abstract') }}</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false" tabindex="-1">PDF</a>
+                                <a class="nav-link" id="pdf-tab" data-bs-toggle="tab" href="#pdf" role="tab"
+                                    aria-controls="pdf" aria-selected="false" tabindex="-1">PDF</a>
                             </li>
                         </ul>
                         <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade active show" id="home" role="tabpanel"
-                                aria-labelledby="home-tab">
+                            <div class="tab-pane fade active show" id="abstract" role="tabpanel"
+                                aria-labelledby="abstract-tab">
                                 <p class="my-2 text-justify">
                                     @if (strlen($dokumen->abstrak) > 150)
                                         <span id="shortDescription">{{ $desk_awal }}...</span>
                                         <span id="fullDescription" style="display: none;">{{ $dokumen->abstrak }}</span>
-                                        <a href="#" id="readMoreBtn">Tampilkan</a>
+                                        <a href="#" id="readMoreBtn">{{ __('landing.show') }}</a>
                                     @else
                                         {{ $dokumen->abstrak }}
                                     @endif
 
                                     @if (strlen($dokumen->abstrak) > 150)
-                                        <a href="#" id="readLessBtn" style="display: none;">Sembunyikan</a>
+                                        <a href="#" id="readLessBtn"
+                                            style="display: none;">{{ __('landing.hide') }}</a>
                                     @endif
                                 </p>
-                                <h6>Kata Kunci/Keyword : {{ $dokumen->keyword }}</h6>
+                                <h6>{{ __('landing.keyword') }} : {{ $dokumen->keyword }}</h6>
 
                             </div>
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="tab-pane fade" id="pdf" role="tabpanel" aria-labelledby="pdf-tab">
                                 <div class="list-group">
                                     @if (auth()->check())
                                         @foreach ($dokumen->file as $file)
@@ -84,12 +87,12 @@
                                                 class="download-link list-group-item list-group-item-action">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <p class="mb-1  text-break">{{ $file }}</p>
-                                                    <small class="align-self-center">Download</small>
+                                                    <small class="align-self-center">{{ __('landing.download') }}</small>
                                                 </div>
                                             </a>
                                         @endforeach
                                     @else
-                                        <p>Silahkan login atau buat akun terlebih dahulu.</p>
+                                        <p>{{ __('landing.must-login') }}</p>
                                     @endif
                                 </div>
                             </div>
@@ -101,11 +104,11 @@
         <div class="col-md-5 col-sm-12 ">
             <div class="card">
                 <div class="card-body" id="dokInfo">
-                    <h5>Informasi Dokumen</h5>
+                    <h5>{{ __('landing.document-info') }}</h5>
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Penulis
+                            {{ __('landing.author') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataPenulis">
@@ -115,7 +118,7 @@
                     <div class="row" id="dataPembimbing">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Pebimbing
+                            {{ __('landing.mentor') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12">
@@ -125,7 +128,7 @@
                     <div class="row" id="dataPembimbing1">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Pebimbing 1
+                            {{ __('landing.mentor1') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12">
@@ -135,7 +138,7 @@
                     <div class="row "id="dataPembimbing2">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Pebimbing 2
+                            {{ __('landing.mentor2') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12">
@@ -146,7 +149,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Penguji
+                            {{ __('landing.assessor') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataPenguji">
@@ -156,7 +159,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Publish
+                            {{ __('landing.publish') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataTahun">
@@ -166,7 +169,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Jenis Dokumen
+                            {{ __('landing.document-type') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataJenis">
@@ -176,7 +179,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Diunduh
+                            {{ __('landing.downloaded') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataJenis">
@@ -186,7 +189,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Staf Input/Edit
+                            {{ __('landing.staff-input') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataJenis">
@@ -196,7 +199,7 @@
                     <div class="row">
                         <hr class="my-2">
                         <div class="col-md-4 col-sm-12">
-                            Tanggal Input
+                            {{ __('landing.input-date') }}
                         </div>
                         <div class="col-md-1 d-none d-md-block">:</div>
                         <div class="col-md-7 col-sm-12" id="dataJenis">

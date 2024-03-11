@@ -18,8 +18,8 @@
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Daftar Akun</h5>
-                        <p class="text-muted">Silahkan isi form dibawah ini untuk membuat akun</p>
+                        <h5>{{ __('landing.sign-up-account') }}</h5>
+                        <p class="text-muted">{{ __('landing.subtitle-register') }}</p>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('register') }}" method="post" class="needs-validation" novalidate
@@ -51,13 +51,14 @@
                             </div>
                             <div class="col-md-12 mt-4">
                                 <button type="submit" class="btn btn-primary w-100">
-                                    Daftar
+                                    {{ __('landing.register-text') }}
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div class="card-footer text-center pt-0 border-0">
-                        <span>Sudah punya akun? <a href="{{ route('login') }}">Masuk</a></span>
+                        <span>{{ __('landing.already-have-account') }} <a
+                                href="{{ route('login') }}">{{ __('landing.login-text') }}</a></span>
                     </div>
                 </div>
             </div>

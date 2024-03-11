@@ -1,11 +1,8 @@
 <?php
 
-use App\Models\User;
-use App\Models\Dokumen;
-use App\Models\Bookmark;
-use App\Http\Middleware\cekRole;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\ProdiController;
@@ -25,18 +22,25 @@ use App\Http\Controllers\MahasiswaController;
 |
 */
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('set-locale/{locale}', function ($locale) {
+    if (in_array($locale, ['id', 'en'])) Session::put('locale', $locale);
+    return redirect()->back();
+})->name('setlocale');
 
-Auth::routes();
+Route::middleware('setlocale')->group(function () {
+    Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('search', [LandingController::class, 'search'])->name('landing.search');
-Route::get('pencarian/{id}/{slug}', [LandingController::class, 'detail'])->name('landing.detail');
-Route::get('contributors', function () {
-    return view('contributors');
-})->name('contributors');
+    Auth::routes();
 
-Route::middleware('auth')->group(function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('search', [LandingController::class, 'search'])->name('landing.search');
+    Route::get('pencarian/{id}/{slug}', [LandingController::class, 'detail'])->name('landing.detail');
+    Route::get('contributors', function () {
+        return view('contributors');
+    })->name('contributors');
+});
+
+Route::middleware(['auth', 'setlocale'])->group(function () {
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::post('/update-security', [UserController::class, 'securityUpdate'])->name('security.update');
 

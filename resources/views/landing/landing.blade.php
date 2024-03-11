@@ -7,7 +7,7 @@
                 <h3 class="text-center pt-serif">Electronic Theses & Project Documents</h3>
                 @include('landing.searchbar')
                 <div class="d-flex justify-content-center mt-3">
-                    <a href="{{ route('landing.search') }}"><u>Cari selengkapnya</u></a>
+                    <a href="{{ route('landing.search') }}"><u>{{ __('landing.advance-search') }}</u></a>
                 </div>
             </div>
             <div class="d-flex justify-content-center gap-4">

@@ -5,19 +5,20 @@
         <div class="col-12 col-md-12">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-sm-start">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a class="text-decoration-none" href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Koleksi</li>
+                    <li class="breadcrumb-item active"><a class="text-decoration-none"
+                            href="{{ url('/') }}">{{ __('landing.home') }}</a></li>
+                    <li class="breadcrumb-item active">{{ __('landing.account-dropdown.collection') }}</li>
                 </ol>
             </nav>
         </div>
     </div>
     <div class="row">
         <div class="col-12 mb-3 ">
-            <button onclick="history.back()" class="btn icon btn-md icon-left"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 1024 1024">
+            <button onclick="history.back()" class="btn icon btn-md icon-left"><svg xmlns="http://www.w3.org/2000/svg"
+                    width="16" height="16" viewBox="0 0 1024 1024">
                     <path fill="currentColor"
                         d="M685.248 104.704a64 64 0 0 1 0 90.496L368.448 512l316.8 316.8a64 64 0 0 1-90.496 90.496L232.704 557.248a64 64 0 0 1 0-90.496l362.048-362.048a64 64 0 0 1 90.496 0" />
-                </svg> Kembali</button>
+                </svg> {{ __('landing.back') }}</button>
         </div>
     </div>
     <div class="row">
@@ -29,7 +30,7 @@
                         <h6 class="mb-2">Total: {{ count($koleksi) }}</h6>
 
                     </div>
-                        <hr class="mb-0">
+                    <hr class="mb-0">
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column">
@@ -39,7 +40,7 @@
                                     <div class="row">
                                         <div class="col-11">
                                             <h4 class="pt-serif"><a
-                                                    href="{{ route('landing.detail', ['id'=>$kol->dokumen->hash_id, 'slug'=>Str::slug($kol->dokumen->judul)]) }}">{{ $kol->dokumen->judul }}</a>
+                                                    href="{{ route('landing.detail', ['id' => $kol->dokumen->hash_id, 'slug' => Str::slug($kol->dokumen->judul)]) }}">{{ $kol->dokumen->judul }}</a>
                                             </h4>
                                         </div>
                                         <div class="col-1">
@@ -60,13 +61,15 @@
                                         </div>
                                     </div>
 
-                                    <p class="m-0">{{ $kol->dokumen->penulis .' | '. $kol->dokumen->pembimbing .' | '. $kol->dokumen->penguji}}</p>
+                                    <p class="m-0">
+                                        {{ $kol->dokumen->penulis . ' | ' . $kol->dokumen->pembimbing . ' | ' . $kol->dokumen->penguji }}
+                                    </p>
                                     <p>{{ $kol->dokumen->tahun . ' | ' . $kol->dokumen->jenis->nama_jenis }}</p>
                                     <hr class="my-2">
                                 </div>
                             </div>
                         @empty
-                            <p class="text-center">Tidak ada koleksi</p>
+                            <p class="text-center">{{ __('landing.collection-not-found') }}</p>
                         @endforelse
                     </div>
                 </div>

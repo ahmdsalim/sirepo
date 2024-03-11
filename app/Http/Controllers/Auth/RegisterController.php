@@ -63,7 +63,7 @@ class RegisterController extends Controller
                         ->where('is_active', true)
                         ->doesntHave('user')->count();
                     if ($mhs === 0) {
-                        $fail('NPM tidak terdaftar.');
+                        $fail(trans('auth.npm-unregistered'));
                     }
                 }
             ],
@@ -118,12 +118,12 @@ class RegisterController extends Controller
                 : redirect($this->redirectPath());
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('failed', 'Gagal mendaftar : Terjadi kesalahan pada server');
+            return back()->with('failed', trans('messages.register.failed'));
         }
     }
 
     protected function registered(Request $request)
     {
-        return to_route('login')->with('success', 'Pendaftaran akun berhasil. Silahkan cek pesan email yang telah dikirimkan');
+        return to_route('login')->with('success', trans('messages.register.success'));
     }
 }

@@ -3,24 +3,27 @@
 @section('setting')
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Ubah Password</h5>
+            <h5 class="card-title">{{ __('landing.change-password') }}</h5>
         </div>
         <div class="card-body">
             <form id="formSecurity">
                 <div class="form-group  my-2">
-                    <label for="current_password" class="form-label">Password Saat Ini</label>
+                    <label for="current_password"
+                        class="form-label">{{ __('landing.security-form.current-password') }}</label>
                     <input type="password" name="current_password" id="current_password" class="form-control"
-                        autocomplete="current_password" placeholder="Masukkan password saat ini">
+                        autocomplete="current_password"
+                        placeholder="{{ __('landing.security-form.current-pass-placeholder') }}">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password" class="form-label">Password Baru</label>
+                    <label for="password" class="form-label">{{ __('landing.security-form.new-password') }}</label>
                     <input type="password" name="password" id="password" class="form-control" autocomplete="password"
-                        placeholder="Masukkan minimal 8 karakter">
+                        placeholder="{{ __('landing.security-form.new-pass-placeholder') }}">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                    <label for="password_confirmation"
+                        class="form-label">{{ __('landing.security-form.confirm-password') }}</label>
                     <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="password"
-                        class="form-control" placeholder="Konfirmasi password">
+                        class="form-control" placeholder="{{ __('landing.security-form.confirm-pass-placeholder') }}">
                 </div>
 
                 <div class="form-group my-2 d-flex justify-content-end">

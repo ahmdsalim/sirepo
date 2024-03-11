@@ -95,10 +95,10 @@ class UserController extends Controller
             }
             $user->save();
             DB::commit();
-            return response()->json(['success' => 'Berhasil mengupdate profile', 'data' => ['nama' => $data['nama']]]);
+            return response()->json(['success' => trans('messages.profile.success'), 'data' => ['nama' => $data['nama']]]);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['errors' => 'Gagal mengupdate profile : ' . $e->getMessage()], 500);
+            return response()->json(['errors' => trans('messages.profile.errors') . $e->getMessage()], 500);
         }
     }
 
@@ -126,13 +126,13 @@ class UserController extends Controller
                     'password' => Hash::make($data['password'])
                 ])->save();
 
-                return response()->json(['success' => 'Berhasil mengupdate password']);
+                return response()->json(['success' => trans('messages.security.success')]);
             }
             return response()->json(['errors' => ['current_password' => [
-                "Password does not match"
+                trans('messages.security.password-doesnt-match')
             ]]], 422);
         } catch (\Exception $e) {
-            return response()->json(['errors' => 'Gagal mengupdate password : ' . $e->getMessage()], 422);
+            return response()->json(['errors' => trans('messages.security.errors') . $e->getMessage()], 422);
         }
     }
 

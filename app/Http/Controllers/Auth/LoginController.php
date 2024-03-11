@@ -95,7 +95,7 @@ class LoginController extends Controller
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
-        return $this->sendFailedLoginResponse($request, 'Akun Anda telah dinonaktifkan. Silahkan menghubungi Admin untuk mengaktifkan akun.');
+        return $this->sendFailedLoginResponse($request, trans('auth.non-active'));
     }
 
     protected function isUserExist(array $credentials)

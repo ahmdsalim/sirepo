@@ -3,12 +3,12 @@
 @section('setting')
     <div class="card" id="settings-card">
         <div class="card-header">
-            <h4>Profil</h4>
+            <h4>{{ __('landing.account-dropdown.profile') }}</h4>
         </div>
         <div class="card-body">
             <form id="formProfile">
                 <div class="form-group ">
-                    <label for="nama" class="form-label">Nama</label>
+                    <label for="nama" class="form-label">{{ __('landing.user-name') }}</label>
                     <input type="text" name="nama" id="nama" class="form-control" placeholder="Nama pengguna"
                         value="{{ $user->nama }}" required>
                 </div>

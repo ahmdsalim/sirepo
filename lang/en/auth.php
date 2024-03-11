@@ -16,5 +16,6 @@ return [
     'failed' => 'These credentials do not match our records.',
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'npm-unregistered' => 'The NPM is not registered.',
+    'non-active' => 'Your account has been disabled. Please contact the Admin to activate the account.'
 ];

@@ -16,5 +16,7 @@ return [
     'failed' => 'Username atau password salah.',
     'password' => 'Password yang diberikan salah.',
     'throttle' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam :seconds detik.',
+    'npm-unregistered' => 'NPM tidak terdaftar.',
+    'non-active' => 'Akun Anda telah dinonaktifkan. Silahkan menghubungi Admin untuk mengaktifkan akun.'
 
 ];

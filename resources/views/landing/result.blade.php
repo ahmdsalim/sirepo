@@ -5,8 +5,9 @@
         <div class="col-12 col-md-12">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-sm-start">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a class="text-decoration-none" href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Hasil Pencarian</li>
+                    <li class="breadcrumb-item active"><a class="text-decoration-none"
+                            href="{{ url('/') }}">{{ __('landing.home') }}</a></li>
+                    <li class="breadcrumb-item" aria-current="page">{{ __('landing.search-result') }}</li>
                 </ol>
             </nav>
         </div>
@@ -17,12 +18,13 @@
             <div class="d-flex flex-column gap-4">
                 <form id="filterForm" action="{{ route('landing.search') }}" method="get">
                     <input class="form-control py-3 px-4 shadow-sm mb-3" type="search" id="searchInput" name="search"
-                        placeholder="Cari Judul, Penulis, Pembimbing, Penguji" value="{{ $keyword }}">
-                    @if (Request::is('search-all') || $keyword == '')
-                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span> Hasil pencarian</h5>
+                        placeholder="{{ __('landing.search-placeholder') }}" value="{{ $keyword }}">
+                    @if ($keyword == '')
+                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span>
+                            {{ __('landing.search-result') }}</h5>
                     @else
-                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span> Hasil pencarian
-                            dengan kata kunci {{ $keyword }}</h5>
+                        <h5 class="mx-1 text-break "><span class="text-primary">{{ count($dokumen) }}</span>
+                            {{ __('landing.search-result-keyword') }} {{ $keyword }}</h5>
                     @endif
             </div>
         </div>
@@ -31,7 +33,7 @@
         <div class="col-md-3 col-sm-12">
             <div class="card mb-2">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Filter Berdasarkan Jenis</h6>
+                    <h6 class="mb-2 text-center">{{ __('landing.filter-text-jenis') }}</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($jenis as $jen)
@@ -49,7 +51,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <h6 class="mb-2 text-center">Filter Berdasarkan Tahun</h6>
+                    <h6 class="mb-2 text-center">{{ __('landing.filter-text-tahun') }}</h6>
                     <hr>
                     <div class="d-flex flex-column gap-2">
                         @foreach ($tahun as $thn)
@@ -70,7 +72,7 @@
         <div class="col-md-9 col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="mb-2">Hasil Pencarian</h6>
+                    <h6 class="mb-2">{{ __('landing.search-result') }}</h6>
                     <hr class="mb-0">
                 </div>
                 <div class="card-body">
@@ -110,7 +112,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-center">Data tidak ditemukan</p>
+                            <p class="text-center">{{ __('landing.not-found') }}</p>
                         @endforelse
                     </div>
                 </div>

@@ -6,14 +6,14 @@
                     width="16" height="16" viewBox="0 0 1024 1024">
                     <path fill="currentColor"
                         d="M685.248 104.704a64 64 0 0 1 0 90.496L368.448 512l316.8 316.8a64 64 0 0 1-90.496 90.496L232.704 557.248a64 64 0 0 1 0-90.496l362.048-362.048a64 64 0 0 1 90.496 0" />
-                </svg> Kembali</button>
+                </svg> {{ __('landing.back') }}</button>
         </div>
     </div>
     <div class="row mb-4">
         <div class="col-md-6 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h6>Detail Pengguna</h6>
+                    <h6>{{ __('landing.detail-user') }}</h6>
                 </div>
                 <div class="card-body">
                     <div class="contaier">
@@ -21,7 +21,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h6 class="mb-1">Nama Pengguna</h6>
+                                        <h6 class="mb-1">{{ __('landing.user-name') }}</h6>
                                         {{ $user->nama }}
                                     </address>
                                 </div>
@@ -50,7 +50,7 @@
         <div class="col-md-6 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h6>Data Mahasiswa</h6>
+                    <h6>Data {{ __('landing.student') }}</h6>
                 </div>
                 <div class="card-body">
                     <div class="contaier">
@@ -66,7 +66,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h6 class="mb-1">Nama Mahasiswa</h6>
+                                        <h6 class="mb-1">{{ __('landing.student-name') }}</h6>
                                         {{ $user->mahasiswa->nama_mahasiswa }}
                                     </address>
                                 </div>
@@ -74,7 +74,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <address class="mb-4 mb-md-0">
-                                        <h6 class="mb-1">Program Studi</h6>
+                                        <h6 class="mb-1">{{ __('landing.major') }}</h6>
                                         {{ $user->mahasiswa->prodi->nama_prodi }}
                                     </address>
                                 </div>
