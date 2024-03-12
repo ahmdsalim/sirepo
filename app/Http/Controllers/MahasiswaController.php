@@ -263,7 +263,7 @@ class MahasiswaController extends Controller
     public function getUnsyncMhs()
     {
         try {
-            $mahasiswa = Mahasiswa::select('npm', 'nama_mahasiswa')->doesntHave('user')->get();
+            $mahasiswa = Mahasiswa::select('npm', 'nama_mahasiswa')->where('is_active', true)->doesntHave('user')->get();
             return response()->json(['success' => true, 'data' => $mahasiswa]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'errors' => $e->getMessage()]);
