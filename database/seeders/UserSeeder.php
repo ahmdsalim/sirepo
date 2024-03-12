@@ -23,20 +23,29 @@ class UserSeeder extends Seeder
             "role" => "super"
         ]);
         User::create([
-            "username" => "ahmdsalim",
+            "username" => "admin_dev",
             "kode_prodi" => "D3MI",
-            "nama" => "Ahmad Salim",
+            "nama" => "Admin Dev",
             "email" => "salimahmad14823@gmail.com",
             "password" => Hash::make("12345678"),
             "is_active" => true,
             "role" => "super"
         ]);
         User::create([
-            "username" => "guest",
+            "username" => "mubassiran",
             "kode_prodi" => "D3MI",
-            "nama" => "Guest Account",
-            "email" => "guest@gmail.com",
-            "password" => Hash::make("guest"),
+            "nama" => "Mubassiran",
+            "email" => "mubassiran@ulbi.ac.id",
+            "password" => Hash::make("12345678"),
+            "is_active" => true,
+            "role" => "super"
+        ]);
+        User::create([
+            "username" => "admin_d3mi",
+            "kode_prodi" => "D3MI",
+            "nama" => "Staff D3 MI",
+            "email" => "d3si@ulbi.ac.id",
+            "password" => Hash::make("12345678"),
             "is_active" => true,
             "role" => "admin"
         ]);

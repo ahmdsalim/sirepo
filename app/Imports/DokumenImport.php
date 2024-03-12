@@ -30,7 +30,7 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
     {
         ++$this->rows;
 
-        $jenisId = $this->getJenisId($row['jenis_id']);
+        $jenisId = $this->getJenisId($row['jenis']);
 
         return new Dokumen([
             'judul' => $row['judul'],
@@ -39,7 +39,7 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
             'penguji' => $row['penguji'],
             'tahun' => $row['tahun'],
             'username' => auth()->user()->username,
-            'jenis_id' => $jenisId,
+            'jenis' => $jenisId,
             'abstrak' => $row['abstrak'],
             'keyword' => $row['keyword'],
         ]);
@@ -66,7 +66,7 @@ class DokumenImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnF
             'penulis' => 'required|string|min:3',
             'pembimbing' => 'required|string|min:3',
             'penguji' => 'required|string|min:3',
-            'jenis_id' => 'required',
+            'jenis' => 'required',
             'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'keyword' => 'required|string|min:3',
         ];
