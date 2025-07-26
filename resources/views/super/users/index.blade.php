@@ -217,7 +217,7 @@
                             name: 'kode_prodi',
                             render: function(data, type, row) {
                                 var show = '<span class="small text-muted">Null</span>'
-                                if (row.role == 'admin' || row.role == 'super' && data) {
+                                if ((row.role == 'admin' || row.role == 'super') && data) {
                                     show = data
                                 } else if (row.role == 'user') {
                                     show = row.mahasiswa.kode_prodi
