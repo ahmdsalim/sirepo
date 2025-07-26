@@ -29,8 +29,8 @@ class Dokumen extends Model
     protected function file(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => json_decode($value),
-            set: fn (string $value) => $value,
+            get: fn (?string $value) => $value !== null ? json_decode($value) : [],
+            set: fn (?string $value) => $value,
         );
     }
 
@@ -57,6 +57,14 @@ class Dokumen extends Model
     public function scopeOnlyLogged(Builder $query)
     {
         $query->where('username', auth()->user()->username);
+    }
+
+    public function scopeOnlySameProdi(Builder $query)
+    {
+        $user = auth()->user();
+        $query->whereHas('user', function ($subquery) use ($user) {
+            $subquery->where('kode_prodi', $user->kode_prodi);
+        });
     }
 
     public function collectedBy(User $user)

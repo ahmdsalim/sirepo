@@ -4,10 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class cekRole
+class SetLocale
 {
     /**
      * Handle an incoming request.
@@ -16,9 +17,9 @@ class cekRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === ['super','admin','user']) {
-            return $next($request);
-          }
-         return redirect('/');
+        if (Session::has('locale')) {
+            App::setLocale(Session::get('locale'));
+        }
+        return $next($request);
     }
 }

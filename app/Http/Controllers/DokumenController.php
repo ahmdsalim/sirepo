@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Jenis;
 use App\Models\Dokumen;
+use setasign\Fpdi\Fpdi;
 use App\Models\Download;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Imports\DokumenImport;
 use App\Services\HashIdService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +23,6 @@ class DokumenController extends Controller
      */
     public function index()
     {
-        $data['header'] = 'asasa';
         $data['jenis'] = Jenis::select('id', 'nama_jenis')->get();
         return view('dokumen.index', $data);
     }
@@ -29,35 +31,17 @@ class DokumenController extends Controller
     {
         $documents = Dokumen::with('jenis')->with('user');
         if (auth()->user()->role == 'admin') {
+            $user = auth()->user();
             $documents = Dokumen::with('jenis')
                 ->with('user')
-                ->where('username', auth()->user()->username);
+                ->whereHas('user', function ($query) use ($user) {
+                    $query->where('kode_prodi', $user->kode_prodi);
+                });
         }
 
-        return DataTables::eloquent($documents)
+        return DataTables::eloquent($documents->latest())
             ->editColumn('penulis', function ($row) {
                 return Str::limit($row->penulis, 50, '...');
-            })
-            ->addColumn('file', function ($row) {
-                $actionBtn = '<ul style="
-                    list-style: none;
-                    padding-left: 0;
-                    margin: auto 0;
-                ">';
-                $rowLength = count($row->file);
-                if ($rowLength > 0) {
-                    if ($rowLength > 2) {
-                        $actionBtn .= '<li><span class="badge text-bg-secondary">' . $rowLength . ' File</span></li>';
-                    } else {
-                        foreach ($row->file as $val) {
-                            $actionBtn .= '<li><a href="' . route('file.get', $val) . '" class="d-flex gap-1" target="_blank"><i class="bi bi-file-earmark-pdf-fill"></i> ' . Str::limit($val, 6, '...') . '</a></li>';
-                        }
-                    }
-                } else {
-                    $actionBtn .= '<li>Tidak ada file</li>';
-                }
-                $actionBtn .= '</ul>';
-                return $actionBtn;
             })
             ->addColumn('action', function ($row) {
                 $actionBtn =
@@ -82,10 +66,9 @@ class DokumenController extends Controller
     {
         try {
             $dokumen = Dokumen::findOrFail($id);
-            if (count($dokumen->file) == 1) {
+            if (count($dokumen->file) === 0) {
                 throw new \Exception('Required at least one file document', 422);
             }
-
             $indexFile = (new HashIdService())->decode($request->fileid);
             $destination = 'file-penelitian/';
             Storage::delete($destination . $dokumen->file[$indexFile]);
@@ -94,10 +77,12 @@ class DokumenController extends Controller
                 ->values()
                 ->all();
             $dokumen->file = json_encode($files);
+            DB::beginTransaction();
             $dokumen->save();
-
+            DB::commit();
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
@@ -106,7 +91,9 @@ class DokumenController extends Controller
     {
         try {
             $id = (new HashIdService())->decode($request->id);
-            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama'])->withSum('downloads', 'total')->findOrFail($id);
+            $dokumen = Dokumen::with(['jenis:id,nama_jenis', 'user:username,nama,kode_prodi'])
+                ->withSum('downloads', 'total')
+                ->findOrFail($id);
 
             return response()->json(['success' => 'Berhasil mengambil data', 'data' => $dokumen], 200);
         } catch (\Exception $e) {
@@ -116,27 +103,9 @@ class DokumenController extends Controller
 
     public function getFile(Request $request, string $filename)
     {
-
         $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
         if ($isFileExist) {
             if ($request->query('download')) {
-                // Temukan dokumen berdasarkan file name
-                $dokumen = Dokumen::whereJsonContains('file', $filename)->first();
-
-                $download = Download::where('dokumen_id', $dokumen->id)->whereDate('created_at', date('Y-m-d'))->first();
-
-                if (!$download) {
-                    // Jika tidak ada entri unduhan, buat yang baru
-                    $download = new Download();
-                    $download->dokumen_id = $dokumen->id;
-                    $download->total = 1;
-                    $download->save();
-                } else {
-                    // Jika ada, tingkatkan total unduhan
-                    $download->total = $download->total + 1;
-                    $download->save();
-                }
-
                 return Storage::download('file-penelitian/' . $filename);
             } else {
                 // Retrieve the file from storage
@@ -150,12 +119,65 @@ class DokumenController extends Controller
         throw new NotFoundHttpException('File not found.');
     }
 
+    public function downloadFile($filename)
+    {
+        $isFileExist = Storage::disk('local')->exists('file-penelitian/' . $filename);
+        if ($isFileExist) {
+            try {
+                // Temukan dokumen berdasarkan file name
+                $dokumen = Dokumen::whereJsonContains('file', $filename)->first();
+
+                $download = Download::where('dokumen_id', $dokumen->id)
+                    ->whereDate('created_at', date('Y-m-d'))
+                    ->first();
+
+                DB::beginTransaction();
+                if (!$download) {
+                    // Jika tidak ada entri unduhan, buat yang baru
+                    $download = new Download();
+                    $download->dokumen_id = $dokumen->id;
+                    $download->total = 1;
+                    $download->save();
+                } else {
+                    // Jika ada, tingkatkan total unduhan
+                    $download->total = $download->total + 1;
+                    $download->save();
+                }
+
+                $filePath = storage_path('app/file-penelitian/' . $filename);
+
+                $pdf = new Fpdi();
+                $pageCount = $pdf->setSourceFile($filePath);
+
+                if (str_contains($filename, 'DPL')) {
+                    if ($pageCount > 25) $pageCount = 25;
+                } else {
+                    if ($pageCount > 15) $pageCount = 15;
+                }
+
+                for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                    $templateId = $pdf->importPage($pageNumber);
+                    $pdf->addPage();
+                    $pdf->useTemplate($templateId);
+                }
+
+                DB::commit();
+                return $pdf->Output($filename, "D");
+            } catch (\Exception $e) {
+                DB::rollback();
+                abort(500);
+            }
+        }
+        // Throw a 404 Not Found exception
+        throw new NotFoundHttpException('File not found.');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('dokumen.tambah-dokumen');
+        //
     }
 
     /**
@@ -174,14 +196,14 @@ class DokumenController extends Controller
                 'penguji' => 'required|string|min:3',
                 'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
                 'jenis' => 'required|string',
-                'files' => 'required',
-                'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'required',
-                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+                'files' => 'nullable',
+                'files.*' => 'file|mimes:pdf|max:10240',
+                'filenames' => 'required_with:files',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [
-                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
-            ]
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)',
+            ],
         );
 
         if ($validator->fails()) {
@@ -203,26 +225,29 @@ class DokumenController extends Controller
 
             $fileuploaded = [];
             $totalUploaded = $request->totalUploaded;
-            $filenamesLength = count($request->filenames);
-            if ($totalUploaded == $filenamesLength) {
+            $filenamesLength = $request->filenames === null ? 0 : count($request->filenames);
+            if ($totalUploaded == $filenamesLength && $totalUploaded != 0 && $filenamesLength != 0) {
                 $filenames = $request->filenames;
                 for ($i = 0; $i < $totalUploaded; $i++) {
                     if ($request->hasFile('files.' . $i)) {
                         $destination = 'file-penelitian';
                         $file = $request->file('files.' . $i);
-                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $judul = str_replace(' ', '_', $validData['judul']);
+                        $format_file = $judul . '-' . date('Ymd') . '-' . rand();
+                        $filename = $filenames[$i] . '-' . $format_file . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
                         array_push($fileuploaded, $filename);
                     }
                 }
                 $dokumen->file = json_encode($fileuploaded);
             }
-
+            DB::beginTransaction();
             $dokumen->save();
-
+            DB::commit();
             // return response()->json(['success' => 'Berhasil menambah data', 'data' => $dokumen], 200);
             return response()->json(['success' => 'Berhasil menambah data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
@@ -232,8 +257,7 @@ class DokumenController extends Controller
      */
     public function show($id)
     {
-        $data['dok'] = Dokumen::findOrFail($id);
-        return view('dokumen.detail', $data);
+        //
     }
 
     /**
@@ -263,13 +287,13 @@ class DokumenController extends Controller
                 'tahun' => 'required|digits:4|integer|min:2000|max:' . date('Y'),
                 'jenis' => 'required|string',
                 'files' => 'nullable',
-                'files.*' => 'mimes:pdf|max:10240',
-                'filenames' => 'nullable',
-                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-]+$/|max:50',
+                'files.*' => 'file|mimes:pdf|max:10240',
+                'filenames' => 'required_with:files',
+                'filenames.*' => 'string|regex:/^[a-zA-Z0-9_\-\s]+$/|max:50',
             ],
             [
-                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)',
-            ]
+                'filenames.*.regex' => 'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)',
+            ],
         );
 
         if ($validator->fails()) {
@@ -297,7 +321,9 @@ class DokumenController extends Controller
                     $filenames = $request->filenames;
                     foreach ($request->file('files') as $i => $file) {
                         $destination = 'file-penelitian';
-                        $filename = $filenames[$i] . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $judul = str_replace(' ', '_', rtrim($validData['judul']));
+                        $format_file = $judul . '-' . date('Ymd') . rand();
+                        $filename = $filenames[$i] . '-' . $format_file . '.' . $file->getClientOriginalExtension();
                         $file->storeAs($destination, $filename);
                         array_push($fileuploaded, $filename);
                     }
@@ -305,10 +331,12 @@ class DokumenController extends Controller
                     $dokumen->file = json_encode($fileuploaded);
                 }
             }
-
+            DB::beginTransaction();
             $dokumen->save();
+            DB::commit();
             return to_route('dokumens.index')->with('success', 'Berhasil mengubah data');
         } catch (\Exception $e) {
+            DB::rollback();
             return back()->with('failed', 'Error: ' . $e->getMessage());
         }
     }
@@ -320,15 +348,67 @@ class DokumenController extends Controller
     {
         try {
             $dokumen = Dokumen::findOrFail($id);
-            $destination = 'file-penelitian/';
-            foreach ($dokumen->file as $i => $file) {
-                Storage::delete($destination . $dokumen->file[$i]);
-            }
-            $dokumen->delete();
 
+            // Check if files exist before attempting to delete
+            if ($dokumen->file) {
+                $destination = 'file-penelitian/';
+                foreach ($dokumen->file as $i => $file) {
+                    Storage::delete($destination . $dokumen->file[$i]);
+                }
+            }
+            DB::beginTransaction();
+            $dokumen->delete();
+            DB::commit();
             return response()->json(['success' => 'Berhasil menghapus data'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['errors' => $e->getMessage()], 500);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $file = $request->file('file');
+
+        try {
+            DB::beginTransaction();
+            // Pass the file path to the import method
+            $import = new DokumenImport();
+            $import->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+            // dd($import);
+
+            if ($import->failures()->isNotEmpty()) {
+                DB::rollback();
+                return redirect()->route('dokumens.errorImport')->withFailures($import->failures());
+            }
+
+            if ($import->getRowCount() == 0) {
+                DB::rollback();
+                return back()->with('failed', 'Import Gagal: Data tidak ditemukan');
+            }
+
+            DB::commit();
+            return to_route('dokumens.index')->with('success', 'Import Data Dokumen Berhasil');
+        } catch (\Exception $e) {
+            DB::rollback();
+            $message = $e->getMessage();
+            if (str_contains($e->getMessage(), 'Undefined array key')) {
+                $message = ': Jenis yang Anda import tidak sesuai';
+            }
+            return back()->with('failed', 'Import Gagal ' . $message);
+        }
+    }
+
+    public function errorImport()
+    {
+        return view('dokumen.error-import');
     }
 }

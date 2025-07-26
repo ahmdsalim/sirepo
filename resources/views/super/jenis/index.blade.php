@@ -108,6 +108,7 @@
                             data: 'action',
                             name: 'action',
                             orderable: false,
+                            searchable: false,
                             width: "20%",
                         }
                     ]
@@ -178,16 +179,12 @@
                     }).then((result) => {
                         if (result.value) {
                             const dataId = $(this).data('id')
-                            const data = {
-                                id: dataId
-                            }
                             const url = "{{ route('jenis.destroy', ['id' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
-                                data: JSON.stringify(data),
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",

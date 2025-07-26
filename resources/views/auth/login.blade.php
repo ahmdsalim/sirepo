@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5>Login</h5>
-                        <p class="text-muted">Silahkan login ke akun Anda</p>
+                        <p class="text-muted">{{ __('landing.subtitle-login') }}</p>
                     </div>
                     <div class="card-body">
                         <form class="row g-3" method="POST" action="{{ route('login') }}">
@@ -62,18 +62,19 @@
                             </div>
                             <div class="col-6 text-end">
                                 <a href="{{ route('password.request') }}">
-                                    Lupa Password?
+                                    {{ __('landing.forgot-password') }}
                                 </a>
                             </div>
                             <div class="col-md-12 mt-4">
                                 <button type="submit" class="btn btn-primary w-100">
-                                    Masuk
+                                    {{ __('landing.login-text') }}
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div class="card-footer text-center pt-0 border-0">
-                        <span>Belum punya akun? <a href="{{ route('register') }}">Daftar</a></span>
+                        <span>{{ __('landing.doesnt-have-account') }} <a
+                                href="{{ route('register') }}">{{ __('landing.register-text') }}</a></span>
                     </div>
                 </div>
             </div>
@@ -112,7 +113,7 @@
     </script>
     <script>
         function toast(color = "#198754", type = "Success", message =
-            "Berhasil membuat akun, tunggu konfirmasi dari admin") {
+            "Pesan") {
             $("#toastRect").attr("fill", color)
             $("#toastType").text(type)
             $("#toastMessage").text(message)
@@ -121,7 +122,10 @@
             toast.show()
         }
         @if (session('success'))
-            toast(undefined, undefined, undefined)
+            toast(undefined, undefined, "{{ session('success') }}")
+        @endif
+        @if (session('status'))
+            toast(undefined, undefined, "{{ session('status') }}")
         @endif
     </script>
 @endpush

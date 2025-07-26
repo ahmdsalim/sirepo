@@ -48,19 +48,23 @@ class JenisController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nama_jenis' => 'required|min:1|max:150'
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'nama_jenis' => 'required|min:1|max:150'
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            Jenis::create([
+                'nama_jenis' => $request->nama_jenis
+            ]);
+
+            return response()->json(['success' => 'Berhasil menambahkan data'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
-
-        Jenis::create([
-            'nama_jenis' => $request->nama_jenis
-        ]);
-
-        return response()->json(['success' => 'Berhasil menambahkan data'], 200);
     }
 
     /**
@@ -86,22 +90,26 @@ class JenisController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(), [
-            'nama_jenis' => 'required|min:1|max:150'
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'nama_jenis' => 'required|min:1|max:150'
+            ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $validData = $validator->validated();
+
+            $jenis = Jenis::findOrFail($id);
+            $jenis->update([
+                'nama_jenis' => $validData['nama_jenis']
+            ]);
+
+            return to_route('jenis.index')->with('success', 'Berhasil mengubah data');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Gagal mengubah data : ' . $e->getMessage());
         }
-
-        $validData = $validator->validated();
-
-        $jenis = Jenis::findOrFail($id);
-        $jenis->update([
-            'nama_jenis' => $validData['nama_jenis']
-        ]);
-
-        return to_route('jenis.index')->with('success', 'Berhasil mengubah data');
     }
 
     /**

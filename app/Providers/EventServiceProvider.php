@@ -2,12 +2,9 @@
 
 namespace App\Providers;
 
-use App\Events\UserModerationApproved;
-use App\Listeners\SendModerationApprovedNotification;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use App\Events\Registered;
+use App\Listeners\SendEmailRegisteredNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,10 +15,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
-        UserModerationApproved::class => [
-            SendModerationApprovedNotification::class,
+            SendEmailRegisteredNotification::class,
         ],
     ];
 

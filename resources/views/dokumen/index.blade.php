@@ -17,11 +17,42 @@
     </x-slot>
 
     <section class="section">
+
         <div class="card">
             <div class="card-header">
-                <div class="d-inline-block user-select-none" id="toggleContainer" style="cursor: pointer;">
-                    <span id="toggleText">Tambah</span>
-                    <i class="bi bi-chevron-compact-right" id="toggleIcon"></i>
+                <div class="d-flex justify-content-between">
+                    <div class="d-inline-block user-select-none my-auto" id="toggleContainer" style="cursor: pointer;">
+                        <span id="toggleText">Tambah</span>
+                        <i class="bi bi-chevron-compact-right" id="toggleIcon"></i>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#inlineForm">
+                        Import Excel
+                    </button>
+                    <div class="modal fade text-left" id="inlineForm" tabindex="-1" aria-labelledby="myModalLabel33"
+                        style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel33">Import Excel</h4>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18">
+                                            </line>
+                                            <line x1="6" y1="6" x2="18" y2="18">
+                                            </line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                @include('layouts.partials.input-file-excel', [
+                                    'routeImport' => route('dokumens.import'),
+                                    'pathDownload' => asset('assets/static/template/template-dokumen.xlsx'),
+                                ])
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body" id="formContainer" style="display: none;">
@@ -72,8 +103,8 @@
                             <div class="col-12">
                                 <div class="form-group mandatory">
                                     <label for="pembimbing" class="form-label">Pembimbing</label>
-                                    <input type="text" id="pembimbing" class="form-control" placeholder="Pembimbing"
-                                        name="pembimbing" required>
+                                    <input type="text" id="pembimbing" class="form-control"
+                                        placeholder="Pembimbing" name="pembimbing" required>
                                     <small id="small-tag" style="display: none;">Format: Pembimbing 1/Pebimbing
                                         2</small>
 
@@ -95,11 +126,11 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="mb-3 mandtory">
-                                    <label for="file" class="form-label">File <span class="text-danger">*</span>
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">File</span>
                                     </label>
                                     <input class="form-control" type="file" name="files[]" id="files"
-                                        accept=".pdf" multiple required>
+                                        accept=".pdf" multiple>
                                     <small><span class="text-muted small">Unggah file sampai dengan 10MB dalam format
                                             PDF.</span></small>
                                 </div>
@@ -294,7 +325,13 @@
                             name: 'jenis.nama_jenis',
                         },
                         {
-                            data: 'user.nama',
+                            @if (auth()->user()->role == 'super')
+                                data: function(row) {
+                                    return row.user.nama + '-' + row.user.kode_prodi;
+                                },
+                            @else
+                                data: 'user.nama',
+                            @endif
                             name: 'user.nama',
                         },
                         {
@@ -302,6 +339,14 @@
                             name: 'file',
                             orderable: false,
                             searchable: false,
+                            render: function(data, type, row) {
+                                var list =
+                                    `<ul style="list-style: none;padding-left: 0;margin: auto 0;">`
+                                list +=
+                                    `<li><span class="badge text-bg-secondary">${data.length} File</span></li>`
+                                list += '</ul>'
+                                return list
+                            }
                         },
                         {
                             data: 'action',
@@ -334,16 +379,12 @@
                     }).then((result) => {
                         if (result.value) {
                             const dataId = $(this).data('id')
-                            const data = {
-                                id: dataId
-                            }
                             const url = "{{ route('dokumens.destroy', ['id' => ':data']) }}"
                             const bindUrl = url.replace(':data', dataId)
                             var btn = $(this)
                             $.ajax({
                                 url: bindUrl,
                                 type: "DELETE",
-                                data: JSON.stringify(data),
                                 dataType: "JSON",
                                 proccessData: false,
                                 contentType: "application/json",
@@ -385,6 +426,25 @@
                     }
                 })
 
+                const toggleContainerImportCSV = document.getElementById('toggleContainerImportCSV')
+                $('#toggleContainerImportCSV').click(function() {
+                    const formContainerImportCSV = $('#formContainerImportCSV')
+                    const toggleText = $('#toggleText')
+                    const toggleIcon = $('#toggleIcon')
+
+                    if (formContainerImportCSV.is(':visible')) {
+                        formContainerImportCSV.hide(200)
+                        toggleText.text('Tambah')
+                        toggleIcon.removeClass('bi bi-chevron-compact-down')
+                        toggleIcon.addClass('bi bi-chevron-compact-right')
+                    } else {
+                        formContainerImportCSV.show(200)
+                        toggleText.text('Sembunyikan')
+                        toggleIcon.removeClass('bi bi-chevron-compact-right')
+                        toggleIcon.addClass('bi bi-chevron-compact-down')
+                    }
+                })
+
                 const formDokumen = document.getElementById('formDokumen')
                 formDokumen.addEventListener('submit', (event) => {
                     event.preventDefault()
@@ -392,7 +452,8 @@
                     //Data for sending to server  
                     var formData = new FormData($('#formDokumen')[0])
                     let totalUploaded = $('#files')[0].files.length
-                    let fileName = JSON.parse($('#files').attr('data-filenames'))
+                    let fileName = $('#files').attr('data-filenames') === undefined ? [] : JSON.parse($(
+                        '#files').attr('data-filenames'))
                     for (let i = 0; i < fileName.length; i++) {
                         formData.append(`filenames[]`, fileName[i])
                     }
@@ -454,10 +515,12 @@
                             return
                         }
                         // Validasi nama file
-                        var regex = /^[a-zA-Z0-9_\-]+$/;
+                        var regex = /^[a-zA-Z0-9_\-\s]+$/;
                         if (!regex.test(name)) {
                             $('#files').val('').removeAttr('data-filenames')
-                            alert('Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)')
+                            alert(
+                                'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
+                            )
                             return
                         }
 
@@ -501,8 +564,17 @@
                             $('#dataJenis').text(response.data.jenis.nama_jenis)
                             $('#dataTahun').text(response.data.tahun)
                             $('#dataKeyword').text(response.data.keyword)
-                            $('#dataUploader').text(response.data.user.nama)
+                            @if (auth()->user()->role == 'super')
+                                $('#dataUploader').text(response.data.user.nama + '-' + response
+                                    .data.user.kode_prodi);
+                            @else
+                                $('#dataUploader').text(response.data.user.nama);
+                            @endif
                             $('#dataDiunduh').text(response.data.downloads_sum_total)
+                            if (response.data.file.length == 0) {
+                                $('#dataFile').html(
+                                    '<li class="text-muted">-- Belum ada file --</li>')
+                            }
                             $.each(response.data.file, (key, val) => {
                                 var elmLi = $('<li>')
                                 let url =

@@ -11,15 +11,17 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class UserModerationApproved
+class Registered
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public User $user;
-    
-    public function __construct(User $user)
+    public $data;
+    /**
+     * Create a new event instance.
+     */
+    public function __construct($data)
     {
-        $this->user = $user;
+        $this->data = $data;
     }
 
     /**

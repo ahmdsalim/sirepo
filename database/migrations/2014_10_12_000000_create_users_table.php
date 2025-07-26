@@ -14,12 +14,23 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->string('username')->primary();
             $table->string('nama');
-            $table->string('email')->unique();
+            $table->string('npm')->nullable();
+            $table->foreign('npm')
+                ->references('npm')
+                ->on('mahasiswas')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('kode_prodi')->nullable();
+            $table->foreign('kode_prodi')
+                ->references('kode_prodi')
+                ->on('prodis')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('verifikasi_file')->nullable();
-            $table->boolean('terverifikasi');
-            $table->enum('role',['admin','user','super']);
+            $table->boolean('is_active');
+            $table->enum('role', ['admin', 'user', 'super']);
             $table->rememberToken();
             $table->timestamps();
         });

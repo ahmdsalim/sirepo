@@ -135,16 +135,19 @@
                                 <div class="mb-3">
                                     <div class="text-muted mt-2 fst-italic">File saat ini:</div>
                                     <ul class="ps-0" style="list-style: none;">
-                                        @foreach ($dokumen->file as $i => $value)
-                                            <li><a href="{{ route('file.get', $value) }}"
-                                                    target="_blank">{{ $value }}'</a>
+                                        @forelse ($dokumen->file as $i => $value)
+                                            <li>
+                                                <a href="{{ route('file.get', $value) }}"
+                                                    target="_blank">{{ $value }}</a>
                                                 <button type="button"
                                                     class="border-0 text-danger fw-bold delete-button"
                                                     data-id="{{ $dokumen->hash_id }}"
                                                     data-fileid="{{ (new App\Services\HashIdService())->encode($i) }}"
                                                     style="background: none;">x</button>
                                             </li>
-                                        @endforeach
+                                        @empty
+                                            <li>-- Tidak ada file --</li>
+                                        @endforelse
                                     </ul>
                                 </div>
                             </div>
@@ -251,10 +254,12 @@
                         }
 
                         // Validasi nama file
-                        var regex = /^[a-zA-Z0-9_\-]+$/;
+                        var regex = /^[a-zA-Z0-9_\-\s]+$/;
                         if (!regex.test(name)) {
-                            $('#files').val('')
-                            alert('Nama file hanya boleh mengandung huruf, angka, _ (underscore), dan - (dash)')
+                            $('#files').val('').removeAttr('data-filenames')
+                            alert(
+                                'Nama file hanya boleh mengandung huruf, angka, spasi, _ (underscore), dan - (dash)'
+                            )
                             return
                         }
 

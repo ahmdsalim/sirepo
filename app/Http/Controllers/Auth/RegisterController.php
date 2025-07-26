@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Mahasiswa;
+use App\Events\Registered;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -52,11 +55,19 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'nama' => 'required|string|min:2|max:255',
-            'email' => 'required|email|unique:users,email',
-            'username' => 'required|string|min:5|max:100|not_in:admin,super,user|unique:users,username',
-            'password' => 'required|string|min:8|max:150',
-            'ktm' => 'required|file|mimes:pdf,jpg,jpeg,png,heic|max:2048',
+            'npm' => [
+                'required',
+                function ($attribute, $value, $fail) use ($data) {
+                    $mhs = Mahasiswa::where('npm', $data['npm'])
+                        ->where('email', $data['email'])
+                        ->where('is_active', true)
+                        ->doesntHave('user')->count();
+                    if ($mhs === 0) {
+                        $fail(trans('auth.npm-unregistered'));
+                    }
+                }
+            ],
+            'email' => 'required|email',
         ]);
     }
 
@@ -67,41 +78,52 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(Request $request)
+    protected function create(Request $request, $password)
     {
-        $file = $request->file('ktm');
-        $destination = '/public/file-verifikasi';
-        $filename = 'ktm_' . time() . '.' . $file->getClientOriginalExtension();
-        $file->storeAs($destination, $filename);
-
+        $mhs = Mahasiswa::findOrFail($request->npm);
         return User::create([
-            'nama' => $request->nama,
-            'username' => $request->username,
-            'email' => $request->email,
+            'nama' => $mhs->nama_mahasiswa,
+            'email' => $mhs->email,
+            'username' => $request->npm,
+            'npm' => $request->npm,
             'role' => 'user',
-            'verifikasi_file' => $filename,
-            'terverifikasi' => false,
-            'password' => Hash::make($request->password),
+            'is_active' => $mhs->is_active,
+            'password' => Hash::make($password),
         ]);
     }
 
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
+        try {
+            $rawpassword = strtolower(Str::random(8));
+            DB::beginTransaction();
+            $user = $this->create($request, $rawpassword);
+            $data = [
+                'email' => $user->email,
+                'nama' => $user->nama,
+                'username' => $user->username,
+                'password' => $rawpassword
+            ];
 
-        event(new Registered($user = $this->create($request)));
+            event(new Registered($data));
 
-        if ($response = $this->registered($request)) {
-            return $response;
+            if ($response = $this->registered($request)) {
+                DB::commit();
+                return $response;
+            }
+
+            return $request->wantsJson()
+                ? new JsonResponse([], 201)
+                : redirect($this->redirectPath());
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('failed', trans('messages.register.failed'));
         }
-
-        return $request->wantsJson()
-            ? new JsonResponse([], 201)
-            : redirect($this->redirectPath());
     }
 
     protected function registered(Request $request)
     {
-        return to_route('login')->with('success', 'Berhasil mendaftar akun');
+        return to_route('login')->with('success', trans('messages.register.success'));
     }
 }

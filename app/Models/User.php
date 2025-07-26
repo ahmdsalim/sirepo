@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Prodi;
 use App\Models\Dokumen;
 use App\Models\Bookmark;
 use Laravel\Sanctum\HasApiTokens;
@@ -28,11 +29,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username',
+        'npm',
+        'prodi_id',
         'nama',
         'email',
         'password',
-        'verifikasi_file',
-        'terverifikasi',
+        'is_active',
         'role',
     ];
 
@@ -56,11 +58,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function sendModerationApprovedNotification()
-    {
-        $this->notifyNow(new UserModerationApproved($this));
-    }
-
     public function getHashUsernameAttribute()
     {
         return encryptString($this->username);
@@ -76,14 +73,24 @@ class User extends Authenticatable
         return $this->hasMany(Dokumen::class);
     }
 
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'npm', 'npm');
+    }
+
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'kode_prodi', 'kode_prodi');
+    }
+
     public function scopeToapprove(Builder $query)
     {
-        $query->where('terverifikasi', 0);
+        $query->where('is_active', 0);
     }
 
     public function scopeApproved(Builder $query)
     {
-        $query->where('terverifikasi', 1);
+        $query->where('is_active', 1);
     }
 
     public function scopeExceptlogged(Builder $query)
@@ -94,5 +101,10 @@ class User extends Authenticatable
     public function scopeOnlyuser(Builder $query)
     {
         $query->where('role', 'user');
+    }
+
+    public function scopeOnlyadmin(Builder $query)
+    {
+        $query->where('role', 'admin');
     }
 }

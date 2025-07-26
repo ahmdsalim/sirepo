@@ -18,54 +18,6 @@ class LandingController extends Controller
         return view('landing.landing', compact('jenis'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function profile()
     {
         $user = Auth::user();
@@ -87,7 +39,6 @@ class LandingController extends Controller
     public function search(Request $request)
     {
         $keyword = $request->input('search');
-        $request->session()->put('searchKeyword', $keyword);
         $jenis = Jenis::all();
         $filters = $request->input('filter');
         $years = $request->input('tahun');
@@ -116,7 +67,7 @@ class LandingController extends Controller
                 $query->whereIn('tahun', $years);
             });
         }
-        $dokumen = $dokumen->orderBy('tahun')->paginate(5);
+        $dokumen = $dokumen->orderBy('tahun')->paginate(25);
 
         // dd($years);
 
@@ -127,7 +78,7 @@ class LandingController extends Controller
     {
         // Ambil dokumen berdasarkan judul
         $dokumen = Dokumen::findOrFail($id);
-        $desk_awal = substr($dokumen->abstrak, 0, 250);
+        $desk_awal = substr($dokumen->abstrak, 0, 150);
 
         $pebimbings = explode('/', $dokumen->pembimbing);
 
@@ -135,6 +86,6 @@ class LandingController extends Controller
         $pembimbing2 = $pebimbings[1] ?? null;
 
         // Kirim data ke view
-        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2','desk_awal'));
+        return view('landing.detail', compact('dokumen', 'pembimbing1', 'pembimbing2', 'desk_awal'));
     }
 }

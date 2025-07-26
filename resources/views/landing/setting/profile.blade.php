@@ -3,21 +3,21 @@
 @section('setting')
     <div class="card" id="settings-card">
         <div class="card-header">
-            <h4>Profil</h4>
+            <h4>{{ __('landing.account-dropdown.profile') }}</h4>
         </div>
         <div class="card-body">
             <form id="formProfile">
                 <div class="form-group ">
-                    <label for="nama" class="form-label">Nama</label>
+                    <label for="nama" class="form-label">{{ __('landing.user-name') }}</label>
                     <input type="text" name="nama" id="nama" class="form-control" placeholder="Nama pengguna"
                         value="{{ $user->nama }}" required>
                 </div>
-                <div class="form-group ">
+                <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-control" placeholder="Email pengguna"
                         value="{{ $user->email }}" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group my-2 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
@@ -64,6 +64,7 @@
                     nama: nama.val(),
                     email: email.val()
                 }
+                var btn = $('#btnUpdate')
                 $.ajax({
                     url: "{{ route('profile.update') }}",
                     type: "POST",
@@ -71,6 +72,11 @@
                     dataType: "JSON",
                     proccessData: false,
                     contentType: "application/json",
+                    beforeSend: () => {
+                        btn.attr('disabled', true).html(
+                            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+                        )
+                    },
                     success: (response) => {
                         if (response.success) {
                             $('#profileName').text(response.data.nama)
@@ -84,21 +90,23 @@
                             nama.addClass('is-invalid')
                             nama.after(
                                 `<span class="invalid-feedback" role="alert">${errors.nama[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('email')) {
                             email.addClass('is-invalid')
                             email.after(
                                 `<span class="invalid-feedback" role="alert">${errors.email[0]}</span>`
-                                )
+                            )
                         }
                         toast("#dc3545", "Failed", "Gagal mengupdate profile")
+                    },
+                    complete: () => {
+                        $('#btnUpdate').removeAttr('disabled').text('Submit')
                     }
-
                 })
             })
 
-            function toast(color = "#198754", type = "Success", message = "Berhasil menambahkan data jenis") {
+            function toast(color = "#198754", type = "Success", message = "Berhasil mengupdate data") {
                 $("#toastRect").attr("fill", color)
                 $("#toastType").text(type)
                 $("#toastMessage").text(message)

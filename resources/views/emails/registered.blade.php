@@ -330,29 +330,24 @@
                         <tr>
                             <td class="wrapper">
                                 <p>Hai {{ $nama }},</p>
-                                <p>Pendaftaran akun anda telah disetujui. Silahkan login untuk dapat mengakses akun
-                                    Anda.</p>
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0"
-                                    class="btn btn-primary">
-                                    <tbody>
-                                        <tr>
-                                            <td align="left">
-                                                <table role="presentation" border="0" cellpadding="0"
-                                                    cellspacing="0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td> <a href="{{ route('login') }}"
-                                                                    target="_blank">Login</a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                <p>Terima kasih telah mendaftar! Akun Anda telah berhasil dibuat.</p>
+                                <p>Berikut informasi akun Anda:</p>
+                                <table style="margin-bottom:15px;">
+                                    <tr>
+                                        <td width="80">Username</td>
+                                        <td width="10">:</td>
+                                        <td>{{ $username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Password</td>
+                                        <td>:</td>
+                                        <td>{{ $password }}</td>
+                                    </tr>
                                 </table>
-                                <p>Terima kasih telah mendaftar di aplikasi kami.</p>
-                                <p>Regards,<br>Admin Sirepo</p>
+
+                                <p>Harap pastikan untuk menyimpan password Anda dengan aman dan jangan membagikannya
+                                    kepada siapa pun.</p>
+                                <p>Terima kasih.</p>
                             </td>
                         </tr>
 
@@ -365,7 +360,6 @@
                             <tr>
                                 <td class="content-block">
                                     <span class="apple-link">&copy; {{ date('Y') }} Sirepo</span>
-                                    <br>
                                 </td>
                             </tr>
                         </table>

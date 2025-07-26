@@ -28,7 +28,7 @@ return new class extends Migration
                 ->constrained('jenis')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->json('file');
+            $table->json('file')->nullable();
             $table->text('abstrak');
             $table->string('keyword');
             $table->timestamps();

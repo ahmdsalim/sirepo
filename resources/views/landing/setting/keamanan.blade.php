@@ -3,24 +3,27 @@
 @section('setting')
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Ubah Password</h5>
+            <h5 class="card-title">{{ __('landing.change-password') }}</h5>
         </div>
         <div class="card-body">
             <form id="formSecurity">
                 <div class="form-group  my-2">
-                    <label for="current_password" class="form-label">Current Password</label>
+                    <label for="current_password"
+                        class="form-label">{{ __('landing.security-form.current-password') }}</label>
                     <input type="password" name="current_password" id="current_password" class="form-control"
-                        autocomplete="current_password" placeholder="Password saat ini">
+                        autocomplete="current_password"
+                        placeholder="{{ __('landing.security-form.current-pass-placeholder') }}">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password" class="form-label">New Password</label>
+                    <label for="password" class="form-label">{{ __('landing.security-form.new-password') }}</label>
                     <input type="password" name="password" id="password" class="form-control" autocomplete="password"
-                        placeholder="Password baru">
+                        placeholder="{{ __('landing.security-form.new-pass-placeholder') }}">
                 </div>
                 <div class="form-group  my-2">
-                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                    <label for="password_confirmation"
+                        class="form-label">{{ __('landing.security-form.confirm-password') }}</label>
                     <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="password"
-                        class="form-control" placeholder="Konfirmasi password">
+                        class="form-control" placeholder="{{ __('landing.security-form.confirm-pass-placeholder') }}">
                 </div>
 
                 <div class="form-group my-2 d-flex justify-content-end">
@@ -94,19 +97,19 @@
                             current_password.addClass('is-invalid')
                             current_password.after(
                                 `<span class="invalid-feedback" role="alert">${errors.current_password[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('password')) {
                             password.addClass('is-invalid')
                             password.after(
                                 `<span class="invalid-feedback" role="alert">${errors.password[0]}</span>`
-                                )
+                            )
                         }
                         if (errors.hasOwnProperty('password_confirmation')) {
                             password_confirmation.addClass('is-invalid')
                             password_confirmation.after(
                                 `<span class="invalid-feedback" role="alert">${errors.password_confirmation[0]}</span>`
-                                )
+                            )
                         }
                         toast("#dc3545", "Failed", "Gagal mengupdate password")
                     }

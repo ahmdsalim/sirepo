@@ -9,12 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApprovedMail extends Mailable
+class RegisteredMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     protected $data;
-
     /**
      * Create a new message instance.
      */
@@ -39,9 +38,11 @@ class ApprovedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.approved',
+            view: 'emails.registered',
             with: [
-                'nama' => $this->data['nama']
+                'nama' => $this->data['nama'],
+                'username' => $this->data['username'],
+                'password' => $this->data['password']
             ],
         );
     }
