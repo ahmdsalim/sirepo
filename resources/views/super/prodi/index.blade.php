@@ -202,7 +202,7 @@
                                 url: bindUrl,
                                 type: "DELETE",
                                 dataType: "JSON",
-                                proccessData: false,
+                                processData: false,
                                 contentType: "application/json",
                                 beforeSend: () => {
                                     btn.attr('disabled', true).html(
