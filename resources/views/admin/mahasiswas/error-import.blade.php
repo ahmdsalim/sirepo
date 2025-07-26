@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-12 d-flex justify-content-end gap-2">
                             <a href="{{ route('mahasiswas.index') }}" class="btn btn-primary" >Kembali</a>
-                            <button type="sumbit" class="btn btn-success">Import</button>
+                            <button type="submit" class="btn btn-success">Import</button>
                         </div>
 
                     </form>
