@@ -22,8 +22,13 @@ use App\Http\Controllers\MahasiswaController;
 |
 */
 
-Route::get('set-locale/{locale}', function ($locale) {
-    if (in_array($locale, ['id', 'en'])) Session::put('locale', $locale);
+use Illuminate\Http\Request;
+
+Route::get('set-locale/{locale}', function (Request $request, $locale) {
+    $validated = $request->validate([
+        'locale' => 'required|in:id,en',
+    ]);
+    Session::put('locale', $locale);
     return redirect()->back();
 })->name('setlocale');
 
