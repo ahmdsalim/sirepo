@@ -278,7 +278,9 @@ class UserController extends Controller
                 $data['kode_prodi'] = $validData['prodi'];
             }
 
-            !empty($validData['password']) ?? ($data['password'] = $validData['password']);
+            if(isset($request->password)) {
+                $data['password'] = $validData['password'];
+            }
 
             $user->update($data);
             DB::commit();
