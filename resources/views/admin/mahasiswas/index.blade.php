@@ -365,7 +365,7 @@
                                 type: "DELETE",
                                 data: JSON.stringify(data),
                                 dataType: "JSON",
-                                proccessData: false,
+                                processData: false,
                                 contentType: "application/json",
                                 beforeSend: () => {
                                     btn.attr('disabled', true).html(
